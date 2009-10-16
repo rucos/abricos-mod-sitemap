@@ -1,22 +1,29 @@
 <?php
 /**
-* @version $Id: module.php 11 2009-09-20 12:25:11Z roosit $
-* @package CMSBrick
-* @copyright Copyright (C) 2008 CMSBrick. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
-*/
+ * Модуль "Карта сайта"
+ * 
+ * @version $Id: module.php 11 2009-09-20 12:25:11Z roosit $
+ * @package CMSBrick
+ * @subpackage Sitemap
+ * @copyright Copyright (C) 2008 CMSBrick. All rights reserved.
+ * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+ * @author Alexander Kuzmin (roosit@cmsbrick.ru)
+ */
 
-global $cms;
 $mod = new CMSModuleSitemap();
-$cms->modules->Register($mod);
+CMSRegistry::$instance->modules->Register($mod);
 
 /**
  * Карта сайта.
+ * 
  * Элементы сайта разделены на три типа:
  * 1) Главная страница
  * 2) Пункт меню и его страница index
  * 3) Страница не index
  * 4) Ссылка
+ * 
+ * @package CMSBrick
+ * @subpackage Sitemap
  */
 class CMSModuleSitemap extends CMSModule {
 	
@@ -114,6 +121,12 @@ class CMSModuleSitemap extends CMSModule {
 	
 }
 
+/**
+ * Статичные функции запросов к базе данных
+ * 
+ * @package CMSBrick
+ * @subpackage Sitemap
+ */
 class CMSQSitemap {
 
 	/**

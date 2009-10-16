@@ -1,10 +1,13 @@
 <?php
 /**
-* @version $Id: p_paginator.php 9 2009-08-17 09:48:36Z roosit $
-* @package CMSBrick
-* @copyright Copyright (C) 2008 CMSBrick. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
-*/
+ * Paginator
+ * @version $Id: p_paginator.php 9 2009-08-17 09:48:36Z roosit $
+ * @package CMSBrick
+ * @subpackage Sitemap
+ * @copyright Copyright (C) 2008 CMSBrick. All rights reserved.
+ * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+ * @author Alexander Kuzmin (roosit@cmsbrick.ru)
+ */
 
 $brick = Brick::$builder->brick;
 $db = Brick::$db;

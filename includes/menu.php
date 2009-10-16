@@ -1,12 +1,21 @@
 <?php
 /**
-* @version $Id: menu.php 11 2009-09-20 12:25:11Z roosit $
-* @package CMSBrick
-* @copyright Copyright (C) 2008 CMSBrick. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
-*/
+ * Классы управления меню
+ * 
+ * @version $Id: menu.php 11 2009-09-20 12:25:11Z roosit $
+ * @package CMSBrick
+ * @subpackage Sitemap
+ * @copyright Copyright (C) 2008 CMSBrick. All rights reserved.
+ * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+ * @author Alexander Kuzmin (roosit@cmsbrick.ru)
+ */
 
-class CMSSitemapMenu extends CMSBaseClass {
+/**
+ * Конструктор меню 
+ * @package CMSBrick
+ * @subpackage Sitemap
+ */
+class CMSSitemapMenu {
 	
 	/**
 	 * Ядро
@@ -76,6 +85,11 @@ class CMSSitemapMenu extends CMSBaseClass {
 	}
 }
 
+/**
+ * Элемент меню 
+ * @package CMSBrick
+ * @subpackage Sitemap
+ */
 class CMSSitemapMenuItem {
 	
 	public $id;

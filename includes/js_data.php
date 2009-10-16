@@ -1,10 +1,14 @@
 <?php
 /**
-* @version $Id: js_data.php 9 2009-08-17 09:48:36Z roosit $
-* @package CMSBrick
-* @copyright Copyright (C) 2008 CMSBrick. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
-*/
+ * Обработка запросов DataSet
+ * 
+ * @version $Id: js_data.php 9 2009-08-17 09:48:36Z roosit $
+ * @package CMSBrick
+ * @subpackage Sitemap
+ * @copyright Copyright (C) 2008 CMSBrick. All rights reserved.
+ * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+ * @author Alexander Kuzmin (roosit@cmsbrick.ru)
+ */
 
 if (!Brick::$session->IsAdminMode()){ return; }
 $brick = Brick::$builder->brick;
