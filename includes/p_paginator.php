@@ -1,7 +1,7 @@
 <?php
 /**
  * Paginator
- * @version $Id: p_paginator.php 9 2009-08-17 09:48:36Z roosit $
+ * @version $Id$
  * @package CMSBrick
  * @subpackage Sitemap
  * @copyright Copyright (C) 2008 CMSBrick. All rights reserved.

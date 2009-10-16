@@ -2,7 +2,7 @@
 /**
  * Построить горизонтальное меню 
  * 
- * @version $Id: pub_horizontal.php 3 2009-06-10 10:26:44Z roosit $
+ * @version $Id$
  * @package CMSBrick
  * @subpackage Sitemap
  * @copyright Copyright (C) 2008 CMSBrick. All rights reserved.

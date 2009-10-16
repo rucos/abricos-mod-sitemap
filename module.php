@@ -2,7 +2,7 @@
 /**
  * Модуль "Карта сайта"
  * 
- * @version $Id: module.php 11 2009-09-20 12:25:11Z roosit $
+ * @version $Id$
  * @package CMSBrick
  * @subpackage Sitemap
  * @copyright Copyright (C) 2008 CMSBrick. All rights reserved.

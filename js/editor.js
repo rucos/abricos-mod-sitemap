@@ -1,5 +1,5 @@
 /**
-* @version $Id: editor.js 9 2009-08-17 09:48:36Z roosit $
+* @version $Id$
 * @package CMSBrick
 * @copyright Copyright (C) 2008 CMSBrick. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
