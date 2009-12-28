@@ -1,79 +1,76 @@
-/**
+/*
 * @version $Id$
-* @package CMSBrick
-* @copyright Copyright (C) 2008 CMSBrick. All rights reserved.
+* @copyright Copyright (C) 2008 Abricos All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
 */
 
-(function(){
+/**
+ * @module Feedback
+ * @namespace Brick.mod.feedback
+ */
+var Component = new Brick.Component();
+Component.requires = {
+	mod:[
+		{name: 'sitemap', files: ['api.js']},
+		{name: 'sys', files: ['data.js','form.js']}
+	]
+};
+Component.entryPoint = function(){
 	
-	Brick.namespace('mod.sitemap');
-
-	var T, TId;
 	var Dom = YAHOO.util.Dom,
 		E = YAHOO.util.Event,
-		L = YAHOO.lang,
-		C = YAHOO.util.Connect,
-		J = YAHOO.lang.JSON;
+		L = YAHOO.lang;
+	
+	var NS = this.namespace, 
+		TMG = this.template;
+	
+	var TM = TMG.build(), 
+		T = TM.data,
+		TId = TM.idManager;
+	
+	var API = NS.API;
 
-	var BC = Brick.util.Connection;
-	var DATA;
-
-	var uniqurl = Brick.uniqurl;
-	var dateExt = Brick.dateExt;
-	var wWait = Brick.widget.WindowWait;
 	var elClear = Brick.elClear;
 	var tSetVar = Brick.util.Template.setProperty;
+	var tSetVarA = Brick.util.Template.setPropertyArray;
+	
+	Brick.util.CSS.update(Brick.util.CSS['sitemap']['manager']);
+	delete Brick.util.CSS['sitemap']['manager'];
 
-	Brick.Loader.add({
-		mod:[
-		     {name: 'sitemap', files: ['api.js']},
-		     {name: 'sys', files: ['data.js','form.js']}
-		    ],
-    onSuccess: function() {
-		
-			if (!Brick.objectExists('Brick.mod.sitemap.data')){
-				Brick.mod.sitemap.data = new Brick.util.data.byid.DataSet('sitemap');
-			}
-			DATA = Brick.mod.sitemap.data;
-
-			T = Brick.util.Template['sitemap']['cp_man'];
-			Brick.util.Template.fillLanguage(T);
-			TId = new Brick.util.TIdManager(T);
-			
-			Brick.util.CSS.update(Brick.util.CSS['sitemap']['cp_man']);
-			delete Brick.util.CSS['sitemap']['cp_man'];
-			
-			moduleInitialize();
-			delete moduleInitialize;
-			
-			Brick.Loader.add({yahoo: ["dragdrop"]});
-	  }
-	});
-var moduleInitialize = function(){
+	if (!Brick.objectExists('Brick.mod.sitemap.data')){
+		Brick.mod.sitemap.data = new Brick.util.data.byid.DataSet('sitemap');
+	}
+	var DATA = Brick.mod.sitemap.data;
 
 (function(){
 	
-	Brick.mod.sitemap.cppage = function(){
-		return {
-			initialize: function(container){
-				container.innerHTML = T['panel'];
-
-				this.manager = new Manager();
-				var __self = this;
-				E.on(container, 'click', function(e){
-					if (__self.clickEvent(E.getTarget(e))){ E.stopEvent(e); }
-				});
-				var ds = Brick.mod.sitemap.data;
-				ds.request();
-			},
-			clickEvent: function(el){
-				if (this.manager.clickEvent(el)){ return true; }
-				return false;
+	/**
+	 * Панель администратора.
+	 * 
+	 * @class ManagerPanel
+	 */
+	var ManagerPanel = function(){
+		ManagerPanel.superclass.constructor.call(this, {
+			'width': '780px', fixedcenter: true
+		});
+	};
+	YAHOO.extend(ManagerPanel, Brick.widget.Panel, {
+		initTemplate: function(){
+			return T['managerpanel'];
+		},
+		onLoad: function(){
+			this.managerWidget = new NS.ManagerWidget(TId['managerpanel']['container']);
+		},
+		onClick: function(el){
+			if (el.id == TId['managerpanel']['bclose']){
+				this.close(); return true;
 			}
+			return false;
 		}
-	}();
+	});
 	
+	NS.ManagerPanel = ManagerPanel;	
+
 	function createTree(parent, menus, level, pages){
 		var id = parent.id;
 		menus.foreach(function(row){
@@ -90,19 +87,75 @@ var moduleInitialize = function(){
 		});
 	};
 
-	var Manager = function(){
-		this.init();
+	
+	var ManagerWidget = function(container){
+		container = L.isString(container) ? Dom.get(container) : container;
+		this.init(container);
 	};
-	Manager.prototype = {
-		init: function(){
+	
+	ManagerWidget.prototype = {
+		init: function(container){
+			container.innerHTML = T['managerwidget'];
+	
+			var __self = this;
+			E.on(container, 'click', function(e){
+				if (__self.onClick(E.getTarget(e))){ E.stopEvent(e); }
+			});
+			
 			this.root = null;
 			
-			this.tables = {'menulist': DATA.get('menulist', true), 'pagelist': DATA.get('pagelist', true)};
+			this.tables = {
+				'menulist': DATA.get('menulist', true), 
+				'pagelist': DATA.get('pagelist', true)
+			};
 
 			DATA.onComplete.subscribe(this.onDSUpdate, this, true);
 			if (DATA.isFill(this.tables)){
 				this.render();
 			}
+		},
+		onClick: function(el){
+			var __self = this;
+			
+			if (el.id == TId['managerwidget']['rootedit']){
+				var row = this.tables['pagelist'].getRows().find({'mid': 0, 'nm': 'index'});
+				API.showPageEditorPanel(row.id, false, 0);
+			}else if (el.id == TId['managerwidget']['rootadd']) {
+				new NS.ItemCreatePanel(0);
+			}else{
+				var prefix = el.id.replace(/([0-9]+$)/, '');
+				var numid = el.id.replace(prefix, "");
+				
+				switch(prefix){
+				case (TId['mapitem']['expand']+'-'):
+					this.itemChangeEC(numid);
+					return true;
+				case (TId['biup']['id']+'-'): this.itemMove(numid, 'up'); return true;
+				case (TId['bidown']['id']+'-'): this.itemMove(numid, 'down'); return true;
+				case (TId['biadd']['id']+'-'):
+					new NS.ItemCreatePanel(numid);
+					return true;
+				case (TId['bieditp']['id']+'-'):
+					API.showPageEditorPanel(numid);
+					return true;
+				case (TId['biedit']['id']+'-'):
+					var item = this.root.find(numid);
+					if (item.link){
+						API.showLinkEditorPanel(numid);
+					}else{
+						var row = this.tables['pagelist'].getRows().find({'mid': numid, 'nm': 'index'});
+						API.showPageEditorPanel(row.id, true);
+					}
+					return true;
+				case (TId['birem']['id']+'-'):
+					this.removeMenu(numid);
+					return true;
+				case (TId['biremp']['id']+'-'):
+					this.removePage(numid);
+					return true;
+				}
+			}
+			return false;
 		},
 		onDSUpdate: function(type, args){
 			if (args[0].check(['menulist','pagelist'])){ this.render(); }
@@ -123,7 +176,7 @@ var moduleInitialize = function(){
 			}
 			this.root = root;
 
-			var ul = Dom.get(TId['panel']['items']);
+			var ul = Dom.get(TId['managerwidget']['items']);
 			elClear(ul);
 			var s = this.renderNode (this.root);
 			
@@ -144,18 +197,18 @@ var moduleInitialize = function(){
 		},
 		renderNode: function(node){
 			
-			var list = "", t, item, child, tc, btns, i;
+			var lst = "", t, item, child, tc, btns, i;
 			var count = node.child.length;
 			
 			for (i=0;i<node.pages.length;i++){
 				item = node.pages[i];
-				t = T['mapitempage'];
-				t = tSetVar(t, 'url', item.getUrl());
-				t = tSetVar(t, 'title', item.name);
-				t = tSetVar(t, 'level', item.level);
-				t = tSetVar(t, 'buttons', T['biempty']+T['biempty']+T['bieditp']+T['biempty']+T['biremp']);
-				t = tSetVar(t, 'id', item.id);
-				list += t;
+				lst += TM.replace('mapitempage', {
+					'url': item.getUrl(),
+					'title': item.name,
+					'level': item.level,
+					'buttons': T['biempty']+T['biempty']+T['bieditp']+T['biempty']+T['biremp'],
+					'id': item.id
+				});
 			}
 			
 			for (i=0;i<node.child.length;i++){
@@ -185,56 +238,15 @@ var moduleInitialize = function(){
 				child = "";
 				tc = this.renderNode(item);
 				if (tc != ""){
-					child = tSetVar(T['maplist'], 'id', item.id);
-					child = tSetVar(child, 'list', tc);
+					child = TM.replace('maplist', {
+						'id': item.id,
+						'list': tc
+					});
 				}
-				list += tSetVar(t, 'child', child);
+				lst += tSetVar(t, 'child', child);
 			}
 
-			return list;
-		},
-		clickEvent: function(el){
-			var __self = this;
-			
-			if (el.id == TId['panel']['rootedit']){
-				var row = this.tables['pagelist'].getRows().find({'mid': 0, 'nm': 'index'});
-				Brick.mod.sitemap.api.editor.editPage(row.id);
-			}else if (el.id == TId['panel']['rootadd']) {
-				new Brick.mod.sitemap.ItemCreater(0);
-			}else{
-				var prefix = el.id.replace(/([0-9]+$)/, '');
-				var numid = el.id.replace(prefix, "");
-				
-				switch(prefix){
-				case (TId['mapitem']['expand']+'-'):
-					this.itemChangeEC(numid);
-					return true;
-				case (TId['biup']['id']+'-'): this.itemMove(numid, 'up'); return true;
-				case (TId['bidown']['id']+'-'): this.itemMove(numid, 'down'); return true;
-				case (TId['biadd']['id']+'-'):
-					new Brick.mod.sitemap.ItemCreater(numid);
-					return true;
-				case (TId['bieditp']['id']+'-'):
-					Brick.mod.sitemap.api.editor.editPage(numid);
-					return true;
-				case (TId['biedit']['id']+'-'):
-					var item = this.root.find(numid);
-					if (item.link){
-						Brick.mod.sitemap.api.editor.editLink(numid);
-					}else{
-						var row = this.tables['pagelist'].getRows().find({'mid': numid, 'nm': 'index'});
-						Brick.mod.sitemap.api.editor.editMenu(row.id);
-					}
-					return true;
-				case (TId['birem']['id']+'-'):
-					Brick.mod.sitemap.api.editor.removeMenu(numid);
-					return true;
-				case (TId['biremp']['id']+'-'):
-					Brick.mod.sitemap.api.editor.removePage(numid);
-					return true;
-				}
-			}
-			return false;
+			return lst;
 		},
 		itemChangeEC: function(id, status){
 			var container = Dom.get(TId['maplist']['id']+'-'+id);
@@ -264,8 +276,25 @@ var moduleInitialize = function(){
 			}
 			this.tables['menulist'].applyChanges();
 			DATA.request();
+		},
+		removeMenu: function(menuid){
+			var menu = DATA.get('menulist').getRows().getById(menuid);
+			if (L.isNull(menu)){ return; }
+			menu.remove();
+			DATA.get('menulist').applyChanges();
+			DATA.get('pagelist').getRows().clear();
+			DATA.request();
+		},
+		removePage: function(pageid){
+			var page = DATA.get('pagelist').getRows().getById(pageid);
+			if (YAHOO.lang.isNull(page)){ return; }
+			page.remove();
+			DATA.get('pagelist').applyChanges();
+			DATA.request();
 		}
-	}
+	};
+	
+	NS.ManagerWidget = ManagerWidget;
 	
 	var mapnode = function(parent, row, level){
 		this.parent = parent;
@@ -290,14 +319,14 @@ var moduleInitialize = function(){
 		this.child = [];
 		this.pages = [];
 		
-		this.options = { expand: false }
+		this.options = { expand: false };
 	};
 	mapnode.prototype = {
 		addChild: function(childNode){
 			childNode.order = this.child.length;
 			this.child[this.child.length] = childNode;
 		},
-		addPage: function (page){ this.pages[this.pages.length] = page },
+		addPage: function (page){ this.pages[this.pages.length] = page; },
 		childCount: function(){ return this.child.length+this.pages.length; },
 		find: function(id){
 			if (this.id == id){ return this; }
@@ -322,7 +351,7 @@ var moduleInitialize = function(){
 			if (this.type == 'link'){ return this.link; }
 			return this.parent.getUrl()+this.name+'/';
 		}
-	}
+	};
 	
 	var mapnodepage = function(parent, row, level){
 		this.parent = parent;
@@ -334,17 +363,16 @@ var moduleInitialize = function(){
 		this.contentid = d['cid'];
 		this.name = d['nm']+'.html';
 		this.level = level;
-	}
-	
-	mapnodepage.prototype = {
-		getUrl: function(){
+		
+		this.getUrl = function(){
 			if (L.isNull(this.parent)){
 				return '/';
 			}
 			return this.parent.getUrl()+this.name;
-		}
-	}
-	function cloneOptions(node, tree){
+		};
+	};
+
+	var cloneOptions = function(node, tree){
 		var treeNode = tree.find(node.id);
 		if (!L.isNull(treeNode)){
 			treeNode.options.expand = node.options.expand;
@@ -352,21 +380,26 @@ var moduleInitialize = function(){
 		for (var i=0;i<node.child.length;i++){
 			cloneOptions(node.child[i], tree);
 		}
-	}
-	
+	};	
 })();
 
-/* * * * * * * * * * * * Menu Item Creater * * * * * * * * * * */
+//Menu Item Creater 
 (function(){
 
-	var Creater = function(menuid){
+	var ItemCreatePanel = function(menuid){
 		this.menuid = menuid;
-		Creater.superclass.constructor.call(this, T['mnuadd']);
-	}
-	YAHOO.extend(Creater, Brick.widget.Panel, {
+		ItemCreatePanel.superclass.constructor.call(this, {
+			modal: true,
+			fixedcenter: true
+		});
+	};
+	YAHOO.extend(ItemCreatePanel, Brick.widget.Panel, {
 		el: function(name){ return Dom.get(TId['mnuadd'][name]); },
 		elv: function(name){ return Brick.util.Form.getValue(this.el(name)); },
 		setelv: function(name, value){ Brick.util.Form.setValue(this.el(name), value); },
+		initTemplate: function(){
+			return T['mnuadd'];
+		},
 		onClick: function(el){
 			var tp = TId['mnuadd']; 
 			switch(el.id){
@@ -376,17 +409,18 @@ var moduleInitialize = function(){
 		},
 		create: function(){
 			if (this.el('type0').checked){
-				Brick.mod.sitemap.api.editor.createMenu(this.menuid);
+				API.showPageEditorPanel(0, true ,this.menuid);
 			}else if(this.el('type1').checked){
-				Brick.mod.sitemap.api.editor.createLink(this.menuid);
+				API.showLinkEditorPanel(0, this.menuid);
 			}else{
-				Brick.mod.sitemap.api.editor.createPage(this.menuid);
+				API.showPageEditorPanel(0, false, this.menuid, true);
 			}
 			this.close();
 		}
 	});
 
-	Brick.mod.sitemap.ItemCreater = Creater;
+	NS.ItemCreatePanel = ItemCreatePanel;
 })();
+
+	
 };
-})();

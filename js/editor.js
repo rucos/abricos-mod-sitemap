@@ -1,73 +1,169 @@
-/**
+/*
 * @version $Id$
-* @package CMSBrick
-* @copyright Copyright (C) 2008 CMSBrick. All rights reserved.
+* @copyright Copyright (C) 2008 Abricos All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
 */
 
-(function(){
+/**
+ * @module Sitemap
+ * @namespace Brick.mod.sitemap
+ */
+var Component = new Brick.Component();
+Component.requires = {
+	yahoo: ['tabview', 'json'],
+	mod:[
+		{name: 'sitemap', files: ['api.js']},
+		{name: 'sys', files: ['form.js','data.js','editor.js','container.js']}
+	]
+};
+Component.entryPoint = function(){
 	
-	Brick.namespace('mod.sitemap.page');
-	Brick.namespace('mod.sitemap.link');
+	var Dom = YAHOO.util.Dom,
+		E = YAHOO.util.Event,
+		L = YAHOO.lang,
+		J = YAHOO.lang.JSON;
 	
-	Brick.namespace('mod.sys');
+	var NS = this.namespace,
+		TMG = this.template;
+	
+	var API = NS.API;
 
-	var Dom, E,	L, C, T, J, TId;
-	Dom = YAHOO.util.Dom;
-	E = YAHOO.util.Event;
-	L = YAHOO.lang;
-
-	var uniqurl = Brick.uniqurl;
-	var dateExt = Brick.dateExt;
-	var readScript = Brick.readScript;
 	var elClear = Brick.elClear;
-	var wWait = Brick.widget.WindowWait;
 	var tSetVar = Brick.util.Template.setProperty;
 	var tSetVarA = Brick.util.Template.setPropertyArray;
 	
-	var DATA, DATAsys;
-
-	Brick.Loader.add({
-		yahoo: ['tabview','json'],
-		mod:[{name: 'sys', files: ['form.js','data.js','editor.js','container.js']}],
-    onSuccess: function() {
-			J = YAHOO.lang.JSON;
-			
-			if (!Brick.objectExists('Brick.mod.sitemap.data')){
-				Brick.mod.sitemap.data = new Brick.util.data.byid.DataSet('sitemap');
-			}
-			DATA = Brick.mod.sitemap.data;
-			
-			if (!Brick.objectExists('Brick.mod.sys.data')){
-				Brick.mod.sys.data = new Brick.util.data.byid.DataSet('sys');
-			}
-			DATAsys = Brick.mod.sys.data;
-
-			T = Brick.util.Template['sitemap']['editor'];
-			Brick.util.Template.fillLanguage(T);
-			TId = new Brick.util.TIdManager(T);
-			Brick.util.CSS.update(Brick.util.CSS['sitemap']['editor']);
-			
-			moduleInitialize();
-			delete moduleInitialize;
-	  }
-	});
-
-var moduleInitialize = function(){
+	if (!Brick.objectExists('Brick.mod.sitemap.data')){
+		Brick.mod.sitemap.data = new Brick.util.data.byid.DataSet('sitemap');
+	}
+	var DATA = Brick.mod.sitemap.data;
 	
-/* * * * * * * * * * * * Page Editor * * * * * * * * * * */
+	if (!Brick.objectExists('Brick.mod.sys.data')){
+		Brick.mod.sys.data = new Brick.util.data.byid.DataSet('sys');
+	}
+	var DATAsys = Brick.mod.sys.data;
+	
 (function(){
 	
-	var Editor = function(rows){
-		this.rows = rows;
-		Editor.superclass.constructor.call(this, T['pageeditor']);
-	}
-	YAHOO.extend(Editor, Brick.widget.Panel, {
-		onClose: function(){ this._editor.destroy(); },
-		el: function(name){ return Dom.get(TId['pageeditor'][name]); },
+	/**
+	 * Редактор страницы.
+	 * 
+	 * @class PageEditorPanel
+	 * @constructor
+	 * @param {Integer} pageId Идентификатор страницы.
+	 * @param {Boolean} withMenu Редактировать так же элемент меню, 
+	 * если эта страница является страницей раздела меню.
+	 * @param {Integer} parentMenuId Идентификатор элемента меню, используется в том
+	 * случае, если pageId=0, т.е. создается новый элемент.
+	 */
+	var PageEditorPanel = function(pageId, withMenu, parentMenuId, isOnlyPage){
+		this.pageId = pageId || 0;
+		this.withMenu = withMenu || false;
+		this.parentMenuId = parentMenuId || 0;
+		this.isOnlyPage = isOnlyPage || false;
+		
+		this._mods = "";
+		
+		PageEditorPanel.superclass.constructor.call(this, {
+			overflow: true,
+			fixedcenter: true
+		});
+	};
+	YAHOO.extend(PageEditorPanel, Brick.widget.Panel, {
+		el: function(name){ return Dom.get(this._TId['pageeditor'][name]); },
 		elv: function(name){ return Brick.util.Form.getValue(this.el(name)); },
 		setelv: function(name, value){ Brick.util.Form.setValue(this.el(name), value); },
+		initTemplate: function(){
+			var TM = TMG.build('pageeditor,select,option,moditem'), 
+				T = TM.data, TId = TM.idManager;
+			this._TM = TM; this._T = T; this._TId = TId;
+			
+			return T['pageeditor'];
+		},
+		onLoad: function(){
+			var tabView = new YAHOO.widget.TabView(this._TId['pageeditor']['tab']);
+
+			var Editor = Brick.widget.Editor;
+			this.editor = new Editor(this._TId['pageeditor']['editor'], {
+				width: '750px', height: '250px', 'mode': Editor.MODE_VISUAL
+			});
+			
+			if (this.withMenu){
+				this.el('menucont').style.display = '';
+			}
+
+			if (this.pageId > 0){
+				this._initTables();
+				if (DATA.isFill(this.tables)){ this.renderElements(); }
+				DATA.onComplete.subscribe(this.dsComplete, this, true);
+			}else{
+				this.renderElements();
+			}
+		},
+		_initTables: function(){
+			this.tables = { 
+				'page': DATA.get('page', true),
+				'templates': DATA.get('templates', true)
+			};
+			this.rows = {
+				'page': DATA.get('page').getRows({id: this.pageId}) 
+			};
+			if (this.withMenu){
+				this.tables['pagemenu'] = DATA.get('pagemenu', true);
+				this.rows['pagemenu'] = DATA.get('pagemenu').getRows({id: this.pageId}); 
+			}
+		},
+		dsComplete: function(type, args){
+			if (args[0].checkWithParam('page', {id: this.pageId})){ 
+				this.renderElements(); 
+			}
+		},
+		renderElements: function(){
+			
+			if (this.pageId > 0){
+			
+		 		var page = this.rows['page'].getByIndex(0).cell;
+		 		this.setelv('pgtitle', page['tl']);
+		 		this.setelv('pgkeys', page['mtks']);
+		 		this.setelv('pgdesc', page['mtdsc']);
+		 		this.setelv('pgname', page['nm']);
+		 		if (page['nm'] == 'index'){ 
+		 			this.el('pgnamecont').style.display = 'none'; 
+		 		}
+		 		
+		 		this._mods = page['mods'];
+		 		
+				this.editor.setContent(page['bd']);
+				
+				if (this.withMenu){
+			 		var menu = this.rows['pagemenu'].getByIndex(0).cell;
+			 		this.setelv('mtitle', menu['tl']);
+			 		this.setelv('mdesc', menu['dsc']);
+			 		this.setelv('mname', menu['nm']);
+				}
+
+				var T = this._T;
+				
+				var ttsRows = DATA.get('templates', true).getRows();
+				var s = "";
+				ttsRows.foreach (function(row){
+					var di = row.cell;
+					var key = di['nm']+':'+di['vl'];
+					s += tSetVarA(T['option'], {
+						'id': key,
+						'tl': key
+					});
+				});
+				this.el('templates').innerHTML = tSetVar(T['select'], 'list', s);
+				this.renderMods();
+			}else{
+				if (this.withMenu){
+		 			this.el('pgnamecont').style.display = 'none'; 
+			 		this.setelv('pgname', 'index');
+				}
+			}
+		},
 		onClick: function(el){
+			var TId = this._TId;
 			var tp = TId['pageeditor']; 
 			switch(el.id){
 			case tp['bcancel']: this.close(); return true;
@@ -85,45 +181,13 @@ var moduleInitialize = function(){
 				this.removeModule(numid); return true;
 			}
 			return false;
-
 		},
-		onLoad: function(){
-			
-			var tabView = new YAHOO.widget.TabView(TId['pageeditor']['tab']);
-
-	 		this.row = this.rows['page'].getByIndex(0);
-	 		var page = this.row.cell;
-	 		this.setelv('pgtitle', page['tl']);
-	 		this.setelv('pgkeys', page['mtks']);
-	 		this.setelv('pgdesc', page['mtdsc']);
-	 		this.setelv('pgname', page['nm']);
-	 		if (page['nm'] == 'index'){ this.el('pgnamecont').style.display = 'none'; }
-
-			this._editor = new Brick.widget.editor.TinyMCE(TId['pageeditor']['editor'],{
-				'value': page['bd'],
-				width: '773px', height: '400px', buttonsgroup: 'page' 
-			});
-			if (this.rows['pagemenu']){
-		 		var menu = this.rows['pagemenu'].getByIndex(0).cell;
-		 		this.setelv('mtitle', menu['tl']);
-		 		this.setelv('mdesc', menu['dsc']);
-		 		this.setelv('mname', menu['nm']);
-			}else{
-				this.el('menucont').style.display = 'none';
+		destroy: function(){
+			this.editor.destroy();
+			if (this.pageId > 0){
+				DATA.onComplete.unsubscribe(this.dsComplete);
 			}
-			
-			var ttsRows = DATA.get('templates', true).getRows();
-			var s = "";
-			ttsRows.foreach (function(row){
-				var di = row.cell;
-				var key = di['nm']+':'+di['vl'];
-				s += tSetVarA(T['option'], {
-					'id': key,
-					'tl': key
-				});
-			});
-			this.el('templates').innerHTML = tSetVar(T['select'], 'list', s);
-			this.renderMods();
+			PageEditorPanel.superclass.destroy.call(this);
 		},
 		nameTranslite: function(){
 			var el = this.el('mname');
@@ -134,38 +198,52 @@ var moduleInitialize = function(){
 		},
 		save: function(){
 			this.nameTranslite();
-			var page = this.rows['page'].getByIndex(0);
-			if (page.isNew()){
+			
+			this._initTables();
+			var table = DATA.get('page');
+			
+			var page = this.pageId>0 ? this.rows['page'].getByIndex(0) : table.newRow();
+			
+			if (this.pageId == 0){
 				DATA.get('page').getRows({id: 0}).add(page);
-				DATA.get('pagelist').getRows().clear();
 			}
 			page.update({
 				'nm': this.elv('pgname'),
 				'tl': this.elv('pgtitle'),
 				'mtks': this.elv('pgkeys'),
 				'mtdsc': this.elv('pgdesc'),
-				'bd': this._editor.getValue()
+				'bd': this.editor.getContent(),
+				'mods': this._mods
 			});
-			if (this.rows['pagemenu']){
-				var menu = this.rows['pagemenu'].getByIndex(0); 
-				if (menu.isNew()){
-					DATA.get('pagemenu').getRows({id: 0}).add(menu);
+			if (this.pageId == 0){
+				page.cell['mid'] = this.parentMenuId;
+			}
+			table.applyChanges();
+			
+			if (this.withMenu){
+				var tableMenu = DATA.get('pagemenu');
+				var menu = this.pageId > 0 ? this.rows['pagemenu'].getByIndex(0) : tableMenu.newRow(); 
+				
+				if (this.pageId == 0){
+					this.rows['pagemenu'].add(menu);
+					menu.cell['pid'] = this.parentMenuId;
 				}
 				menu.update({
 					'tl': this.elv('mtitle'),
 					'dsc': this.elv('mdesc'),
 					'nm': this.elv('mname')
 				});
-				var menulist = DATA.get('menulist');
-				if ((menu.isUpdate() && !L.isNull(menulist)) || menu.isNew()){ menulist.getRows().clear(); }
-				DATA.get('pagemenu').applyChanges();
-			}else{
-				var pagelist = DATA.get('pagelist');
-				if (!L.isNull('pagelist')){
-					pagelist.getRows().clear();
-				}
+				tableMenu.applyChanges();
 			}
-			DATA.get('page').applyChanges();
+			
+			if (!L.isNull(DATA.get('menulist'))){
+				DATA.get('menulist').getRows().clear();
+			}
+			
+			var pagelist = DATA.get('pagelist');
+			if (!L.isNull('pagelist')){
+				pagelist.getRows().clear();
+			}
 			DATA.request();
 			this.close();
 		},
@@ -195,18 +273,16 @@ var moduleInitialize = function(){
 			});
 		},
 		addModule: function(r){
-			var o = {};
-			if (this.row.cell['mods'].length > 0){
-				o = J.parse(this.row.cell['mods']);
-			}
+			var o = this._mods == "" ? {} : J.parse(this._mods);
 			var di = r.cell;
 			if (!o[di['own']]){ o[di['own']] = {}; }
 			o[di['own']][di['nm']] = '';
-			this.row.update({ 'mods': J.stringify(o) });
+			this._mods = J.stringify(o);
 			this.renderMods();
 		},
 		renderMods: function(){
-			var smods = this.row.cell['mods']; 
+			var TM = this._TM;
+			var smods = this._mods; 
 			if (smods == ''){ return; }
 			
 			var o = J.parse(smods);
@@ -217,7 +293,7 @@ var moduleInitialize = function(){
 			for (var own in o){
 				for (var bk in o[own]){
 					this.modsid[i] = { 'own': own, 'bk': bk};
-					lst += tSetVarA(T['moditem'], {
+					lst += TM.replace('moditem', {
 						'own': own,
 						'nm': bk, 
 						'id': i 
@@ -229,12 +305,11 @@ var moduleInitialize = function(){
 		},
 		insertModule: function(id){
 			var o = this.modsid[id];
-			this._editor.insertValue("[mod]"+o['own']+":"+o['bk']+"[/mod]");
+			this.editor.insertValue("[mod]"+o['own']+":"+o['bk']+"[/mod]");
 		},
 		removeModule: function(id){
 			var no = {}, co = this.modsid[id];
-			var smods = this.row.cell['mods']; 
-			var o = J.parse(smods);
+			var o =  this._mods == "" ? {} : J.parse(this._mods); 
 			
 			for (var own in o){ 
 				for (var bk in o[own]){
@@ -244,23 +319,33 @@ var moduleInitialize = function(){
 					}
 				}
 			}
-			this.row.update({'mods': J.stringify(no)});
+			this._mods = J.stringify(no);
 			this.renderMods();
 		}
 	});
 	
-	Brick.mod.sitemap.page.Editor = Editor;
+	NS.PageEditorPanel = PageEditorPanel;
 	
 	var Mods = function(rows, callback){
 		this.rows = rows;
 		this.callback = callback;
-		Mods.superclass.constructor.call(this, T['mods']);
-	}
+		Mods.superclass.constructor.call(this, {
+			modal: true, fixedcenter: true
+		});
+	};
 	YAHOO.extend(Mods, Brick.widget.Panel, {
 		el: function(name){ return Dom.get(TId['mods'][name]); },
 		elv: function(name){ return Brick.util.Form.getValue(this.el(name)); },
 		setelv: function(name, value){ Brick.util.Form.setValue(this.el(name), value); },
+		initTemplate: function(){
+			var TM = TMG.build('mods,modstable,modsrow'), 
+				T = TM.data, TId = TM.idManager;
+			this._TM = TM; this._T = T; this._TId = TId;
+
+			return T['mods'];
+		},
 		onClick: function(el){
+			var TId = this._TId;
 			var tp = TId['mods']; 
 			switch(el.id){
 			case tp['bcancel']: this.close(); return true;
@@ -275,51 +360,95 @@ var moduleInitialize = function(){
 			return false;
 		},
 		onLoad: function(){
+			var TM = this._TM;
 			var lst = "";
 			this.rows.foreach(function(row){
 				var di = row.cell;
-				lst += tSetVarA(T['modsrow'], {'id': di['id'], 'own': di['own'], 'nm': di['nm']});
+				lst += TM.replace('modsrow', {'id': di['id'], 'own': di['own'], 'nm': di['nm']});
 			});
-			lst = tSetVar(T['modstable'], 'rows', lst);
-			Dom.get(TId['mods']['table']).innerHTML = lst;
+			TM.getEl('mods.table').innerHTML = TM.replace('modstable', {'rows': lst});
 		}
 	});
+})();	
 	
-	
-})();
-
-/* * * * * * * * * * * * Link Editor * * * * * * * * * * */
+//Link Editor 
 (function(){
 
-	var Editor = function(rows){
-		this.rows = rows;
-		Editor.superclass.constructor.call(this, T['linkeditor']);
-	}
-	YAHOO.extend(Editor, Brick.widget.Panel, {
-		el: function(name){ return Dom.get(TId['linkeditor'][name]); },
+	/**
+	 * Редактор ссылки.
+	 * 
+	 * @class LinkEditorPanel
+	 * @constructor
+	 * @param {Integer} linkId Идентификатор ссылки.
+	 * @param {Integer} parentMenuId Идентификатор элемента меню, используется в том
+	 * случае, если linkId=0, т.е. создается новый элемент.
+	 */
+	var LinkEditorPanel = function(linkId, parentMenuId){
+		this.linkId = linkId || 0;
+		this.parentMenuId = parentMenuId || 0;
+		LinkEditorPanel.superclass.constructor.call(this, {
+			modal: true,
+			fixedcenter: true
+		});
+	};
+	YAHOO.extend(LinkEditorPanel, Brick.widget.Panel, {
+		el: function(name){ return Dom.get(this._TId['linkeditor'][name]); },
 		elv: function(name){ return Brick.util.Form.getValue(this.el(name)); },
 		setelv: function(name, value){ Brick.util.Form.setValue(this.el(name), value); },
+		initTemplate: function(){
+			var TM = TMG.build('linkeditor'), 
+				T = TM.data, TId = TM.idManager;
+			this._TM = TM; this._T = T; this._TId = TId;
+
+			return T['linkeditor']; 
+		},
+		onLoad: function(){
+			if (this.linkId > 0){
+				this._initTables();
+				if (DATA.isFill(this.tables)){ this.renderElements(); }
+				DATA.onComplete.subscribe(this.dsComplete, this, true);
+			}else{
+				this.renderElements();
+			}
+		},
+		_initTables: function(){
+			var tables = {'link': DATA.get('link', true)};
+			var rows = tables['link'].getRows({'id': this.linkId});
+			this.tables = tables;
+			this.rows = rows;
+		},
+		dsComplete: function(type, args){
+			if (args[0].checkWithParam('link', {id: this.linkId})){ 
+				this.renderElements(); 
+			}
+		},
+		renderElements: function(){
+			if (this.linkId > 0){
+				var d = this.rows.getByIndex(0).cell;
+		 		this.setelv('mtitle', d['tl']);
+		 		this.setelv('mdesc', d['dsc']);
+		 		this.setelv('mlink', d['lnk']);
+			}
+		},
 		onClick: function(el){
-			var tp = TId['linkeditor']; 
+			var tp = this._TId['linkeditor']; 
 			switch(el.id){
 			case tp['bcancel']: this.close(); return true;
 			case tp['bsave']: this.save(); return true;
 			}
-		},
-		onLoad: function(){
-			var d = this.rows.getByIndex(0).cell;
-	 		this.setelv('mtitle', d['tl']);
-	 		this.setelv('mdesc', d['dsc']);
-	 		this.setelv('mlink', d['lnk']);
+			return false;
 		},
 		save: function(){
-			var row = this.rows.getByIndex(0);
+			this._initTables();
+			var row = this.linkId > 0 ? this.rows.getByIndex(0) : DATA.get('link').newRow();
+			if (this.linkId == 0){
+				this.rows.add(row);
+			}
 			row.update({
 				'tl': this.elv('mtitle'),
 				'dsc': this.elv('mdesc'),
 				'lnk': this.elv('mlink')
 			});
-			if (row.isNew()){DATA.get('link').getRows().add(row);}
 			
 			var menulist = DATA.get('menulist');
 			if ((row.isUpdate() && !L.isNull(menulist)) || row.isNew()){ menulist.getRows().clear(); }
@@ -329,8 +458,6 @@ var moduleInitialize = function(){
 			this.close();
 		}
 	});
-	
-	Brick.mod.sitemap.link.Editor = Editor;
+	NS.LinkEditorPanel = LinkEditorPanel;
 })();
 };
-})();

@@ -14,7 +14,7 @@
 		</ul>            
 	  <div class="yui-content">
 		  <div id="{i#tabbody}">
-				<div id="{i#menucont}">
+				<div id="{i#menucont}" style="display: none;">
 					<h3>{#sitemap.pageeditor.hd2}</h3>
 					<p>
 						{#sitemap.pageeditor.title}
@@ -34,10 +34,9 @@
 				<p id="{i#pgnamecont}">
 					{#sitemap.pageeditor.pagename}<input type="text" id="{i#pgname}" style="width: 400px" />
 				</p>
-				<div id="{i#editor}"></div>
+				<textarea id="{i#editor}" style="width: 750px; height: 250px"></textarea>
 				<h3>Модули</h3>
 				<div id="{i#modlist}" style="clear: both;" >
-				
 				</div>
 				<div style="clear: both;"></div>
 				<div class="right" style="margin-top: 10px;">

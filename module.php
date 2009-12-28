@@ -3,11 +3,11 @@
  * Модуль "Карта сайта"
  * 
  * @version $Id$
- * @package CMSBrick
+ * @package Abricos
  * @subpackage Sitemap
- * @copyright Copyright (C) 2008 CMSBrick. All rights reserved.
+ * @copyright Copyright (C) 2008 Abricos All rights reserved.
  * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
- * @author Alexander Kuzmin (roosit@cmsbrick.ru)
+ * @author Alexander Kuzmin (roosit@abricos.org)
  */
 
 $mod = new CMSModuleSitemap();
@@ -22,7 +22,7 @@ CMSRegistry::$instance->modules->Register($mod);
  * 3) Страница не index
  * 4) Ссылка
  * 
- * @package CMSBrick
+ * @package Abricos
  * @subpackage Sitemap
  */
 class CMSModuleSitemap extends CMSModule {
@@ -42,7 +42,7 @@ class CMSModuleSitemap extends CMSModule {
 	private $menuFull = null;
 	
 	function __construct(){
-		$this->version = "1.0.1";
+		$this->version = "0.2";
 		$this->name = "sitemap";
 		$this->defaultCSS = "sitemap.css";
 	}
@@ -124,7 +124,7 @@ class CMSModuleSitemap extends CMSModule {
 /**
  * Статичные функции запросов к базе данных
  * 
- * @package CMSBrick
+ * @package Abricos 
  * @subpackage Sitemap
  */
 class CMSQSitemap {
