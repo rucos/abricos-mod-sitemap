@@ -105,7 +105,7 @@ foreach ($ds->ts as $ts){
 				$dir = dir(CWD."/tt");
 				while (false !== ($entry = $dir->read())) {
 					if ($entry == "." || $entry == ".." || empty($entry) ){ continue; }
-					$files = glob(CWD."/tt/".$entry."/*.html");
+					$files = globa(CWD."/tt/".$entry."/*.html");
 					foreach ($files as $file){
 						$bname = basename($file);
 						$row = array();
