@@ -1,0 +1,38 @@
+<!--[*]
+[script]content.php[/script]
+[bkvar=editor]
+	<img id="mod-sitemap-fasteditor" style="vertical-align:middle; cursor: pointer;" src="/modules/sitemap/images/edit.gif" alt="Редактировать" title="Редактировать"/>
+	<img id="mod-sitemap-fastadd" style="vertical-align:middle; cursor: pointer; display: none;" src="/modules/sitemap/images/plus.png" alt="Добавить" title="Добавить"/>
+	
+	<script>
+		YAHOO.util.Event.onDOMReady(function () {
+			var pagenm = '{v#pagenm}', pageid = {v#pageid}, withmenu = {v#withmenu}, menuid = {v#menuid};
+			YAHOO.util.Event.addListener('mod-sitemap-fasteditor', 'click', function(){
+		   		Brick.Component.API.fire('sitemap', 'api', 'showPageEditorPanelObj', {
+		   			pageid: pageid, withmenu: withmenu, menuid: menuid,
+		   			savecallback: function(){
+		   				Brick.Page.reload();
+		   			}
+		   		});
+			});
+	   		if (withmenu || (pagenm == 'index' && menuid>-1)){
+	   			return; // @TODO необходимо доработать
+	   			document.getElementById('mod-sitemap-fastadd').style.display = '';
+	
+				YAHOO.util.Event.addListener('mod-sitemap-fastadd', 'click', function(){
+			   		Brick.Component.API.fire('sitemap', 'api', 'showItemCreatePanel', {
+			   			menuid: menuid,
+			   			savecallback: function(){
+			   				Brick.Page.reload();
+			   			}
+			   		});
+				});
+	   			
+	   		}
+	    });
+	</script>
+[/bkvar]
+
+[*]-->
+
+

@@ -61,12 +61,21 @@ Component.entryPoint = function(){
 		});
 	};
 	
-	API.showPageEditorPanel = function(pageId, withMenu, parentMenuId, isOnlyPage){
+	API.showPageEditorPanel = function(pageId, withMenu, parentMenuId, isOnlyPage, saveCallBack){
 		API.fn('editor', function(){
 			var widget = new NS.PageEditorPanel(pageId, withMenu, parentMenuId, isOnlyPage);
+			widget.saveCallBack = saveCallBack;
 			API.addWidget('PageEditorPanel', widget);
 			API.dsRequest();
 		});	
+	};
+	
+	API.showPageEditorPanelObj = function(param){
+		param = L.merge({
+			pageid: 0, withmenu: false, parentmenuid: 0, isonlypage: false,
+			savecallback: null
+		}, param || {});
+		API.showPageEditorPanel(param.pageid, param.withmenu, param.parentmenuid, param.isonlypage, param.savecallback);
 	};
 	
 	API.showLinkEditorPanel = function(linkId, withMenu, parentMenuId){
@@ -76,6 +85,13 @@ Component.entryPoint = function(){
 			API.dsRequest();
 		});		
 	};
+	
+	API.showItemCreatePanel = function(menuid){
+		API.fn('manager', function(){
+			var widget = new NS.ItemCreatePanel(menuid);
+			API.addWidget('ItemCreatePanel', widget);
+		});		
+	}; 
 
 	/**
 	 * Запросить DataSet произвести обновление данных.

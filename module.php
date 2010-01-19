@@ -42,10 +42,16 @@ class CMSModuleSitemap extends CMSModule {
 	private $menuFull = null;
 	
 	function __construct(){
-		$this->version = "0.2";
+		$this->version = "0.2.1";
 		$this->name = "sitemap";
+		$this->takelink = "__super";
 		$this->defaultCSS = "sitemap.css";
 	}
+	
+	public function GetContentName(){
+		return 'index';
+	}
+	
 
 	/**
 	 * Получить менеджер управления меню

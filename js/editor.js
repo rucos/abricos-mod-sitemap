@@ -60,6 +60,7 @@ Component.entryPoint = function(){
 		this.withMenu = withMenu || false;
 		this.parentMenuId = parentMenuId || 0;
 		this.isOnlyPage = isOnlyPage || false;
+		this.saveCallBack = null;
 		
 		this._mods = "";
 		
@@ -241,8 +242,17 @@ Component.entryPoint = function(){
 			}
 			
 			var pagelist = DATA.get('pagelist');
-			if (!L.isNull('pagelist')){
+			if (!L.isNull(pagelist)){
 				pagelist.getRows().clear();
+			}
+			var callback = this.saveCallBack; 
+			if (L.isFunction(callback)){
+				var onDsComplete;
+				onDsComplete = function(){
+					DATA.onComplete.unsubscribe(onDsComplete);
+					callback();
+				};
+				DATA.onComplete.subscribe(onDsComplete);
 			}
 			DATA.request();
 			this.close();
