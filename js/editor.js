@@ -453,6 +453,9 @@ Component.entryPoint = function(){
 			var row = this.linkId > 0 ? this.rows.getByIndex(0) : DATA.get('link').newRow();
 			if (this.linkId == 0){
 				this.rows.add(row);
+				row.update({
+					'pid': this.parentMenuId
+				});
 			}
 			row.update({
 				'tl': this.elv('mtitle'),
