@@ -2,7 +2,7 @@
 /**
  * Схема таблиц данного модуля.
  * 
- * @version $Id: shema.php 270 2009-12-28 13:24:34Z roosit $
+ * @version $Id$
  * @package Abricos
  * @subpackage Sys
  * @copyright Copyright (C) 2008 Abricos. All rights reserved.
@@ -42,11 +42,11 @@ if ($updateManager->isInstall()){
 		CREATE TABLE IF NOT EXISTS `".$pfx."sys_page` (
 		  `pageid` int(10) unsigned NOT NULL auto_increment,
 		  `menuid` int(10) unsigned NOT NULL default '0',
-		  `brickid` int(10) unsigned NOT NULL default '0' COMMENT 'Кирпич отвечающий за вывод',
 		  `contentid` int(10) unsigned NOT NULL default '0',
 		  `pagename` varchar(250) NOT NULL DEFAULT '' COMMENT 'Имя',
 		  `title` varchar(250) NOT NULL DEFAULT '' COMMENT 'Описание',
 		  `language` char(2) NOT NULL DEFAULT 'ru',
+		  `template` VARCHAR(50) NOT NULL DEFAULT '',
 		  `metakeys` varchar(250) NOT NULL DEFAULT '' COMMENT 'Описание',
 		  `metadesc` varchar(250) NOT NULL DEFAULT '' COMMENT 'Описание',
 		  `mods` TEXT NOT NULL,
@@ -77,7 +77,7 @@ if ($updateManager->isInstall()){
 	");
 	$mainpageId = $db->insert_id();
 
-	$about = "<h1>О проекте</h1>\n<p><a href='http://abricos.org'>Abricos</a> - это самая современная на сегодняшний день система управления web-контентом.</p>";
+	$about = "<h1>О проекте</h1><p><a href='http://abricos.org'>Abricos</a> - это самая современная на сегодняшний день система управления web-контентом.</p>";
 	$db->query_write("
 		INSERT INTO `".$pfx."content` (`body`, `dateline`, `deldate`, `modman`) VALUES
 		('".bkstr($about)."', ".TIMENOW.", 0, 'sitemap')
@@ -96,10 +96,18 @@ if ($updateManager->isInstall()){
 	$aboutmenuId = $db->insert_id();
 	
 	$db->query_write("
-		INSERT INTO `".$pfx."sys_page` (`menuid`, `brickid`, `contentid`, `pagename`, `title`, `language`, `metakeys`, `metadesc`, `usecomment`, `dateline`, `deldate`) VALUES
-		(0, 0, ".$mainpageId.", 'index', '', 'ru', '', '', 0, ".TIMENOW.", 0),
-		(".$aboutmenuId.", 0, ".$aboutpageId.", 'index', '', 'ru', '', '', 0, ".TIMENOW.", 0)
+		INSERT INTO `".$pfx."sys_page` (`menuid`, `contentid`, `pagename`, `title`, `language`, `metakeys`, `metadesc`, `usecomment`, `dateline`, `deldate`) VALUES
+		(0, ".$mainpageId.", 'index', '', 'ru', '', '', 0, ".TIMENOW.", 0),
+		(".$aboutmenuId.", ".$aboutpageId.", 'index', '', 'ru', '', '', 0, ".TIMENOW.", 0)
 	");
+}
+
+if ($updateManager->serverVersion == '1.0.1'){
+	/*
+	$db->query_write("
+		ALTER TABLE `".$pfx."sys_page` ADD  `mods` TEXT NOT NULL AFTER `metadesc`
+	");
+	/**/
 }
 
 if ( $updateManager->isUpdate('0.2.1') || $updateManager->serverVersion == '1.0.1'){
@@ -109,5 +117,14 @@ if ( $updateManager->isUpdate('0.2.1') || $updateManager->serverVersion == '1.0.
 		WHERE name='sitemap' 
 	");
 }
-
+if ( $updateManager->isUpdate('0.2.2')){
+	CMSRegistry::$instance->modules->GetModule('sitemap')->permission->Install();
+}
+if ( $updateManager->isUpdate('0.2.3')){
+	/*
+	$db->query_write("
+		ALTER TABLE `".$pfx."sys_page` ADD `template` VARCHAR(50) NOT NULL AFTER `metadesc`
+	");
+	/**/
+}
 ?>

@@ -2,7 +2,7 @@
 /**
  * Выборка страницы из БД по идентификатор
  * 
- * @version $Id: content.php 270 2009-12-28 13:24:34Z roosit $
+ * @version $Id$
  * @package Abricos
  * @subpackage Sys
  * @copyright Copyright (C) 2008 Abricos. All rights reserved.
@@ -12,54 +12,20 @@
 
 // выборка контента из БД
 $brick = Brick::$builder->brick;
-$pagename = Brick::$cms->adress->contentName;
-$page = null;
-$pid = -1;
-$adress = Brick::$cms->adress;
 $modSitemap = Brick::$modules->GetModule('sitemap');
-if (!empty($modSitemap)){
-	if (Brick::$cms->adress->level == 0){
-		$rows = CMSQSitemap::PageByName(Brick::$db, 0, $pagename);
-		while (($row = Brick::$db->fetch_array($rows))){
-			$page = $row;
-			break;
-		}
-	}else {
-		$rows = CMSQSitemap::MenuListByUrl(Brick::$db, Brick::$cms->adress->dir);
-		$arr = array();
-		while (($row = Brick::$db->fetch_array($rows))){
-			$arr[$row['id']] = $row;
-		}
-		$pid = 0;
-		for ($i=0;$i<$adress->level;$i++){
-			$find = false;
-			$fmenu = null;
-			foreach($arr as $menu){
-				if ($menu['nm'] == $adress->dir[$i] && $menu['pid'] == $pid){
-					$find = true;
-					$fmenu = $menu;
-					$pid = $menu['id'];
-					break;
-				}
-			}
-		}
-		if ($pid > 0){
-			$rows = CMSQSitemap::PageByName(Brick::$db, $pid, $pagename);
-			while (($row = Brick::$db->fetch_array($rows))){
-				$page = $row;
-				break;
-			}
-		}
-	}
-}
+$page = $modSitemap->page;
+// $pid = -1;
+$manager = $modSitemap->GetManager();
+
 $brick->content = "";
 if (!is_null($page)){
-	if (CMSRegistry::$instance->session->IsAdminMode()){
+	
+	if ($manager->IsAdminRole()){
 		$brick->content .= Brick::ReplaceVarByData($brick->param->var['editor'], array(
 			"pagenm"=>$page['nm'],
 			"pageid"=>$page['id'],
-			"withmenu"=>$pid > -1 && $page['nm'] == 'index' ? 'true' : 'false',
-			"menuid"=>$pid > -1 ? $pid : '0'
+			"withmenu"=>$page['mid'] > 0 && $page['nm'] == 'index' ? 'true' : 'false',
+			"menuid"=>$page['mid']
 		));
 	}
 	
@@ -74,9 +40,10 @@ if (!is_null($page)){
 			}
 		}
 	}
-	
 	if (!empty($page['tl'])){
 		Brick::$builder->SetGlobalVar('meta_title', $page['tl']);
+	}else if (!empty($page['menu']['tl'])){
+		Brick::$builder->SetGlobalVar('meta_title', $page['menu']['tl']);
 	}
 	if (!empty($page['mtks'])){
 		Brick::$builder->SetGlobalVar('meta_keys', $page['mtks']);

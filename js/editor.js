@@ -10,14 +10,15 @@
  */
 var Component = new Brick.Component();
 Component.requires = {
-	yahoo: ['tabview', 'json'],
+	yahoo: ['tabview', 'json', 'dragdrop'],
 	mod:[
-		{name: 'sitemap', files: ['api.js']},
-		{name: 'sys', files: ['form.js','data.js','editor.js','container.js']}
+		// {name: 'sys', files: ['form.js','data.js','editor.js','container.js','permission.js']},
+		// TODO: Необходимо организовать сортировку запрашиваемых модулей, иначе в некоторых случаях возникают баги
+		{name: 'sys', files: ['form.js','editor.js','container.js']},
+		{name: 'sitemap', files: ['roles.js']}
 	]
 };
 Component.entryPoint = function(){
-	
 	var Dom = YAHOO.util.Dom,
 		E = YAHOO.util.Event,
 		L = YAHOO.lang,
@@ -28,14 +29,10 @@ Component.entryPoint = function(){
 	
 	var API = NS.API;
 
-	var elClear = Brick.elClear;
-	var tSetVar = Brick.util.Template.setProperty;
-	var tSetVarA = Brick.util.Template.setPropertyArray;
-	
-	if (!Brick.objectExists('Brick.mod.sitemap.data')){
-		Brick.mod.sitemap.data = new Brick.util.data.byid.DataSet('sitemap');
+	if (!NS.data){
+		NS.data = new Brick.util.data.byid.DataSet('sitemap');
 	}
-	var DATA = Brick.mod.sitemap.data;
+	var DATA = NS.data;
 	
 	if (!Brick.objectExists('Brick.mod.sys.data')){
 		Brick.mod.sys.data = new Brick.util.data.byid.DataSet('sys');
@@ -92,13 +89,16 @@ Component.entryPoint = function(){
 				this.el('menucont').style.display = '';
 			}
 
+			var ttable = {'templates': DATA.get('templates', true)};
+			
 			if (this.pageId > 0){
 				this._initTables();
 				if (DATA.isFill(this.tables)){ this.renderElements(); }
-				DATA.onComplete.subscribe(this.dsComplete, this, true);
-			}else{
+			}else if (DATA.isFill(ttable)){
 				this.renderElements();
 			}
+			DATA.onComplete.subscribe(this.dsComplete, this, true);
+			DATA.request();
 		},
 		_initTables: function(){
 			this.tables = { 
@@ -114,12 +114,23 @@ Component.entryPoint = function(){
 			}
 		},
 		dsComplete: function(type, args){
-			if (args[0].checkWithParam('page', {id: this.pageId})){ 
+			if (args[0].checkWithParam('page', {id: this.pageId}) || 
+				(this.pageId < 1 && args[0].checkWithParam('templates', {}))){ 
 				this.renderElements(); 
 			}
 		},
 		renderElements: function(){
-			
+			var TM = this._TM, T = this._T;
+			// шаблон
+			var ttsRows = DATA.get('templates', true).getRows(), 
+				s = TM.replace('option', {'id': '','tl': ''});
+			ttsRows.foreach (function(row){
+				var di = row.cell;
+				var key = di['nm']+':'+di['vl'];
+				s += TM.replace('option', {'id': key,'tl': key});
+			});
+			this.el('templates').innerHTML = TM.replace('select', {'list': s});
+
 			if (this.pageId > 0){
 			
 		 		var page = this.rows['page'].getByIndex(0).cell;
@@ -127,6 +138,9 @@ Component.entryPoint = function(){
 		 		this.setelv('pgkeys', page['mtks']);
 		 		this.setelv('pgdesc', page['mtdsc']);
 		 		this.setelv('pgname', page['nm']);
+		 		
+		 		TM.getEl('select.id').value = page['tpl'];
+		 		
 		 		if (page['nm'] == 'index'){ 
 		 			this.el('pgnamecont').style.display = 'none'; 
 		 		}
@@ -140,21 +154,9 @@ Component.entryPoint = function(){
 			 		this.setelv('mtitle', menu['tl']);
 			 		this.setelv('mdesc', menu['dsc']);
 			 		this.setelv('mname', menu['nm']);
+			 		this.setelv('moff', menu['off']);
 				}
-
-				var T = this._T;
 				
-				var ttsRows = DATA.get('templates', true).getRows();
-				var s = "";
-				ttsRows.foreach (function(row){
-					var di = row.cell;
-					var key = di['nm']+':'+di['vl'];
-					s += tSetVarA(T['option'], {
-						'id': key,
-						'tl': key
-					});
-				});
-				this.el('templates').innerHTML = tSetVar(T['select'], 'list', s);
 				this.renderMods();
 			}else{
 				if (this.withMenu){
@@ -162,6 +164,7 @@ Component.entryPoint = function(){
 			 		this.setelv('pgname', 'index');
 				}
 			}
+			
 		},
 		onClick: function(el){
 			var TId = this._TId;
@@ -185,9 +188,7 @@ Component.entryPoint = function(){
 		},
 		destroy: function(){
 			this.editor.destroy();
-			if (this.pageId > 0){
-				DATA.onComplete.unsubscribe(this.dsComplete);
-			}
+			DATA.onComplete.unsubscribe(this.dsComplete);
 			PageEditorPanel.superclass.destroy.call(this);
 		},
 		nameTranslite: function(){
@@ -214,6 +215,7 @@ Component.entryPoint = function(){
 				'mtks': this.elv('pgkeys'),
 				'mtdsc': this.elv('pgdesc'),
 				'bd': this.editor.getContent(),
+				'tpl': this._TM.getEl('select.id').value,
 				'mods': this._mods
 			});
 			if (this.pageId == 0){
@@ -232,7 +234,8 @@ Component.entryPoint = function(){
 				menu.update({
 					'tl': this.elv('mtitle'),
 					'dsc': this.elv('mdesc'),
-					'nm': this.elv('mname')
+					'nm': this.elv('mname'),
+					'off': this.elv('moff')
 				});
 				tableMenu.applyChanges();
 			}
@@ -335,6 +338,24 @@ Component.entryPoint = function(){
 	});
 	
 	NS.PageEditorPanel = PageEditorPanel;
+	
+	API.showPageEditorPanelObj = function(param){
+		param = L.merge({
+			pageid: 0, 
+			withmenu: false, 
+			parentmenuid: 0, 
+			isonlypage: false,
+			savecallback: null
+		}, param || {});
+		API.showPageEditorPanel(param.pageid, param.withmenu, param.parentmenuid, param.isonlypage, param.savecallback);
+	};
+	
+	API.showPageEditorPanel = function(pageId, withMenu, parentMenuId, isOnlyPage, saveCallBack){
+		NS.roles.load(function(){
+			var widget = new NS.PageEditorPanel(pageId, withMenu, parentMenuId, isOnlyPage);
+			widget.saveCallBack = saveCallBack;
+		});
+	};
 	
 	var Mods = function(rows, callback){
 		this.rows = rows;

@@ -1,7 +1,5 @@
 <?php
 /**
- * Классы управления меню
- * 
  * @version $Id$
  * @package Abricos
  * @subpackage Sitemap
@@ -10,127 +8,63 @@
  * @author Alexander Kuzmin (roosit@abricos.org)
  */
 
-/**
- * Конструктор меню 
- * @package Abricos
- * @subpackage Sitemap
- */
-class CMSSitemapMenu {
-	
-	/**
-	 * Ядро
-	 *
-	 * @var CMSRegistry
-	 */
-	public $registry = null;
-	
-	/**
-	 * Root menu item
-	 *
-	 * @var CMSSitemapMenuItem
-	 */
-	public $menu = null;
-	
-	/**
-	 * Массив пути из меню
-	 *
-	 * @var mixed
-	 */
-	public $menuLine = array();
-	
-	public function __construct(CMSRegistry $registry, $full = false){
-		$this->registry = $registry;
-		$db = $registry->db;
-		$data = array();
-		$rows = CMSQSitemap::MenuList($db);
-		while (($row = $db->fetch_array($rows))){
-			$row['id'] = intval($row['id']);
-			$row['pid'] = intval($row['pid']);
-			$data[$row['id']] = $row;
-		}
-		$this->menu = new CMSSitemapMenuItem(null, 0, -1, 0, 'root', 'root', '/', 0);
-		array_push($this->menuLine, $this->menu);
-		$this->Build($this->menu, $data, 0, $full);
-	}
-	
-	private function Build(CMSSitemapMenuItem $parent, $data, $level, $full){
-		$lastChildMenu = null;
-		foreach ($data as $row){
-			if ($row['pid'] != $parent->id){ continue; }
-			$child = new CMSSitemapMenuItem($parent, $row['id'], $row['pid'], $row['tp'], $row['nm'], $row['tl'], $row['lnk'], $level+1);
-			if ($child->type == CMSQSitemap::MENUTYPE_LINK){
-				if ($this->registry->adress->requestURI == $child->link){
-					$child->isSelected = true;
-				}
-			}else{
-				if (strpos($this->registry->adress->requestURI, $child->link) === 0){
-					$child->isSelected = true;
-				}
+$brick = Brick::$builder->brick;
+$param = $brick->param;
+
+$isFull = $param->param['full'] == 'true';
+$mods = explode("/",$param->param['mods']);
+$mm = CMSRegistry::$instance->modules->GetModule('sitemap')->GetManager()->GetMenu($isFull, $mods);
+
+if (empty($mm->menu->child)){
+	$brick->content = "";
+	return;
+}
+
+if (!function_exists("sitemap_pub_menublock_out")){
+	function sitemap_pub_menublock_out(CMSSitemapMenuItem $menu, $param, $parent, $isroot = false, $notItems){
+		$isnot = false;
+		foreach ($notItems as $nitem){
+			if ($nitem == $menu->name){
+				return "";
 			}
-			array_push($parent->child, $child);
-			if ($child->isSelected){
-				if ($child->type != CMSQSitemap::MENUTYPE_LINK){
-					array_push($this->menuLine, $child);
-				}
-			}
-			if ($full || $child->isSelected){
-				$this->Build($child, $data, $level+1, $full);
-			}
-			
-			$lastChildMenu = $child;
 		}
-		if (!is_null($lastChildMenu)){
-			$lastChildMenu->isLast = true;
+		
+		$lst = "";
+		foreach ($menu->child as $child){
+			$lst .= sitemap_pub_menublock_out($child, $param, $menu, false, $notItems);
 		}
+		if (!empty($lst)){
+			$lst = Brick::ReplaceVarByData($param->var["menu"], array(
+				"id" => $menu->id,
+				"lvl" => $menu->level,
+				"hide" => (!$isroot && !$menu->isSelected ? "hide" : ""),
+				"rows" => $lst
+			)); 
+		}
+		if ($isroot){ return $lst; }
+		
+		return Brick::ReplaceVarByData($param->var['item'], array(
+			"id" => $menu->id,
+			"sel" => $menu->isSelected ? "selected" : "",
+			"last" => ($menu->isLast && empty($menu->child)) ? "last" : "",	 
+			"tl" => $menu->title,
+			"link" => $menu->link,
+			"child" => $lst
+		));
 	}
 }
 
-/**
- * Элемент меню 
- * @package Abricos 
- * @subpackage Sitemap
- */
-class CMSSitemapMenuItem {
-	
-	public $id;
-	public $pid;
-	public $type;
-	public $name;
-	public $title;
-	public $link;
-	public $parent = null;
-	public $child = array();
-	public $level = 0;
-	
-	/**
-	 * Меню является последним на этом уровне в списке
-	 *
-	 * @var boolean
-	 */
-	public $isLast = false;
-	
-	/**
-	 * Активный пункт меню
-	 *
-	 * @var boolean
-	 */
-	public $isSelected = false;
-	
-	public function __construct($parent, $id, $pid, $type, $name, $title, $link, $level = 0){
-		if (is_null($parent)){
-			$link = $link;
-		}else{
-			$link = empty($link) ? $parent->link.$name."/" : $link;
-		}
-		
-		$this->id = $id;
-		$this->pid = $pid;
-		$this->type = $type;
-		$this->name = $name;
-		$this->title = $title;
-		$this->link = $link;
-		$this->level = $level;
+$from = $param->param['from'];
+$notItems = !empty($param->param['not']) ? explode("&", $param->param['not']) : array();
+$param->var['title'] = !empty($param->param['title']) ? Brick::ReplaceVarByData($param->var['title'], array('tl'=>$param->param['title'])) : "";
+if (empty($from)){
+	$param->var['result'] = sitemap_pub_menublock_out($mm->menu, $param, null, true, $notItems);
+}else{
+	$fromMenu = $mm->Find($from);
+	if (!empty($fromMenu)){
+		$param->var['result'] = sitemap_pub_menublock_out($fromMenu, $param, null, true, $notItems);
 	}
 }
+
 
 ?>

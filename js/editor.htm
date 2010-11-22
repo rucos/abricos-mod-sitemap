@@ -16,25 +16,36 @@
 		  <div id="{i#tabbody}">
 				<div id="{i#menucont}" style="display: none;">
 					<h3>{#sitemap.pageeditor.hd2}</h3>
-					<p>
-						{#sitemap.pageeditor.title}
-						<input type="text" id="{i#mtitle}" style="width: 400px" />
-					</p>
-					<p>
-						{#sitemap.pageeditor.descr}
-						<input type="text" id="{i#mdesc}" style="width: 400px" />
-					</p>
-					<p>
-						{#sitemap.pageeditor.name}
-						<input type="text" id="{i#mname}" style="width: 400px" />
-						<span class="dsc">{#sitemap.pageeditor.namedesc}</span>
-					</p>
+					<table class="fields"><tbody>
+					<tr>
+						<td>{#sitemap.pageeditor.title}</td>
+						<td><input type="text" id="{i#mtitle}" style="width: 400px" /></td>
+					</tr>
+					<tr>
+						<td>{#sitemap.pageeditor.descr}</td>
+						<td><input type="text" id="{i#mdesc}" style="width: 400px" /></td>
+					</tr>
+					<tr>
+						<td>{#sitemap.pageeditor.name}</td>
+						<td>
+							<input type="text" id="{i#mname}" style="width: 400px" />
+							<span class="dsc">{#sitemap.pageeditor.namedesc}</span>
+						</td>
+					</tr>
+					<tr>
+						<td>Видимость</td>
+						<td>
+							<input type="checkbox" id="{i#moff}" />
+							<label for="{i#moff}">скрыть</label>
+						</td>
+					</tr>
+					</tbody></table>
 				</div>
 				<h3>{#sitemap.pageeditor.page}</h3>
 				<p id="{i#pgnamecont}">
 					{#sitemap.pageeditor.pagename}<input type="text" id="{i#pgname}" style="width: 400px" />
 				</p>
-				<textarea id="{i#editor}" style="width: 750px; height: 250px"></textarea>
+				<textarea id="{i#editor}" style="width: 750px; height: 300px"></textarea>
 				<h3>Модули</h3>
 				<div id="{i#modlist}" style="clear: both;" >
 				</div>
@@ -57,7 +68,7 @@
 					{#sitemap.pageeditor.description}<br />
 					<textarea id="{i#pgdesc}" style="width: 500px"></textarea>
 				</p>
-				<div style="display: none">
+				<div>
 					<h3>Шаблон</h3>
 					<p id="{i#templates}"></p>
 				</div>

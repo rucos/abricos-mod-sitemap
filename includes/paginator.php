@@ -12,23 +12,27 @@
 $brick = Brick::$builder->brick;
 $db = Brick::$db;
 
-$pp = $brick->param->param; 
-$pv = $brick->param->var;
+$pp = &$brick->param->param; 
+$pv = &$brick->param->var;
 
 $total = $pp['total'];
 $perpage = $pp['perpage'];
 $pagelink = $pp['pagelink'];
 $uri = $pp['uri'];
 $uripage = $pp['uripage'];
+$hidepn = intval($pp['hidepn']) > 0;
 
 $page = max(1, $pp['page']);
 
 $pcount = ceil($total/$perpage);
-if ($pcount <= 1){ return; }
+if ($pcount <= 1){
+	$brick->content = ""; 
+	return; 
+}
 
 $result = "";
-if ($page > 1){
-	if ($page > 2){
+if ($page > 1 || !$hidepn){
+	if ($page > 2 || !$hidepn){
 		$result .= Brick::ReplaceVar($pv['first'], "lnk", $uri);
 	}
 	$lnk = $page > 2 ? $uri.$uripage.($page-1).'/':$uri;
@@ -59,7 +63,11 @@ if ($page < $pcount){
 	}
 }
 
-$brick->param->var["result"] = Brick::ReplaceVar($brick->param->var["container"], "c", $result);
+$brick->param->var["result"] = $result;
 
+// Paginator info
+$brick->content = Brick::ReplaceVarByData($brick->content, array(
+	"info" => implode("|", array($total, $perpage, $page, $pagelink, $uri, $uripage, $hidepn))
+));
 
 ?>

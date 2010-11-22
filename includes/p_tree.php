@@ -11,7 +11,7 @@
 $brick = Brick::$builder->brick;
 
 $modSitemap = Brick::$modules->GetModule('sitemap');
-$mm = $modSitemap->GetMenu(true);
+$mm = $modSitemap->GetManager()->GetMenu(true);
 if (empty($mm->menu->child)){
 	$brick->content = "";
 	return;
@@ -21,7 +21,7 @@ $curcolrows = 0;
 $resultCols = "";
 $result = "";
 foreach ($mm->menu->child as $child){
-	$childcolrows = CMSModuleSitemap::ChildMenuItemCount($child);
+	$childcolrows = SitemapManager::ChildMenuItemCount($child);
 	if ($childcolrows + $curcolrows > $maxcolrows){
 		$result .= Brick::ReplaceVar($brick->param->var['column'], 'tree', $resultCols);
 		$resultCols = "";

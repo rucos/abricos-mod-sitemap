@@ -1,5 +1,5 @@
 <!--[*]
-[script]p_paginator.php[/script]
+[script]paginator.php[/script]
 
 [p=total]0[/p]
 [p=page]0[/p]
@@ -7,9 +7,7 @@
 [p=pagelink]5[/p]
 [p=uri]/[/p]
 [p=uripage]page[/p]
-
-
-[bkvar=container]<ul class="paginator">{v#c}</ul>[/bkvar]
+[p=hidepn]1[/p]
 
 [bkvar=first]<li><a href="{v#lnk}" class="first" title="На первую страницу">&#171;</a></li>[/bkvar]
 [bkvar=last]<li><a href="{v#lnk}" class="last" title="На последнюю страницу">&#187;</a></li>[/bkvar]
@@ -21,4 +19,7 @@
 [bkvar=result][/bkvar]
 
 [*]-->
-<div class="mod-sitemap">[bkvar]result[/bkvar]</div>
+<ul class="paginator">
+	[bkvar]result[/bkvar]
+	<li class="paginatorinfo" style="display: none;">{v#info}</li>
+</ul>

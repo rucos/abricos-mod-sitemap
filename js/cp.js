@@ -13,13 +13,12 @@ Component.requires = {
 };
 Component.entryPoint = function(){
 	
-	if (!Brick.env.user.isModerator()){ return; }
+	if (!Brick.env.user.isAdmin()){ return; }
 	
 	var cp = Brick.mod.user.cp;
 	
 	var menuItem = new cp.MenuItem(this.moduleName);
 	menuItem.icon = '/modules/sitemap/js/images/cp_icon.gif';
-	menuItem.titleId = 'sitemap.admin.cp.title';
 	menuItem.entryComponent = 'api';
 	menuItem.entryPoint = 'Brick.mod.sitemap.API.showManagerWidget';
 	

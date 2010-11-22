@@ -9,7 +9,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
  * @author Alexander Kuzmin (roosit@abricos.org)
  */
-
-CMSModuleSitemap::BrickBuildFullMenu(Brick::$builder->brick);
+$manager = CMSRegistry::$instance->modules->GetModule('sitemap')->GetManager();
+$manager->BrickBuildFullMenu(Brick::$builder->brick);
 
 ?>

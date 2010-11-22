@@ -5,13 +5,13 @@
 */
 
 /**
- * @module Feedback
- * @namespace Brick.mod.feedback
+ * @module Sitemap
+ * @namespace Brick.mod.sitemap
  */
 var Component = new Brick.Component();
 Component.requires = {
 	mod:[
-		{name: 'sitemap', files: ['api.js']},
+		{name: 'sitemap', files: ['api.js','editor.js']},
 		{name: 'sys', files: ['data.js','form.js']}
 	]
 };
@@ -422,5 +422,4 @@ Component.entryPoint = function(){
 	NS.ItemCreatePanel = ItemCreatePanel;
 })();
 
-	
 };

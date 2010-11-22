@@ -1,0 +1,26 @@
+<!--[*]
+[mcss=sitemap]sitemap.css[/mcss]
+[script]menu.php[/script]
+
+[bkvar=result][/bkvar]
+[bkvar=menu]<ul id="smvm-{v#id}-c" class="{v#hide}">{v#rows}</ul>[/bkvar]
+[bkvar=item]
+	<li class="{v#sel}" >
+		<a id="smvm-{v#id}" class="smvm-opcl" href="{v#link}"></a>
+		<a class="{v#sel}" href="{v#link}" title="{v#tl}">{v#tl}</a>
+		{v#child}
+	</li>
+[/bkvar]
+
+[p=full]true[/p]
+[p=mods][/p]
+[p=from][/p]
+[p=not][/p]
+[p=title][/p]
+
+[bkvar=title]<h2>{v#tl}</h2>[/bkvar]
+
+[*]-->
+
+<div class="vmenuf box">[bkvar]title[/bkvar][bkvar]result[/bkvar]</div>
+<script>Brick.Component.API.fireFunction('sitemap','ui',function(){Brick.mod.sitemap.UI.vmenuInit();});</script>

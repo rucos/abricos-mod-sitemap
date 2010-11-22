@@ -12,8 +12,8 @@ $brick = Brick::$builder->brick;
 $db = Brick::$db;
 $param = $brick->param;
 
-$modSitemap = Brick::$modules->GetModule('sitemap');
-$mm = $modSitemap->GetMenu(true);
+$manager = Brick::$modules->GetModule('sitemap')->GetManager();
+$mm = $manager->GetMenu(true);
 $hmenu = null;
 foreach ($mm->menu->child as $child){
 	if ($child->isSelected){

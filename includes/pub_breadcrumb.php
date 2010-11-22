@@ -11,8 +11,8 @@
 $brick = Brick::$builder->brick;
 $param = $brick->param;
 
-$modSitemap = Brick::$modules->GetModule('sitemap');
-$mm = $modSitemap->GetMenu();
+$manager = Brick::$modules->GetModule('sitemap')->GetManager();
+$mm = $manager->GetMenu();
 
 $arr = array();
 $curlevel = count($mm->menuLine)-1;

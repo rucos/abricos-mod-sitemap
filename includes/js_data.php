@@ -10,8 +10,10 @@
  * @author Alexander Kuzmin (roosit@abricos.org)
  */
 
-if (!Brick::$session->IsAdminMode()){ return; }
+if (!CMSRegistry::$instance->user->IsAdminMode()){ return; }
 $brick = Brick::$builder->brick;
+
+Brick::$modules->GetModule('sitemap')->GetManager();
 
 $mod = Brick::$modules->GetModule('sys');
 $ds = $mod->getDataSet();
@@ -28,7 +30,7 @@ foreach ($ds->ts as $ts){
 			case 'pagemenu':
 				foreach ($tsrs->r as $r){
 					if ($r->f == 'a'){
-						$newmenuid = CMSQSitemap::MenuCreate(Brick::$db, $r->d);
+						$newmenuid = SitemapQuery::MenuCreate(Brick::$db, $r->d);
 						$createmenu = true;
 					}
 				}
@@ -47,41 +49,41 @@ foreach ($ds->ts as $ts){
 			case 'page':
 				foreach ($tsrs->r as $r){
 					if ($r->f == 'u'){
-						CMSQSitemap::PageUpdate(Brick::$db, $r->d);
+						SitemapQuery::PageUpdate(Brick::$db, $r->d);
 					}else if ($r->f == 'a'){
 						if ($createmenu){
 							$r->d->mid = $newmenuid;
 						}
-						CMSQSitemap::PageCreate(Brick::$db, $r->d);
+						SitemapQuery::PageCreate(Brick::$db, $r->d);
 					}
 				}
 				break;
 			case 'link':
 				foreach ($tsrs->r as $r){
 					if ($r->f == 'u'){ 
-						CMSQSitemap::MenuUpdate(Brick::$db, $r->d); 
+						SitemapQuery::MenuUpdate(Brick::$db, $r->d); 
 					}else if ($r->f == 'a'){
-						CMSQSitemap::MenuCreate(Brick::$db, $r->d);
+						SitemapQuery::MenuCreate(Brick::$db, $r->d);
 					}
 				}
 				break;
 			case 'pagemenu':
 				foreach ($tsrs->r as $r){
-					if ($r->f == 'u'){ CMSQSitemap::MenuUpdate(Brick::$db, $r->d); }
+					if ($r->f == 'u'){ SitemapQuery::MenuUpdate(Brick::$db, $r->d); }
 				}
 				break;
 			case 'menulist':
 				foreach ($tsrs->r as $r){
 					if ($r->f == 'd'){
-						CMSQSitemap::MenuRemove(Brick::$db, $r->d->id); 
+						SitemapQuery::MenuRemove(Brick::$db, $r->d->id); 
 					}else if ($r->f == 'u'){
-						CMSQSitemap::MenuUpdate(Brick::$db, $r->d);
+						SitemapQuery::MenuUpdate(Brick::$db, $r->d);
 					}
 				}
 				break;
 			case 'pagelist':
 				foreach ($tsrs->r as $r){
-					if ($r->f == 'd'){ CMSQSitemap::PageRemove(Brick::$db, $r->d->id); }
+					if ($r->f == 'd'){ SitemapQuery::PageRemove(Brick::$db, $r->d->id); }
 				}
 				break;
 		}
@@ -116,19 +118,19 @@ foreach ($ds->ts as $ts){
 				}
 				break;
 			case 'link':
-				$rows = CMSQSitemap::MenuById(Brick::$db, $tsrs->p->id);
+				$rows = SitemapQuery::MenuById(Brick::$db, $tsrs->p->id);
 				break;
 			case 'page':
-				$rows = CMSQSitemap::PageById(Brick::$db, $tsrs->p->id);
+				$rows = SitemapQuery::PageById(Brick::$db, $tsrs->p->id);
 				break;
 			case 'pagemenu':
-				$rows = CMSQSitemap::MenuByPageId(Brick::$db, $tsrs->p->id);
+				$rows = SitemapQuery::MenuByPageId(Brick::$db, $tsrs->p->id);
 				break;
 			case 'menulist':
-				$rows = CMSQSitemap::MenuList(Brick::$db);
+				$rows = SitemapQuery::MenuList(Brick::$db, true);
 				break;
 			case 'pagelist':
-				$rows = CMSQSitemap::PageList(Brick::$db);
+				$rows = SitemapQuery::PageList(Brick::$db);
 				break;
 		}
 		if (!is_null($rows)){
