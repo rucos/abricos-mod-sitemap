@@ -15,7 +15,9 @@ $updateManager = CMSRegistry::$instance->modules->updateManager;
 $db = CMSRegistry::$instance->db;
 $pfx = $db->prefix;
 
-if ($updateManager->isInstall()){
+$isPrevVersionCore = $updateManager->serverVersion == '1.0.1';
+
+if ($updateManager->isInstall() || $isPrevVersionCore){
 	
 	// меню
 	$db->query_write("
@@ -56,6 +58,9 @@ if ($updateManager->isInstall()){
 		  PRIMARY KEY (`pageid`)
 		)".$charset
 	);
+}
+
+if ($updateManager->isInstall() && !$isPrevVersionCore){
 	
 	$mainpage = "<h1>Добро пожаловать!</h1>
 <p>Поздравляем! Платформа <a href='http://abricos.org'>Abricos</a> успешно установлена на ваш сайт.</p>
@@ -102,12 +107,28 @@ if ($updateManager->isInstall()){
 	");
 }
 
-if ($updateManager->serverVersion == '1.0.1'){
-	/*
+if ($isPrevVersionCore){
+	$updateManager->serverVersion = '0.2.1';
+	
 	$db->query_write("
-		ALTER TABLE `".$pfx."sys_page` ADD  `mods` TEXT NOT NULL AFTER `metadesc`
+		INSERT INTO `".$pfx."sys_menu` 
+			(menuid, parentmenuid, name, link, title, menuorder, dateline) 
+		SELECT 
+			menuid, parentmenuid, name, link, phrase, menuorder, dateline
+		FROM `".$pfx."menu`
+		WHERE deldate=0
 	");
-	/**/
+	$db->query_write("DROP TABLE `".$pfx."menu`");
+
+	$db->query_write("
+		INSERT INTO `".$pfx."sys_page` 
+			(pageid, menuid, contentid, pagename, title, metakeys, metadesc, dateline)
+		SELECT 
+			pageid, menuid, contentid, pagename, title, metakeys, metadesc, dateline
+		FROM `".$pfx."page`
+		WHERE deldate=0
+	");
+	$db->query_write("DROP TABLE `".$pfx."page`");
 }
 
 if ( $updateManager->isUpdate('0.2.1') || $updateManager->serverVersion == '1.0.1'){
