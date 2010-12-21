@@ -30,7 +30,11 @@ if (!function_exists("sitemap_pub_menublock_out")){
 		}
 		
 		$lst = "";
+		$isChildSelect = false;
 		foreach ($menu->child as $child){
+			if ($child->isSelected){
+				$isChildSelect = true;
+			}
 			$lst .= sitemap_pub_menublock_out($child, $param, $menu, false, $notItems);
 		}
 		if (!empty($lst)){
@@ -43,9 +47,14 @@ if (!function_exists("sitemap_pub_menublock_out")){
 		}
 		if ($isroot){ return $lst; }
 		
+		$isSelect = $menu->isSelected;
+		if ($param->param['notselp'] && $isChildSelect){
+			$isSelect = false;
+		}
+		
 		return Brick::ReplaceVarByData($param->var['item'], array(
 			"id" => $menu->id,
-			"sel" => $menu->isSelected ? "selected" : "",
+			"sel" => $isSelect ? "selected" : "",
 			"last" => ($menu->isLast && empty($menu->child)) ? "last" : "",	 
 			"tl" => $menu->title,
 			"link" => $menu->link,
