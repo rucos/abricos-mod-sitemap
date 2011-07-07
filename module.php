@@ -10,9 +10,6 @@
  * @author Alexander Kuzmin (roosit@abricos.org)
  */
 
-$mod = new SitemapModule();
-CMSRegistry::$instance->modules->Register($mod);
-
 /**
  * Карта сайта.
  * 
@@ -105,5 +102,8 @@ class SitemapPermission extends CMSPermission {
 		return $roles;
 	}
 }
+
+$mod = new SitemapModule();
+CMSRegistry::$instance->modules->Register($mod);
 
 ?>
