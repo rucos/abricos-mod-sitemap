@@ -130,7 +130,7 @@ Component.entryPoint = function(){
 				s += TM.replace('option', {'id': key,'tl': key});
 			});
 			this.el('templates').innerHTML = TM.replace('select', {'list': s});
-
+			
 			if (this.pageId > 0){
 			
 		 		var page = this.rows['page'].getByIndex(0).cell;
@@ -148,6 +148,11 @@ Component.entryPoint = function(){
 		 		this._mods = page['mods'];
 		 		
 				this.editor.setContent(page['bd']);
+				
+				var Editor = Brick.widget.Editor;
+				if (page['em']*1 > 0){
+					this.editor.set('mode', Editor.MODE_CODE);
+				}
 				
 				if (this.withMenu){
 			 		var menu = this.rows['pagemenu'].getByIndex(0).cell;
@@ -205,6 +210,7 @@ Component.entryPoint = function(){
 			var table = DATA.get('page');
 			
 			var page = this.pageId>0 ? this.rows['page'].getByIndex(0) : table.newRow();
+			var Editor = Brick.widget.Editor;
 			
 			if (this.pageId == 0){
 				DATA.get('page').getRows({id: 0}).add(page);
@@ -216,7 +222,8 @@ Component.entryPoint = function(){
 				'mtdsc': this.elv('pgdesc'),
 				'bd': this.editor.getContent(),
 				'tpl': this._TM.getEl('select.id').value,
-				'mods': this._mods
+				'mods': this._mods,
+				'em': this.editor.get('mode') == Editor.MODE_CODE ? 1 : 0
 			});
 			if (this.pageId == 0){
 				page.cell['mid'] = this.parentMenuId;
