@@ -45,7 +45,7 @@ class SitemapQuery {
 		$contentid = CoreQuery::CreateContent($db, $d->bd, 'sitemap');
 		$sql = "
 			INSERT INTO ".$db->prefix."sys_page
-			(pagename, menuid, contentid, language, title, metakeys, metadesc, template, mods, ediormode, dateline) VALUES (
+			(pagename, menuid, contentid, language, title, metakeys, metadesc, template, mods, editormode, dateline) VALUES (
 				'".bkstr($d->nm)."',
 				".bkint($d->mid).",
 				'".bkstr($contentid)."',
