@@ -5,7 +5,7 @@
  * @version $Id$
  * @package Abricos
  * @subpackage Sys
- * @copyright Copyright (C) 2008 Abricos. All rights reserved.
+ * @copyright Copyright (C) 2011 Abricos. All rights reserved.
  * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
  * @author Alexander Kuzmin (roosit@abricos.org)
  */
@@ -141,11 +141,11 @@ if ( $updateManager->isUpdate('0.2.1') || $updateManager->serverVersion == '1.0.
 if ( $updateManager->isUpdate('0.2.2')){
 	CMSRegistry::$instance->modules->GetModule('sitemap')->permission->Install();
 }
-if ( $updateManager->isUpdate('0.2.3')){
-	/*
+if ( $updateManager->isUpdate('0.2.3.1')){
+	
 	$db->query_write("
-		ALTER TABLE `".$pfx."sys_page` ADD `template` VARCHAR(50) NOT NULL AFTER `metadesc`
+		ALTER TABLE `".$pfx."sys_page` ADD `editormode` TINYINT(1) UNSIGNED NOT NULL default '0' COMMENT '0-визуальный редактор, 1-исходный код'
 	");
-	/**/
+	
 }
 ?>

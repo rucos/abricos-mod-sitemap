@@ -2,11 +2,13 @@
 /**
  * @version $Id$
  * @package Abricos
- * @subpackage Develop
- * @copyright Copyright (C) 2008 Abricos. All rights reserved.
+ * @subpackage Sitemap
+ * @copyright Copyright (C) 2011 Abricos. All rights reserved.
  * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
  * @author Alexander Kuzmin (roosit@abricos.org)
  */
+
+require_once 'dbquery.php';
 
 class SitemapManager {
 	
@@ -56,6 +58,162 @@ class SitemapManager {
 		$this->user = $core->user->info;
 		$this->userid = $this->user['userid'];
 	}
+	public function IsAdminRole(){
+		return $this->module->permission->CheckAction(SitemapAction::ADMIN) > 0;
+	}
+	
+	public function IsWriteRole(){
+		if ($this->IsAdminRole()){ return true; }
+		return $this->module->permission->CheckAction(SitemapAction::WRITE) > 0;
+	}
+	
+	public function IsViewRole(){
+		if ($this->IsWriteRole()){ return true; }
+		return $this->module->permission->CheckAction(SitemapAction::VIEW) > 0;
+	}
+	
+	private $newmenuid = 0;
+	private $createmenu = false;
+	
+	public function DSProcess($name, $rows){
+		$p = $rows->p;
+		$db = $this->db;
+		
+		switch ($name){
+			case 'pagemenu':
+				foreach ($rows as $r){
+					if ($r->f == 'a'){	$this->MenuAppend($r->d); }
+					if ($r->f == 'u'){	$this->MenuUpdate($r->d); }
+				}
+				break;
+			case 'menulist':
+				foreach ($rows as $r){
+					if ($r->f == 'd'){ $this->MenuRemove($r->d->id); }
+					if ($r->f == 'u'){ $this->MenuUpdate($r->d); }
+				}
+				break;
+			case 'page':
+				foreach ($rows as $r){
+					if ($r->f == 'a'){	$this->PageAppend($r->d); }
+					if ($r->f == 'u'){	$this->PageUpdate($r->d); }
+				}
+				break;
+			case 'pagelist':
+				foreach ($rows as $r){
+					if ($r->f == 'd'){ $this->PageRemove($r->d->id); }
+				}
+				break;				
+			case 'link':
+				foreach ($rows as $r){
+					if ($r->f == 'a'){	$this->LinkAppend($r->d); }
+					if ($r->f == 'u'){	$this->LinkUpdate($r->d); }
+				}
+				break;
+		}
+	}
+	
+	public function DSGetData($name, $tsrs){
+		$p = $tsrs->p;
+		switch ($name){
+			case 'pagemenu': return $this->Menu($p->id);
+			case 'menulist': return $this->MenuList();
+			case 'pagelist': return $this->PageList();
+			case 'link': return $this->Link($p->id);
+			case 'page': return $this->Page($p->id);
+			case 'templates': return $this->TemplateList();
+		}
+		
+		return null;
+	}
+	
+	public function MenuAppend($d){
+		if (!$this->IsAdminRole()){ return null; }
+		// создание страницы в два этапа: 1-создание меню, 2-создание страницы в этом меню
+		$this->newmenuid = SitemapQuery::MenuCreate($this->db, $d);
+		$this->createmenu = true;
+	}
+	
+	public function MenuUpdate($d){
+		if (!$this->IsAdminRole()){ return null; }
+		SitemapQuery::MenuUpdate($this->db, $d);
+	}
+	
+	public function Menu($pageid){
+		if (!$this->IsAdminRole()){ return null; }
+		return SitemapQuery::MenuByPageId($this->db, $pageid);		
+	}
+	
+	public function MenuList(){
+		if (!$this->IsAdminRole()){ return null; }
+		return SitemapQuery::MenuList($this->db, true);
+	}
+	
+	public function MenuRemove($menuid){
+		if (!$this->IsAdminRole()){ return null; }
+		SitemapQuery::MenuRemove($this->db, $menuid);
+	}
+	
+	public function PageAppend($d){
+		if (!$this->IsAdminRole()){ return null; }
+		if ($this->createmenu){
+			$d->mid = $this->newmenuid;
+		}
+		SitemapQuery::PageCreate($this->db, $d);
+	}
+	public function PageUpdate($d){
+		if (!$this->IsAdminRole()){ return null; }
+		SitemapQuery::PageUpdate($this->db, $d);
+	}
+	public function PageList(){
+		if (!$this->IsAdminRole()){ return null; }
+		return SitemapQuery::PageList($this->db);
+	}
+	public function PageRemove($pageid){
+		if (!$this->IsAdminRole()){ return null; }
+		SitemapQuery::PageRemove($this->db, $pageid);
+	}
+	public function Page($pageid){
+		if (!$this->IsAdminRole()){ return null; }
+		return SitemapQuery::PageById($this->db, $pageid);
+	}
+	
+	public function LinkAppend($d){
+		if (!$this->IsAdminRole()){ return null; }
+		SitemapQuery::MenuCreate($this->db, $d);
+	}
+	
+	public function LinkUpdate($d){
+		if (!$this->IsAdminRole()){ return null; }
+		SitemapQuery::MenuUpdate($this->db, $d);
+	}
+	
+	public function Link($linkid){
+		if (!$this->IsAdminRole()){ return null; }
+		return SitemapQuery::MenuById($this->db, $linkid);
+	}
+	
+	public function TemplateList(){
+		if (!$this->IsAdminRole()){ return null; }
+		
+		$rows = array();
+		$dir = dir(CWD."/tt");
+		while (false !== ($entry = $dir->read())) {
+			if ($entry == "." || $entry == ".." || empty($entry) ){
+				continue;
+			}
+			$files = globa(CWD."/tt/".$entry."/*.html");
+			foreach ($files as $file){
+				$bname = basename($file);
+				$row = array();
+				$row['nm'] = $entry;
+				$row['vl'] = substr($bname, 0, strlen($bname)-5);
+				array_push($rows, $row);
+			}
+		}
+		return $rows;
+	}
+	
+	
 	
 	/**
 	 * Получить менеджер управления меню
@@ -179,298 +337,7 @@ class SitemapManager {
 	
 		return $t;
 	}
-
-	public function IsAdminRole(){
-		return $this->module->permission->CheckAction(SitemapAction::ADMIN) > 0;
-	}
-	
-	public function IsViewRole(){
-		return $this->module->permission->CheckAction(SitemapAction::VIEW) > 0;
-	}
-	
-	public function IsWriteRole(){
-		return $this->module->permission->CheckAction(SitemapAction::WRITE) > 0;
-	}
-	
-	public function DSProcess($name, $rows){
-	}
-	
-	public function DSGetData($name, $rows){
-	}
-	
 }
-
-/**
- * Статичные функции запросов к базе данных
- * 
- * @package Abricos 
- * @subpackage Sitemap
- */
-class SitemapQuery {
-
-	/**
-	 * Тип меню страница/раздел
-	 *
-	 */
-	const MENUTYPE_PAGE = 0;
-	/**
-	 * Тип меню ссылка
-	 *
-	 */
-	const MENUTYPE_LINK = 1;
-	
-	
-	const FIELDS_MENU = "
-		menuid as id,
-		parentmenuid as pid,
-		menutype as tp,
-		name as nm,
-		title as tl,
-		descript as dsc,
-		link as lnk,
-		menuorder as ord,
-		level as lvl,
-		off
-	";
-	
-	public static function PageCreate(CMSDatabase $db, $d){
-		$contentid = CoreQuery::CreateContent($db, $d->bd, 'sitemap');
-		$sql = "
-			INSERT INTO ".$db->prefix."sys_page
-			(pagename, menuid, contentid, language, title, metakeys, metadesc, template, mods, dateline) VALUES (
-				'".bkstr($d->nm)."',
-				".bkint($d->mid).",
-				'".bkstr($contentid)."',
-				'".LNG."',
-				'".bkstr($d->tl)."',
-				'".bkstr($d->mks)."',
-				'".bkstr($d->mdsc)."',
-				'".bkstr($d->tpl)."',
-				'".bkstr($d->mods)."',
-				".TIMENOW."
-			)
-		";
-		$db->query_write($sql);
-		return $db->insert_id();
-	}
-	
-
-	public static function PageUpdate(CMSDatabase $db, $d){
-		CoreQuery::ContentUpdate($db, $d->cid, $d->bd);
-		$sql = "
-			UPDATE ".$db->prefix."sys_page
-			SET
-				pagename='".bkstr($d->nm)."',
-				title='".bkstr($d->tl)."',
-				metakeys='".bkstr($d->mtks)."',
-				metadesc='".bkstr($d->mtdsc)."',
-				mods='".bkstr($d->mods)."',
-				template='".bkstr($d->tpl)."',
-				dateline='".TIMENOW."'
-			WHERE pageid='".bkint($d->id)."'
-		";
-		$db->query_write($sql);
-	}
-	
-	public static function MenuByPageId(CMSDatabase $db, $pageid){
-		$sql = "
-			SELECT
-				b.menuid as id,
-				b.parentmenuid as pid,
-				b.menutype as tp,
-				b.name as nm,
-				b.title as tl,
-				b.descript as dsc,
-				b.link as lnk,
-				b.menuorder as ord,
-				b.level as lvl,
-				b.off
-			FROM ".$db->prefix."sys_page a
-			LEFT JOIN ".$db->prefix."sys_menu b ON b.menuid=a.menuid
-			WHERE a.pageid=".bkint($pageid)."
-		";
-		return $db->query_read($sql);
-	}
-	
-	const FIELDS_PAGE = "
-		a.pageid as id,
-		a.menuid as mid,
-		a.pagename as nm,
-		a.title as tl,
-		a.metakeys as mtks,
-		a.metadesc as mtdsc,
-		a.template as tpl,
-		a.mods as mods,
-		a.contentid as cid,
-		c.body as bd
-	";
-	
-	public static function PageByName(CMSDatabase $db, $menuid, $pagename, $returnTypeRow = false){
-		$sql = "
-			SELECT
-				".SitemapQuery::FIELDS_PAGE." 
-			FROM ".$db->prefix."sys_page a
-			LEFT JOIN ".$db->prefix."content c ON a.contentid=c.contentid
-			WHERE a.menuid=".bkint($menuid)." AND a.pagename='".bkstr($pagename)."'
-			LIMIT 1
-		";
-		if ($returnTypeRow){
-			return $db->query_first($sql);
-		}else{
-			return $db->query_read($sql);
-		}
-	}
-	
-	public static function PageById(CMSDatabase $db, $pageid){
-		$sql = "
-			SELECT
-				".SitemapQuery::FIELDS_PAGE." 
-			FROM ".$db->prefix."sys_page a
-			LEFT JOIN ".$db->prefix."content c ON a.contentid=c.contentid
-			WHERE a.pageid=".bkint($pageid)."
-			LIMIT 1
-		";
-		return $db->query_read($sql);
-	}
-	
-	public static function PageList(CMSDatabase $db){
-		$rootPage = SitemapQuery::PageByName($db, 0, 'index', true);
-		if (empty($rootPage)){
-			$d = new stdClass(); $d->nm = 'index'; $d->mid = 0; $d->tl = ''; $d->mks = ''; $d->mdsc = '';
-			SitemapQuery::PageCreate($db, $d);
-		}
-		$sql = "
-			SELECT 
-				pageid as id,
-				menuid as mid,
-				contentid as cid,
-				pagename as nm
-			FROM ".$db->prefix."sys_page
-			WHERE deldate=0
-		";
-		return $db->query_read($sql);
-	}
-	
-	public static function MenuCreate(CMSDatabase $db, $d){
-		$sql = "
-			INSERT INTO ".$db->prefix."sys_menu 
-			(parentmenuid, name, link, title, descript, menutype, off) VALUES (
-				".bkint($d->pid).", 
-				'".bkstr($d->nm)."', 
-				'".bkstr($d->lnk)."', 
-				'".bkstr($d->tl)."',
-				'".bkstr($d->dsc)."', 
-				".bkint($d->tp).",
-				".bkint($d->off)."
-			)
-		";
-		$db->query_write($sql);
-		return $db->insert_id();
-	}
-	
-	public static function MenuUpdate(CMSDatabase $db, $d){
-		$sql = "
-			UPDATE ".$db->prefix."sys_menu 
-			SET
-				parentmenuid=".bkint($d->pid).", 
-				name='".bkstr($d->nm)."', 
-				link='".bkstr($d->lnk)."', 
-				title='".bkstr($d->tl)."',
-				descript='".bkstr($d->dsc)."',
-				menuorder=".bkint($d->ord).",
-				off=".bkint($d->off)."
-			WHERE menuid='".bkint($d->id)."'
-		";
-		$db->query_write($sql);
-	}
-	
-	public static function MenuById(CMSDatabase $db, $menuid){
-		$sql = "
-			SELECT
-				".SitemapQuery::FIELDS_MENU." 
-			FROM ".$db->prefix."sys_menu
-			WHERE menuid=".bkint($menuid)."
-			LIMIT 1
-		";
-		return $db->query_read($sql);
-	}
-	
-	
-	public static function MenuListByUrl(CMSDatabase $db, $dir){
-		$names = array();
-		foreach ($dir as $name){
-			array_push($names, "name='".bkstr($name)."'");
-		}
-		$sql = "
-			SELECT
-				".SitemapQuery::FIELDS_MENU." 
-			FROM ".$db->prefix."sys_menu
-			WHERE deldate=0 AND (".implode(" OR ", $names).")
-			ORDER BY parentmenuid
-		";
-		return $db->query_read($sql);
-	}
-	
-	public static function MenuList(CMSDatabase $db, $withOff = false){
-		$sql = "
-			SELECT
-				".SitemapQuery::FIELDS_MENU." 
-			FROM ".$db->prefix."sys_menu
-			WHERE deldate=0 ".($withOff ? "" : " AND off=0")."
-			ORDER BY menuorder
-		";
-		return $db->query_read($sql);
-	}
-	
-	public static function PageRemove(CMSDatabase $db, $pageid){
-		$sql = "
-			SELECT pageid, contentid
-			FROM ".$db->prefix."sys_page
-			WHERE pageid='".bkint($pageid)."'
-		";
-		$row = $db->query_first($sql);
-		$db->query_write("
-			UPDATE ".$db->prefix."content
-			SET deldate='".TIMENOW."'
-			WHERE contentid='".bkint($row['contentid'])."'
-		");
-		$db->query_write("
-			UPDATE ".$db->prefix."sys_page
-			SET deldate='".TIMENOW."'
-			WHERE pageid='".bkint($pageid)."'
-		");
-	}
-	
-	public static function MenuRemove(CMSDatabase $db, $menuid){
-		// remove pages
-		$sql = "
-			SELECT pageid
-			FROM ".$db->prefix."sys_page
-			WHERE menuid=".bkint($menuid)."
-		";
-		$rows = $db->query_read($sql);
-		while (($row = $db->fetch_array($rows))){
-			SitemapQuery::PageRemove($db, $row['pageid']);
-		}
-		
-		// child list
-		$sql = "
-			SELECT menuid
-			FROM ".$db->prefix."sys_menu
-			WHERE parentmenuid=".bkint($menuid)."
-		";
-		$rows = $db->query_read($sql);
-		while (($row = $db->fetch_array($rows))){
-			SitemapQuery::MenuRemove($db, $row['menuid']);
-		}
-		$db->query_write("
-			UPDATE ".$db->prefix."sys_menu
-			SET deldate='".TIMENOW."'
-			WHERE menuid=".bkint($menuid)."
-		");
-	}
-}
-
 
 /**
  * Конструктор меню 

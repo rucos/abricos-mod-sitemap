@@ -78,7 +78,7 @@ Component.entryPoint = function(){
 			return T['pageeditor'];
 		},
 		onLoad: function(){
-			var tabView = new YAHOO.widget.TabView(this._TId['pageeditor']['tab']);
+			new YAHOO.widget.TabView(this._TId['pageeditor']['tab']);
 
 			var Editor = Brick.widget.Editor;
 			this.editor = new Editor(this._TId['pageeditor']['editor'], {
@@ -120,7 +120,7 @@ Component.entryPoint = function(){
 			}
 		},
 		renderElements: function(){
-			var TM = this._TM, T = this._T;
+			var TM = this._TM;
 			// шаблон
 			var ttsRows = DATA.get('templates', true).getRows(), 
 				s = TM.replace('option', {'id': '','tl': ''});

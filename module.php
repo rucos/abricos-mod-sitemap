@@ -5,7 +5,7 @@
  * @version $Id$
  * @package Abricos
  * @subpackage Sitemap
- * @copyright Copyright (C) 2008 Abricos All rights reserved.
+ * @copyright Copyright (C) 2011 Abricos All rights reserved.
  * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
  * @author Alexander Kuzmin (roosit@abricos.org)
  */
@@ -29,7 +29,7 @@ class SitemapModule extends CMSModule {
 	public $page = null;
 	
 	function __construct(){
-		$this->version = "0.2.3";
+		$this->version = "0.2.3.1";
 		$this->name = "sitemap";
 		$this->takelink = "__super";
 		$this->permission = new SitemapPermission($this);
