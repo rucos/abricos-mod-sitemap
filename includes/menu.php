@@ -12,6 +12,7 @@ $brick = Brick::$builder->brick;
 $param = $brick->param;
 
 $isFull = $param->param['full'] == 'true';
+$pViewLevel = intval($param->param['level']);
 $mods = explode("/",$param->param['mods']);
 $mm = CMSRegistry::$instance->modules->GetModule('sitemap')->GetManager()->GetMenu($isFull, $mods);
 
@@ -21,7 +22,10 @@ if (empty($mm->menu->child)){
 }
 
 if (!function_exists("sitemap_pub_menublock_out")){
-	function sitemap_pub_menublock_out(CMSSitemapMenuItem $menu, $param, $parent, $isroot = false, $notItems){
+	function sitemap_pub_menublock_out(CMSSitemapMenuItem $menu, $param, $parent, $isroot = false, $notItems, $viewLevel = 0){
+		if ($viewLevel > 0 && ($menu->level > $viewLevel+1)){ 
+			return ""; 
+		}
 		$isnot = false;
 		foreach ($notItems as $nitem){
 			if ($nitem == $menu->name){
@@ -35,7 +39,7 @@ if (!function_exists("sitemap_pub_menublock_out")){
 			if ($child->isSelected){
 				$isChildSelect = true;
 			}
-			$lst .= sitemap_pub_menublock_out($child, $param, $menu, false, $notItems);
+			$lst .= sitemap_pub_menublock_out($child, $param, $menu, false, $notItems, $viewLevel);
 		}
 		if (!empty($lst)){
 			$lst = Brick::ReplaceVarByData($param->var["menu"], array(
@@ -67,11 +71,11 @@ $from = $param->param['from'];
 $notItems = !empty($param->param['not']) ? explode("&", $param->param['not']) : array();
 $param->var['title'] = !empty($param->param['title']) ? Brick::ReplaceVarByData($param->var['title'], array('tl'=>$param->param['title'])) : "";
 if (empty($from)){
-	$param->var['result'] = sitemap_pub_menublock_out($mm->menu, $param, null, true, $notItems);
+	$param->var['result'] = sitemap_pub_menublock_out($mm->menu, $param, null, true, $notItems, $pViewLevel);
 }else{
 	$fromMenu = $mm->Find($from);
 	if (!empty($fromMenu)){
-		$param->var['result'] = sitemap_pub_menublock_out($fromMenu, $param, null, true, $notItems);
+		$param->var['result'] = sitemap_pub_menublock_out($fromMenu, $param, null, true, $notItems, $pViewLevel);
 	}
 }
 
