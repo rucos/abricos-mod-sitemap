@@ -367,11 +367,9 @@ Component.entryPoint = function(){
 	var Mods = function(rows, callback){
 		this.rows = rows;
 		this.callback = callback;
-		Mods.superclass.constructor.call(this, {
-			modal: true, fixedcenter: true
-		});
+		Mods.superclass.constructor.call(this);
 	};
-	YAHOO.extend(Mods, Brick.widget.Panel, {
+	YAHOO.extend(Mods, Brick.widget.Dialog, {
 		el: function(name){ return Dom.get(TId['mods'][name]); },
 		elv: function(name){ return Brick.util.Form.getValue(this.el(name)); },
 		setelv: function(name, value){ Brick.util.Form.setValue(this.el(name), value); },
@@ -424,12 +422,9 @@ Component.entryPoint = function(){
 	var LinkEditorPanel = function(linkId, parentMenuId){
 		this.linkId = linkId || 0;
 		this.parentMenuId = parentMenuId || 0;
-		LinkEditorPanel.superclass.constructor.call(this, {
-			modal: true,
-			fixedcenter: true
-		});
+		LinkEditorPanel.superclass.constructor.call(this);
 	};
-	YAHOO.extend(LinkEditorPanel, Brick.widget.Panel, {
+	YAHOO.extend(LinkEditorPanel, Brick.widget.Dialog, {
 		el: function(name){ return Dom.get(this._TId['linkeditor'][name]); },
 		elv: function(name){ return Brick.util.Form.getValue(this.el(name)); },
 		setelv: function(name, value){ Brick.util.Form.setValue(this.el(name), value); },

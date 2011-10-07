@@ -388,12 +388,9 @@ Component.entryPoint = function(){
 
 	var ItemCreatePanel = function(menuid){
 		this.menuid = menuid;
-		ItemCreatePanel.superclass.constructor.call(this, {
-			modal: true,
-			fixedcenter: true
-		});
+		ItemCreatePanel.superclass.constructor.call(this);
 	};
-	YAHOO.extend(ItemCreatePanel, Brick.widget.Panel, {
+	YAHOO.extend(ItemCreatePanel, Brick.widget.Dialog, {
 		el: function(name){ return Dom.get(TId['mnuadd'][name]); },
 		elv: function(name){ return Brick.util.Form.getValue(this.el(name)); },
 		setelv: function(name, value){ Brick.util.Form.setValue(this.el(name), value); },
