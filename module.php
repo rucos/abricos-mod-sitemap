@@ -22,14 +22,14 @@
  * @package Abricos
  * @subpackage Sitemap
  */
-class SitemapModule extends CMSModule {
+class SitemapModule extends Ab_Module {
 	
 	private $_manager = null;
 	
 	public $page = null;
 	
 	function __construct(){
-		$this->version = "0.2.3.1";
+		$this->version = "0.2.4";
 		$this->name = "sitemap";
 		$this->takelink = "__super";
 		$this->permission = new SitemapPermission($this);
@@ -77,7 +77,7 @@ class SitemapAction {
 class SitemapPermission extends CMSPermission {
 	
 	public function SitemapPermission(SitemapModule $module){
-		CMSRegistry::$instance->modules->GetModule('user'); // заплатка
+		Abricos::GetModule('user'); // заплатка
 		$defRoles = array(
 			new CMSRole(SitemapAction::VIEW,		1, User::UG_GUEST),
 			
@@ -103,7 +103,6 @@ class SitemapPermission extends CMSPermission {
 	}
 }
 
-$mod = new SitemapModule();
-CMSRegistry::$instance->modules->Register($mod);
+Abricos::ModuleRegister(new SitemapModule());
 
 ?>

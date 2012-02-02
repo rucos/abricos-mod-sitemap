@@ -9,10 +9,10 @@
  */
 
 $brick = Brick::$builder->brick;
-$db = Brick::$db;
+$db = Abricos::$db;
 $param = $brick->param;
 
-$manager = Brick::$modules->GetModule('sitemap')->GetManager();
+$manager = Abricos::GetModule('sitemap')->GetManager();
 $mm = $manager->GetMenu(true);
 $hmenu = null;
 foreach ($mm->menu->child as $child){

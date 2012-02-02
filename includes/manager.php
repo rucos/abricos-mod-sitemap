@@ -10,7 +10,7 @@
 
 require_once 'dbquery.php';
 
-class SitemapManager {
+class SitemapManager extends Ab_ModuleManager {
 	
 	/**
 	 * CMSSitemapMenu
@@ -32,44 +32,22 @@ class SitemapManager {
 	 */
 	public $module = null;
 	
-	/**
-	 * Ядро
-	 * 
-	 * @var CMSRegistry
-	 */
-	public $registry = null;
-	/**
-	 * 
-	 * @var CMSDatabase
-	 */
-	public $db = null;
-	
-	public $user = null;
-	public $userid = 0;
-	
-	public function SitemapManager(SitemapModule $module){
-		
-		$core = $module->registry;
-		
-		$this->module = $module;
-		$this->registry = $core;
-		$this->db = $core->db;
-		
-		$this->user = $core->user->info;
-		$this->userid = $this->user['userid'];
+	public function __construct(SitemapModule $module){
+		parent::__construct($module);
 	}
+	
 	public function IsAdminRole(){
-		return $this->module->permission->CheckAction(SitemapAction::ADMIN) > 0;
+		return $this->IsRoleEnable(SitemapAction::ADMIN);
 	}
 	
 	public function IsWriteRole(){
 		if ($this->IsAdminRole()){ return true; }
-		return $this->module->permission->CheckAction(SitemapAction::WRITE) > 0;
+		return $this->IsRoleEnable(SitemapAction::WRITE);
 	}
 	
 	public function IsViewRole(){
 		if ($this->IsWriteRole()){ return true; }
-		return $this->module->permission->CheckAction(SitemapAction::VIEW) > 0;
+		return $this->IsRoleEnable(SitemapAction::VIEW);
 	}
 	
 	private $newmenuid = 0;
@@ -230,17 +208,17 @@ class SitemapManager {
 		}
 		if ($full){
 			if (is_null($this->menuFull)){
-				$this->menuFull = new CMSSitemapMenu($this->registry, true);
+				$this->menuFull = new CMSSitemapMenu(true);
 			}
 			$menu = $this->menuFull;
 		}else if (is_null($menu)){
 			if (is_null($this->menu)){
-				$this->menu = new CMSSitemapMenu($this->registry, false);
+				$this->menu = new CMSSitemapMenu(false);
 			}
 			$menu = $this->menu;
 		}
 		foreach ($mods as $modname){
-			$module = $this->registry->modules->GetModule($modname);
+			$module = Abricos::GetModule($modname);
 			if (!is_null($module)){
 				$module->BuildMenu($menu, $full);
 			}
@@ -248,7 +226,7 @@ class SitemapManager {
 		return $menu;
 	}
 	
-	public function GetPage(CMSAdress $adress){
+	public function GetPage(Ab_URI $adress){
 		$pagename = $adress->contentName;
 		$page = null;
 		$db = $this->db;
@@ -308,7 +286,7 @@ class SitemapManager {
 	 *
 	 * @param CMSSysBrick $brick - кирпич 
 	 */
-	public function BrickBuildFullMenu(CMSSysBrick $brick){
+	public function BrickBuildFullMenu(Ab_CoreBrick $brick){
 		$mm = $this->GetMenu(true);
 		
 		if (empty($mm->menu->child)){
@@ -347,13 +325,6 @@ class SitemapManager {
 class CMSSitemapMenu {
 	
 	/**
-	 * Ядро
-	 *
-	 * @var CMSRegistry
-	 */
-	public $registry = null;
-	
-	/**
 	 * Root menu item
 	 *
 	 * @var CMSSitemapMenuItem
@@ -367,9 +338,8 @@ class CMSSitemapMenu {
 	 */
 	public $menuLine = array();
 	
-	public function __construct(CMSRegistry $registry, $full = false){
-		$this->registry = $registry;
-		$db = $registry->db;
+	public function __construct($full = false){
+		$db = Abricos::$db;
 		$data = array();
 		$rows = SitemapQuery::MenuList($db);
 		while (($row = $db->fetch_array($rows))){
@@ -389,11 +359,11 @@ class CMSSitemapMenu {
 			$child = new CMSSitemapMenuItem($parent, $row['id'], $row['pid'], $row['tp'], $row['nm'], $row['tl'], $row['lnk'], $level+1);
 			$child->source = $row['source'];
 			if ($child->type == SitemapQuery::MENUTYPE_LINK){
-				if ($this->registry->adress->requestURI == $child->link){
+				if (Abricos::$adress->requestURI == $child->link){
 					$child->isSelected = true;
 				}
 			}else{
-				if (strpos($this->registry->adress->requestURI, $child->link) === 0){
+				if (strpos(Abricos::$adress->requestURI, $child->link) === 0){
 					$child->isSelected = true;
 				}
 			}

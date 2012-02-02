@@ -10,7 +10,7 @@
 
 $brick = Brick::$builder->brick;
 
-$modSitemap = Brick::$modules->GetModule('sitemap');
+$modSitemap = Abricos::GetModule('sitemap');
 $mm = $modSitemap->GetManager()->GetMenu(true);
 if (empty($mm->menu->child)){
 	$brick->content = "";

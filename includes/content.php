@@ -12,7 +12,7 @@
 
 // выборка контента из БД
 $brick = Brick::$builder->brick;
-$modSitemap = Brick::$modules->GetModule('sitemap');
+$modSitemap = Abricos::GetModule('sitemap');
 $page = $modSitemap->page;
 // $pid = -1;
 $manager = $modSitemap->GetManager();

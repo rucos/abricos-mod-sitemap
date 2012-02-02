@@ -11,7 +11,7 @@
 $brick = Brick::$builder->brick;
 $param = $brick->param;
 
-$manager = Brick::$modules->GetModule('sitemap')->GetManager();
+$manager = Abricos::GetModule('sitemap')->GetManager();
 $mm = $manager->GetMenu();
 
 $arr = array();

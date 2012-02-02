@@ -10,7 +10,7 @@
  */
 
 $brick = Brick::$builder->brick;
-$db = Brick::$db;
+$db = Abricos::$db;
 
 $pp = &$brick->param->param; 
 $pv = &$brick->param->var;

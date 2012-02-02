@@ -14,7 +14,7 @@ $param = $brick->param;
 $isFull = $param->param['full'] == 'true';
 $pViewLevel = intval($param->param['level']);
 $mods = explode("/",$param->param['mods']);
-$mm = CMSRegistry::$instance->modules->GetModule('sitemap')->GetManager()->GetMenu($isFull, $mods);
+$mm = Abricos::GetModule('sitemap')->GetManager()->GetMenu($isFull, $mods);
 
 if (empty($mm->menu->child)){
 	$brick->content = "";

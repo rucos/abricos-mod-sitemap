@@ -11,8 +11,8 @@
  */
 
 $charset = "CHARACTER SET 'utf8' COLLATE 'utf8_general_ci'";
-$updateManager = CMSRegistry::$instance->modules->updateManager; 
-$db = CMSRegistry::$instance->db;
+$updateManager = Ab_UpdateManager::$current; 
+$db = Abricos::$db;
 $pfx = $db->prefix;
 
 $isPrevVersionCore = $updateManager->serverVersion == '1.0.1';
@@ -139,7 +139,7 @@ if ( $updateManager->isUpdate('0.2.1') || $updateManager->serverVersion == '1.0.
 	");
 }
 if ( $updateManager->isUpdate('0.2.2')){
-	CMSRegistry::$instance->modules->GetModule('sitemap')->permission->Install();
+	Abricos::GetModule('sitemap')->permission->Install();
 }
 if ( $updateManager->isUpdate('0.2.3.1')){
 	

@@ -13,10 +13,10 @@
 
 $brick = Brick::$builder->brick;
 
-$mod = Brick::$modules->GetModule('sys');
+$mod = Abricos::GetModule('sys');
 $ds = $mod->getDataSet();
 
-$manager = Brick::$modules->GetModule('sitemap')->GetManager();
+$manager = Abricos::GetModule('sitemap')->GetManager();
 
 $ret = new stdClass();
 $ret->_ds = array();
