@@ -18,17 +18,15 @@ Component.requires = {
 		{name: 'sitemap', files: ['roles.js']}
 	]
 };
-Component.entryPoint = function(){
+Component.entryPoint = function(NS){
 	var Dom = YAHOO.util.Dom,
 		E = YAHOO.util.Event,
 		L = YAHOO.lang,
 		J = YAHOO.lang.JSON;
 	
-	var NS = this.namespace,
-		TMG = this.template;
+	var TMG = this.template;
+	var buildTemplate = this.buildTemplate;
 	
-	var API = NS.API;
-
 	if (!NS.data){
 		NS.data = new Brick.util.data.byid.DataSet('sitemap');
 	}
@@ -38,8 +36,6 @@ Component.entryPoint = function(){
 		Brick.mod.sys.data = new Brick.util.data.byid.DataSet('sys');
 	}
 	var DATAsys = Brick.mod.sys.data;
-	
-(function(){
 	
 	/**
 	 * Редактор страницы.
@@ -62,20 +58,15 @@ Component.entryPoint = function(){
 		this._mods = "";
 		
 		PageEditorPanel.superclass.constructor.call(this, {
-			overflow: true,
-			fixedcenter: true
+			overflow: true
 		});
 	};
-	YAHOO.extend(PageEditorPanel, Brick.widget.Panel, {
+	YAHOO.extend(PageEditorPanel, Brick.widget.Dialog, {
 		el: function(name){ return Dom.get(this._TId['pageeditor'][name]); },
 		elv: function(name){ return Brick.util.Form.getValue(this.el(name)); },
 		setelv: function(name, value){ Brick.util.Form.setValue(this.el(name), value); },
 		initTemplate: function(){
-			var TM = TMG.build('pageeditor,select,option,moditem'), 
-				T = TM.data, TId = TM.idManager;
-			this._TM = TM; this._T = T; this._TId = TId;
-			
-			return T['pageeditor'];
+			return buildTemplate(this, 'pageeditor,select,option,moditem').replace('pageeditor');
 		},
 		onLoad: function(){
 			new YAHOO.widget.TabView(this._TId['pageeditor']['tab']);
@@ -169,7 +160,6 @@ Component.entryPoint = function(){
 			 		this.setelv('pgname', 'index');
 				}
 			}
-			
 		},
 		onClick: function(el){
 			var TId = this._TId;
@@ -346,7 +336,7 @@ Component.entryPoint = function(){
 	
 	NS.PageEditorPanel = PageEditorPanel;
 	
-	API.showPageEditorPanelObj = function(param){
+	NS.API.showPageEditorPanelObj = function(param){
 		param = L.merge({
 			pageid: 0, 
 			withmenu: false, 
@@ -354,10 +344,10 @@ Component.entryPoint = function(){
 			isonlypage: false,
 			savecallback: null
 		}, param || {});
-		API.showPageEditorPanel(param.pageid, param.withmenu, param.parentmenuid, param.isonlypage, param.savecallback);
+		NS.API.showPageEditorPanel(param.pageid, param.withmenu, param.parentmenuid, param.isonlypage, param.savecallback);
 	};
 	
-	API.showPageEditorPanel = function(pageId, withMenu, parentMenuId, isOnlyPage, saveCallBack){
+	NS.API.showPageEditorPanel = function(pageId, withMenu, parentMenuId, isOnlyPage, saveCallBack){
 		NS.roles.load(function(){
 			var widget = new NS.PageEditorPanel(pageId, withMenu, parentMenuId, isOnlyPage);
 			widget.saveCallBack = saveCallBack;
@@ -405,10 +395,8 @@ Component.entryPoint = function(){
 			TM.getEl('mods.table').innerHTML = TM.replace('modstable', {'rows': lst});
 		}
 	});
-})();	
 	
 //Link Editor 
-(function(){
 
 	/**
 	 * Редактор ссылки.
@@ -495,5 +483,4 @@ Component.entryPoint = function(){
 		}
 	});
 	NS.LinkEditorPanel = LinkEditorPanel;
-})();
 };
