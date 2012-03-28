@@ -101,9 +101,9 @@ if ($updateManager->isInstall() && !$isPrevVersionCore){
 	$aboutmenuId = $db->insert_id();
 	
 	$db->query_write("
-		INSERT INTO `".$pfx."sys_page` (`menuid`, `contentid`, `pagename`, `title`, `language`, `metakeys`, `metadesc`, `usecomment`, `dateline`, `deldate`) VALUES
-		(0, ".$mainpageId.", 'index', '', 'ru', '', '', 0, ".TIMENOW.", 0),
-		(".$aboutmenuId.", ".$aboutpageId.", 'index', '', 'ru', '', '', 0, ".TIMENOW.", 0)
+		INSERT INTO `".$pfx."sys_page` (`menuid`, `contentid`, `pagename`, `title`, `language`, `metakeys`, `metadesc`, `usecomment`, `dateline`, `deldate`, `mods`) VALUES
+		(0, ".$mainpageId.", 'index', '', 'ru', '', '', 0, ".TIMENOW.", 0, ''),
+		(".$aboutmenuId.", ".$aboutpageId.", 'index', '', 'ru', '', '', 0, ".TIMENOW.", 0, '')
 	");
 }
 
