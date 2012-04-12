@@ -10,10 +10,13 @@
 .vmenu li {
 	list-style-type: none;
 }
-.vmenu a{
+.vmenu a {
 	border-bottom: 1px solid #EEF1F2;
 	display: block;
 	padding: 5px 0 5px 10px;
+}
+.vmenu a.last {
+	border-bottom: none;
 }
 .vmenu ul.lvl1 li a {
 	padding-left: 24pt;
@@ -151,4 +154,4 @@ ul.paginator em {
 
 ul.paginator .inactive	{
 	color: #ccc;
-	}
+}

@@ -30,7 +30,7 @@ if ($updateManager->isInstall() || $isPrevVersionCore){
 		  `descript` varchar(250) NOT NULL DEFAULT '' COMMENT 'Описание',
 		  `link` varchar(250) NOT NULL DEFAULT '' COMMENT 'Ссылка',
 		  `language` char(2) NOT NULL DEFAULT 'ru',
-		  `menuorder` int(4) unsigned NOT NULL default '0',
+		  `menuorder` int(4) unsigned NOT NULL default '0' COMMENT 'Сортировка',
 		  `level` int(2) unsigned NOT NULL default '0',
 		  `off` tinyint(1) unsigned NOT NULL default '0',
 		  `dateline` int(10) unsigned NOT NULL default '0',
@@ -63,8 +63,8 @@ if ($updateManager->isInstall() || $isPrevVersionCore){
 if ($updateManager->isInstall() && !$isPrevVersionCore){
 	
 	$mainpage = "<h1>Добро пожаловать!</h1>
-<p>Поздравляем! Платформа <a href='http://abricos.org'>Abricos</a> успешно установлена на ваш сайт.</p>
-<p>Спасибо за то, что выбрали наш продукт.</p>
+<p>Поздравляем! Платформа <a href='http://abricos.org' title='Система управления контентом (CMS), платформа интернет-приложений'>Абрикос</a> успешно установлена на ваш сайт.</p>
+<p>Спасибо, что выбрали наш продукт.</p>
 <p>С чего начать?</p>
 <h3>Изменение учетной записи пользователя по умолчанию.</h3>
 <p>По умолчанию в системе создается пользователь <strong>admin</strong>(пароль <strong>admin</strong>) с правами Администратора. Необходимо изменить эту учетную запись (установить новый пароль и сменить e-mail). Для этого:</p>
@@ -82,7 +82,7 @@ if ($updateManager->isInstall() && !$isPrevVersionCore){
 	");
 	$mainpageId = $db->insert_id();
 
-	$about = "<h1>О проекте</h1><p><a href='http://abricos.org'>Abricos</a> - это самая современная на сегодняшний день система управления web-контентом.</p>";
+	$about = "<h1>О проекте</h1><p><a href='http://abricos.org'>Абрикос</a> - это современная система управления web-контентом (CMS) и платформа интернет приложений.</p>";
 	$db->query_write("
 		INSERT INTO `".$pfx."content` (`body`, `dateline`, `deldate`, `modman`) VALUES
 		('".bkstr($about)."', ".TIMENOW.", 0, 'sitemap')
@@ -90,13 +90,15 @@ if ($updateManager->isInstall() && !$isPrevVersionCore){
 	$aboutpageId = $db->insert_id();
 	
 	$db->query_write("
-		INSERT INTO `".$pfx."sys_menu` (`parentmenuid`, `menutype`, `name`, `title`, `descript`, `link`, `language`, `menuorder`, `level`, `off`, `dateline`, `deldate`) VALUES
+		INSERT INTO `".$pfx."sys_menu` 
+		(`parentmenuid`, `menutype`, `name`, `title`, `descript`, `link`, `language`, `menuorder`, `level`, `off`, `dateline`, `deldate`) VALUES
 		(0, 1, '', 'Главная', 'Главная страница сайта Abricos', '/', 'ru', 0, 0, 0, 0, 0)
 	");
 	
 	$db->query_write("
-		INSERT INTO `".$pfx."sys_menu` (`parentmenuid`, `menutype`, `name`, `title`, `descript`, `link`, `language`, `menuorder`, `level`, `off`, `dateline`, `deldate`) VALUES
-		(0, 0, 'about', 'О проекте', '', '', 'ru', 0, 0, 0, 0, 0)
+		INSERT INTO `".$pfx."sys_menu` 
+		(`parentmenuid`, `menutype`, `name`, `title`, `descript`, `link`, `language`, `menuorder`, `level`, `off`, `dateline`, `deldate`) VALUES
+		(0, 0, 'about', 'О проекте', '', '', 'ru', 50, 0, 0, 0, 0)
 	");
 	$aboutmenuId = $db->insert_id();
 	
