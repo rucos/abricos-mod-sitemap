@@ -22,7 +22,7 @@ if (empty($mm->menu->child)){
 }
 
 if (!function_exists("sitemap_pub_menublock_out")){
-	function sitemap_pub_menublock_out(CMSSitemapMenuItem $menu, $param, $parent, $isroot = false, $notItems, $viewLevel = 0){
+	function sitemap_pub_menublock_out(SitemapMenuItem $menu, $param, $parent, $isroot = false, $notItems, $viewLevel = 0){
 		if ($viewLevel > 0 && ($menu->level > $viewLevel+1)){ 
 			return ""; 
 		}

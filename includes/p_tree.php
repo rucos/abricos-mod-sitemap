@@ -38,7 +38,7 @@ $result .= Brick::ReplaceVar($brick->param->var['column'], 'tree', $resultCols);
 
 $brick->param->var['result'] = $result;
 
-function Sitemap_BrickBuildTreeMenuGenerate(CMSSitemapMenuItem $menu, $param){
+function Sitemap_BrickBuildTreeMenuGenerate(SitemapMenuItem $menu, $param){
 	$lst = "";
 	foreach ($menu->child as $child){
 		$lst .= Brick::ReplaceVarByData($param->var["item"], array(

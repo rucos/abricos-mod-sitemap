@@ -12,10 +12,8 @@ var Component = new Brick.Component();
 Component.requires = {
 	yahoo: ['tabview', 'json', 'dragdrop'],
 	mod:[
-		// {name: 'sys', files: ['form.js','data.js','editor.js','container.js','permission.js']},
-		// TODO: Необходимо организовать сортировку запрашиваемых модулей, иначе в некоторых случаях возникают баги
 		{name: 'sys', files: ['form.js','editor.js','container.js']},
-		{name: 'sitemap', files: ['roles.js']}
+		{name: 'sitemap', files: ['lib.js']}
 	]
 };
 Component.entryPoint = function(NS){
@@ -69,10 +67,11 @@ Component.entryPoint = function(NS){
 			return buildTemplate(this, 'pageeditor,select,option,moditem').replace('pageeditor');
 		},
 		onLoad: function(){
-			new YAHOO.widget.TabView(this._TId['pageeditor']['tab']);
+			var TM = this._TM;
+			new YAHOO.widget.TabView(TM.getEl('pageeditor.tab'));
 
 			var Editor = Brick.widget.Editor;
-			this.editor = new Editor(this._TId['pageeditor']['editor'], {
+			this.editor = new Editor(TM.getEl('pageeditor.editor'), {
 				width: '750px', height: '250px', 'mode': Editor.MODE_VISUAL
 			});
 			
@@ -258,35 +257,24 @@ Component.entryPoint = function(NS){
 			this.close();
 		},
 		selectModule: function(){
-			var tables = {
-				'bricks': DATAsys.get('bricks', true)
-			};
-			var rows = tables['bricks'].getRows({tp: 0});
-			
-			var loaddata = function(tables, callback){
-				if (!DATAsys.isFill(tables)){
-					var ondsupdate = function(){
-						DATAsys.onComplete.unsubscribe(ondsupdate);
-						callback();
-					};
-					DATAsys.onComplete.subscribe(ondsupdate);
-					DATAsys.request();
-					return;
-				}
-				callback();
-			};
+
 			var __self = this;
-			loaddata(tables, function(){
-				new Mods(rows, function(id){
-					__self.addModule(rows.getById(id));
+			NS.initSitemapManager(function(man){
+				man.loadBrickList(function(list){
+					if (L.isNull(list)){ return; }
+					new Mods(function(id){
+						__self.addModule(id);
+					});
 				});
 			});
 		},
-		addModule: function(r){
+		addModule: function(id){
 			var o = this._mods == "" ? {} : J.parse(this._mods);
-			var di = r.cell;
-			if (!o[di['own']]){ o[di['own']] = {}; }
-			o[di['own']][di['nm']] = '';
+			var di = NS.sitemapManager.brickList.get(id);
+			
+			if (!o[di['mName']]){ o[di['mName']] = {}; }
+			
+			o[di['mName']][di['bName']] = '';
 			this._mods = J.stringify(o);
 			this.renderMods();
 		},
@@ -354,25 +342,29 @@ Component.entryPoint = function(NS){
 		});
 	};
 	
-	var Mods = function(rows, callback){
-		this.rows = rows;
+	var Mods = function(callback){
 		this.callback = callback;
 		Mods.superclass.constructor.call(this);
 	};
 	YAHOO.extend(Mods, Brick.widget.Dialog, {
-		el: function(name){ return Dom.get(TId['mods'][name]); },
+		el: function(name){ return Dom.get(this._TId['mods'][name]); },
 		elv: function(name){ return Brick.util.Form.getValue(this.el(name)); },
 		setelv: function(name, value){ Brick.util.Form.setValue(this.el(name), value); },
 		initTemplate: function(){
-			var TM = TMG.build('mods,modstable,modsrow'), 
-				T = TM.data, TId = TM.idManager;
-			this._TM = TM; this._T = T; this._TId = TId;
-
-			return T['mods'];
+			return buildTemplate(this, 'mods,modstable,modsrow').replace('mods');
+		},
+		onLoad: function(){
+			var TM = this._TM;
+			var lst = "";
+			NS.sitemapManager.brickList.foreach(function(di){
+				lst += TM.replace('modsrow', {
+					'id': di['id'], 'own': di['mName'], 'nm': di['bName']
+				});
+			});
+			TM.getEl('mods.table').innerHTML = TM.replace('modstable', {'rows': lst});
 		},
 		onClick: function(el){
-			var TId = this._TId;
-			var tp = TId['mods']; 
+			var TId = this._TId, tp = TId['mods']; 
 			switch(el.id){
 			case tp['bcancel']: this.close(); return true;
 			}
@@ -380,24 +372,14 @@ Component.entryPoint = function(NS){
 			var prefix = el.id.replace(/([0-9]+$)/, '');
 			var numid = el.id.replace(prefix, "");
 			
-			if (prefix == TId['modsrow']['select']+'-'){
+			if (prefix == (TId['modsrow']['select']+'-')){
 				this.callback(numid); this.close(); return true;
 			}
 			return false;
-		},
-		onLoad: function(){
-			var TM = this._TM;
-			var lst = "";
-			this.rows.foreach(function(row){
-				var di = row.cell;
-				lst += TM.replace('modsrow', {'id': di['id'], 'own': di['own'], 'nm': di['nm']});
-			});
-			TM.getEl('mods.table').innerHTML = TM.replace('modstable', {'rows': lst});
 		}
 	});
-	
-//Link Editor 
 
+	
 	/**
 	 * Редактор ссылки.
 	 * 

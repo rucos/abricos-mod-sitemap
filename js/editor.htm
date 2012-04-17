@@ -95,14 +95,13 @@
 </div>
 
 <!--{mods}-->
-<div class='hd'>Список модулей</div>
+<div class='hd'>Список доступных элементов шаблона модулей</div>
 <div class='bd'>
 	<div class="field linespace-1" style="width: 600px">
-		<h3>Доступные модули</h3>
 		<div id="{i#table}" style="height: 220px; overflow-y:auto;"></div>
 	</div>
 	<div class="buttons right">
-		<input id='{i#baddmod}' type="button" value="Отмена" />
+		<input id='{i#bcancel}' type="button" value="Отмена" />
 	</div>
 </div>
 
@@ -112,7 +111,6 @@
 		<tr>
 			<th>Модуль</th>
 			<th>Кирпич</th>
-			<th>Параметры</th>
 			<th></th>
 		</tr>
 	</thead>
@@ -123,7 +121,6 @@
 <tr>
 	<td>{v#own}</td>
 	<td>{v#nm}</td>
-	<td><input type="text" id="{i#prm}-{v#id}" style="width: 120px" /></td>
 	<td><a href="#" id="{i#select}-{v#id}">Выбрать</a></td>
 <tr>
 

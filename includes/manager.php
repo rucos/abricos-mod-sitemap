@@ -13,16 +13,16 @@ require_once 'dbquery.php';
 class SitemapManager extends Ab_ModuleManager {
 	
 	/**
-	 * CMSSitemapMenu
+	 * SitemapMenuList
 	 *
-	 * @var CMSSitemapMenu
+	 * @var SitemapMenuList
 	 */
 	private $menu = null;
 	
 	/**
-	 * CMSSitemapMenu
+	 * SitemapMenuList
 	 *
-	 * @var CMSSitemapMenu
+	 * @var SitemapMenuList
 	 */
 	private $menuFull = null;
 	
@@ -32,11 +32,28 @@ class SitemapManager extends Ab_ModuleManager {
 	 */
 	public $module = null;
 	
+	/**
+	 * @var SitemapManager
+	 */
+	public static $instance = null;
+	
+	private $_disableRoles = false;
+	
 	public function __construct(SitemapModule $module){
 		parent::__construct($module);
+		SitemapManager::$instance = $this;
+	}
+	
+	public function DisableRoles(){
+		$this->_disableRoles = true;
+	}
+	
+	public function EnableRoles(){
+		$this->_disableRoles = false;
 	}
 	
 	public function IsAdminRole(){
+		if ($this->_disableRoles){ return true; }
 		return $this->IsRoleEnable(SitemapAction::ADMIN);
 	}
 	
@@ -99,16 +116,26 @@ class SitemapManager extends Ab_ModuleManager {
 			case 'link': return $this->Link($p->id);
 			case 'page': return $this->Page($p->id);
 			case 'templates': return $this->TemplateList();
+			case 'bricks': return $this->BrickList();
 		}
 		
 		return null;
 	}
+	
+	public function AJAX($d){
+		switch($d->do){
+			case 'bricks': return $this->BrickList();
+		}
+		return null;
+	}
+	
 	
 	public function MenuAppend($d){
 		if (!$this->IsAdminRole()){ return null; }
 		// создание страницы в два этапа: 1-создание меню, 2-создание страницы в этом меню
 		$this->newmenuid = SitemapQuery::MenuCreate($this->db, $d);
 		$this->createmenu = true;
+		return $this->newmenuid;
 	}
 	
 	public function MenuUpdate($d){
@@ -150,9 +177,10 @@ class SitemapManager extends Ab_ModuleManager {
 		if (!$this->IsAdminRole()){ return null; }
 		SitemapQuery::PageRemove($this->db, $pageid);
 	}
-	public function Page($pageid){
+	public function Page($pageid, $retArray = false){
 		if (!$this->IsAdminRole()){ return null; }
-		return SitemapQuery::PageById($this->db, $pageid);
+		
+		return SitemapQuery::PageById($this->db, $pageid, $retArray);
 	}
 	
 	public function LinkAppend($d){
@@ -191,7 +219,37 @@ class SitemapManager extends Ab_ModuleManager {
 		return $rows;
 	}
 	
+	public function BrickList(){
+		if (!$this->IsAdminRole()){ return null; }
+		
+		Abricos::$instance->modules->RegisterAllModule();
 	
+		$id = 1;
+		$brickdb = array();
+	
+		$mods = Abricos::$instance->modules->GetModules();
+		foreach ($mods as $module){
+			$files = array();
+			$files1 = globa(CWD."/modules/".$module->name."/brick/*.html");
+				
+			if (!empty($files1)){
+				foreach ($files1 as $file){
+					array_push($files, $file);
+				}
+			}
+			foreach ($files as $file){
+				$bname = basename($file, ".html");
+				$key = $module->name.".".$bname;
+				
+				array_push($brickdb, array(
+					"id" => $id++,
+					"md" => $module->name, 
+					"bk" => $bname
+				));
+			}
+		}
+		return $brickdb;
+	}
 	
 	/**
 	 * Получить менеджер управления меню
@@ -199,7 +257,7 @@ class SitemapManager extends Ab_ModuleManager {
 	 * @param boolean $full
 	 * @param array $mods список модулей участвующих в формировании меню
 	 * 
-	 * @return CMSSitemapMenu
+	 * @return SitemapMenuList
 	 */
 	public function GetMenu($full = false, $mods = array()){
 		$menu = null;
@@ -208,12 +266,12 @@ class SitemapManager extends Ab_ModuleManager {
 		}
 		if ($full){
 			if (is_null($this->menuFull)){
-				$this->menuFull = new CMSSitemapMenu(true);
+				$this->menuFull = new SitemapMenuList(true);
 			}
 			$menu = $this->menuFull;
 		}else if (is_null($menu)){
 			if (is_null($this->menu)){
-				$this->menu = new CMSSitemapMenu(false);
+				$this->menu = new SitemapMenuList(false);
 			}
 			$menu = $this->menu;
 		}
@@ -270,9 +328,9 @@ class SitemapManager extends Ab_ModuleManager {
 	/**
 	 * Подсчет кол-ва вложенных в меню элементов
 	 *
-	 * @param CMSSitemapMenuItem $menu
+	 * @param SitemapMenuItem $menu
 	 */
-	public static function ChildMenuItemCount(CMSSitemapMenuItem $menu){
+	public static function ChildMenuItemCount(SitemapMenuItem $menu){
 		$count = 0;
 		foreach ($menu->child as $child){
 			$count++;
@@ -296,7 +354,7 @@ class SitemapManager extends Ab_ModuleManager {
 		$brick->param->var['result'] = SitemapManager::BrickBuildFullMenuGenerate($mm->menu, $brick->param);
 	}
 	
-	private function BrickBuildFullMenuGenerate(CMSSitemapMenuItem $menu, $param){
+	private function BrickBuildFullMenuGenerate(SitemapMenuItem $menu, $param){
 		$prefix = ($menu->isSelected && $menu->id != 0) ? "sel" : "";
 		
 		$t = Brick::ReplaceVarByData($param->var['item'.$prefix], array(
@@ -322,12 +380,12 @@ class SitemapManager extends Ab_ModuleManager {
  * @package Abricos
  * @subpackage Sitemap
  */
-class CMSSitemapMenu {
+class SitemapMenuList {
 	
 	/**
 	 * Root menu item
 	 *
-	 * @var CMSSitemapMenuItem
+	 * @var SitemapMenuItem
 	 */
 	public $menu = null;
 	
@@ -347,16 +405,16 @@ class CMSSitemapMenu {
 			$row['pid'] = intval($row['pid']);
 			$data[$row['id']] = $row;
 		}
-		$this->menu = new CMSSitemapMenuItem(null, 0, -1, 0, 'root', 'root', '/', 0);
+		$this->menu = new SitemapMenuItem(null, 0, -1, 0, 'root', 'root', '/', 0);
 		array_push($this->menuLine, $this->menu);
 		$this->Build($this->menu, $data, 0, $full);
 	}
 	
-	public function Build(CMSSitemapMenuItem $parent, $data, $level, $full){
+	public function Build(SitemapMenuItem $parent, $data, $level, $full){
 		$lastChildMenu = null;
 		foreach ($data as $row){
 			if ($row['pid'] != $parent->id){ continue; }
-			$child = new CMSSitemapMenuItem($parent, $row['id'], $row['pid'], $row['tp'], $row['nm'], $row['tl'], $row['lnk'], $level+1);
+			$child = new SitemapMenuItem($parent, $row['id'], $row['pid'], $row['tp'], $row['nm'], $row['tl'], $row['lnk'], $level+1);
 			$child->source = $row['source'];
 			if ($child->type == SitemapQuery::MENUTYPE_LINK){
 				if (Abricos::$adress->requestURI == $child->link){
@@ -424,10 +482,11 @@ class CMSSitemapMenu {
 
 /**
  * Элемент меню 
+ * 
  * @package Abricos 
  * @subpackage Sitemap
  */
-class CMSSitemapMenuItem {
+class SitemapMenuItem {
 	
 	public $id;
 	public $pid;
@@ -470,5 +529,8 @@ class CMSSitemapMenuItem {
 		$this->level = $level;
 	}
 }
+
+class CMSSitemapMenu extends SitemapMenuList {}
+class CMSSitemapMenuItem extends SitemapMenuItem {}
 
 ?>

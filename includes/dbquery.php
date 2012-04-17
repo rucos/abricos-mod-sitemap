@@ -132,7 +132,7 @@ class SitemapQuery {
 		}
 	}
 	
-	public static function PageById(Ab_Database $db, $pageid){
+	public static function PageById(Ab_Database $db, $pageid, $retArray = false){
 		$sql = "
 			SELECT
 				".SitemapQuery::FIELDS_PAGE." 
@@ -141,7 +141,8 @@ class SitemapQuery {
 			WHERE a.pageid=".bkint($pageid)."
 			LIMIT 1
 		";
-		return $db->query_read($sql);
+
+		return $retArray ? $db->query_first($sql) : $db->query_read($sql);
 	}
 	
 	public static function PageList(Ab_Database $db){
@@ -165,13 +166,14 @@ class SitemapQuery {
 	public static function MenuCreate(Ab_Database $db, $d){
 		$sql = "
 			INSERT INTO ".$db->prefix."sys_menu 
-			(parentmenuid, name, link, title, descript, menutype, off) VALUES (
+			(parentmenuid, name, link, title, descript, menutype, menuorder, off) VALUES (
 				".bkint($d->pid).", 
 				'".bkstr($d->nm)."', 
 				'".bkstr($d->lnk)."', 
 				'".bkstr($d->tl)."',
 				'".bkstr($d->dsc)."', 
 				".bkint($d->tp).",
+				".bkint($d->ord).",
 				".bkint($d->off)."
 			)
 		";
