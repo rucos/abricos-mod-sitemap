@@ -49,6 +49,11 @@ class SitemapModule extends Ab_Module {
 	}
 	
 	public function GetContentName(){
+		$adress = Abricos::$adress;
+		if ($adress->level >= 1 && $adress->dir[0] == 'sitemap'){
+			return 'sitemap';
+		}
+		
 		$page = $this->GetManager()->GetPage($this->registry->adress);
 
 		if (is_null($page)){
