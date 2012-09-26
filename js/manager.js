@@ -244,7 +244,7 @@ Component.entryPoint = function(NS){
 			var img = Dom.get(TId['mapitem']['expand']+'-'+id);
 			if (typeof status == 'undefined'){ status = container.style.display == 'none'; }
 			container.style.display = status ? '' : 'none';
-			img.src = Brick.util.Language.getc('sitemap.img.'+(status?'collapse':'expand'));
+			img.src = Brick.util.Language.getc('mod.sitemap.img.'+(status?'collapse':'expand'));
 			var node = this.root.find(id);
 			node.options.expand = status;
 		},

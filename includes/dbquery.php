@@ -49,7 +49,7 @@ class SitemapQuery {
 				'".bkstr($d->nm)."',
 				".bkint($d->mid).",
 				'".bkstr($contentid)."',
-				'".LNG."',
+				'".Abricos::$LNG."',
 				'".bkstr($d->tl)."',
 				'".bkstr($d->mks)."',
 				'".bkstr($d->mdsc)."',
@@ -122,7 +122,7 @@ class SitemapQuery {
 				".SitemapQuery::FIELDS_PAGE." 
 			FROM ".$db->prefix."sys_page a
 			LEFT JOIN ".$db->prefix."content c ON a.contentid=c.contentid
-			WHERE a.menuid=".bkint($menuid)." AND a.pagename='".bkstr($pagename)."'
+			WHERE a.menuid=".bkint($menuid)." AND a.pagename='".bkstr($pagename)."' AND a.language='".Abricos::$LNG."'
 			LIMIT 1
 		";
 		if ($returnTypeRow){
@@ -158,7 +158,7 @@ class SitemapQuery {
 				contentid as cid,
 				pagename as nm
 			FROM ".$db->prefix."sys_page
-			WHERE deldate=0
+			WHERE deldate=0 AND language='".Abricos::$LNG."'
 		";
 		return $db->query_read($sql);
 	}
@@ -166,7 +166,7 @@ class SitemapQuery {
 	public static function MenuCreate(Ab_Database $db, $d){
 		$sql = "
 			INSERT INTO ".$db->prefix."sys_menu 
-			(parentmenuid, name, link, title, descript, menutype, menuorder, off) VALUES (
+			(parentmenuid, name, link, title, descript, menutype, menuorder, off, language) VALUES (
 				".bkint($d->pid).", 
 				'".bkstr($d->nm)."', 
 				'".bkstr($d->lnk)."', 
@@ -174,7 +174,8 @@ class SitemapQuery {
 				'".bkstr($d->dsc)."', 
 				".bkint($d->tp).",
 				".bkint($d->ord).",
-				".bkint($d->off)."
+				".bkint($d->off).",
+				'".Abricos::$LNG."'
 			)
 		";
 		$db->query_write($sql);
@@ -218,7 +219,7 @@ class SitemapQuery {
 			SELECT
 				".SitemapQuery::FIELDS_MENU." 
 			FROM ".$db->prefix."sys_menu
-			WHERE deldate=0 AND (".implode(" OR ", $names).")
+			WHERE deldate=0 AND (".implode(" OR ", $names).") AND language='".Abricos::$LNG."'
 			ORDER BY parentmenuid
 		";
 		return $db->query_read($sql);
@@ -229,7 +230,7 @@ class SitemapQuery {
 			SELECT
 				".SitemapQuery::FIELDS_MENU." 
 			FROM ".$db->prefix."sys_menu
-			WHERE deldate=0 ".($withOff ? "" : " AND off=0")."
+			WHERE deldate=0 ".($withOff ? "" : " AND off=0")." AND language='".Abricos::$LNG."'
 			ORDER BY menuorder
 		";
 		return $db->query_read($sql);

@@ -1,10 +1,12 @@
-Brick.util.Language.add('ru',{'mod': {'sitemap':{
+Brick.util.Language.add('ru',{'mod': {'{C#MODNAME}':{
 	'title': 'Структура сайта',
-	'roles':{
+	'roles': {
 		'10': 'Чтение',
 		'30': 'Запись',
 		'40': 'Модерирование',
 		'50': 'Администрирование'
 	},
-	'cp':{'title': 'Структура сайта' }
+	'cp': {
+		'title': 'Структура сайта'
+	}
 }}});

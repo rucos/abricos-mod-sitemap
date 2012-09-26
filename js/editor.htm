@@ -1,75 +1,74 @@
-<!--{pageeditor}-->
-<div class='hd'>{#sitemap.pageeditor.hd}</div>
+<!--{pageeditor}--><div class='hd'>{#mod.sitemap.pageeditor.hd}</div>
 <div class='bd'>
 	<div class="buttons-top right">
-		<input id='{i#bsave}' type="button" value="{#sitemap.pageeditor.bsave}" />
-		<input id='{i#bcancel}' type="button" value="{#sitemap.pageeditor.bcancel}" />
+		<input id='{i#bsave}' type="button" value="{#mod.sitemap.pageeditor.bsave}" />
+		<input id='{i#bcancel}' type="button" value="{#mod.sitemap.pageeditor.bcancel}" />
 	</div>
 	<div class="field linespace-1" style="width: 790px">
 	
 	<div id="{i#tab}" class="yui-navset">
 		<ul class="yui-nav">
-			<li class="selected"><a href="#{i#tabbody}"><em>Страница</em></a></li>
-	    <li><a href="#{i#tabmeta}"><em>Дополнительно</em></a></li>
+			<li class="selected"><a href="#{i#tabbody}"><em>{#mod.sitemap.editor.pageeditor.1}</em></a></li>
+	    <li><a href="#{i#tabmeta}"><em>{#mod.sitemap.editor.pageeditor.2}</em></a></li>
 		</ul>            
 	  <div class="yui-content">
 		  <div id="{i#tabbody}">
 				<div id="{i#menucont}" style="display: none;">
-					<h3>{#sitemap.pageeditor.hd2}</h3>
+					<h3>{#mod.sitemap.pageeditor.hd2}</h3>
 					<table class="fields"><tbody>
 					<tr>
-						<td>{#sitemap.pageeditor.title}</td>
+						<td>{#mod.sitemap.pageeditor.title}</td>
 						<td><input type="text" id="{i#mtitle}" style="width: 400px" /></td>
 					</tr>
 					<tr>
-						<td>{#sitemap.pageeditor.descr}</td>
+						<td>{#mod.sitemap.pageeditor.descr}</td>
 						<td><input type="text" id="{i#mdesc}" style="width: 400px" /></td>
 					</tr>
 					<tr>
-						<td>{#sitemap.pageeditor.name}</td>
+						<td>{#mod.sitemap.pageeditor.name}</td>
 						<td>
 							<input type="text" id="{i#mname}" style="width: 400px" />
-							<span class="dsc">{#sitemap.pageeditor.namedesc}</span>
+							<span class="dsc">{#mod.sitemap.pageeditor.namedesc}</span>
 						</td>
 					</tr>
 					<tr>
 						<td>Отображение в меню</td>
 						<td>
 							<input type="checkbox" id="{i#moff}" />
-							<label for="{i#moff}">скрыть</label>
+							<label for="{i#moff}">{#mod.sitemap.editor.pageeditor.3}</label>
 						</td>
 					</tr>
 					</tbody></table>
 				</div>
-				<h3>{#sitemap.pageeditor.page}</h3>
+				<h3>{#mod.sitemap.pageeditor.page}</h3>
 				<p id="{i#pgnamecont}">
-					{#sitemap.pageeditor.pagename}<input type="text" id="{i#pgname}" style="width: 400px" />
+					{#mod.sitemap.pageeditor.pagename}<input type="text" id="{i#pgname}" style="width: 400px" />
 				</p>
 				<textarea id="{i#editor}" style="width: 750px; height: 300px"></textarea>
-				<h3>Модули</h3>
+				<h3>{#mod.sitemap.editor.pageeditor.4}</h3>
 				<div id="{i#modlist}" style="clear: both;" >
 				</div>
 				<div style="clear: both;"></div>
 				<div class="right" style="margin-top: 10px;">
-					<input id='{i#baddmod}' type="button" value="Добавить" />
+					<input id='{i#baddmod}' type="button" value="{#mod.sitemap.editor.pageeditor.5}" />
 				</div>
 			</div>
 			<div id="{i#tabmeta}">
-				<h3>{#sitemap.pageeditor.meta}</h3>
+				<h3>{#mod.sitemap.pageeditor.meta}</h3>
 				<p>
-					{#sitemap.pageeditor.metatitle}<br />
+					{#mod.sitemap.pageeditor.metatitle}<br />
 					<input type="text" id="{i#pgtitle}" style="width: 400px" />
 				</p>
 				<p>
-					{#sitemap.pageeditor.keywords}<br />
+					{#mod.sitemap.pageeditor.keywords}<br />
 					<textarea id="{i#pgkeys}" style="width: 500px"></textarea>
 				</p>
 				<p>
-					{#sitemap.pageeditor.description}<br />
+					{#mod.sitemap.pageeditor.description}<br />
 					<textarea id="{i#pgdesc}" style="width: 500px"></textarea>
 				</p>
 				<div>
-					<h3>Шаблон</h3>
+					<h3>{#mod.sitemap.editor.pageeditor.6}</h3>
 					<p id="{i#templates}"></p>
 				</div>
 			</div>
@@ -77,25 +76,17 @@
 		</div>
 	</div>
 </div>
-
-<!--{select}-->
-<select id="{i#id}">{v#list}</select>
-
-<!--{option}-->
-<option value="{v#id}">{v#tl}</option>
-
-<!--{moditem}-->
-<div style="float: left; text-align: center; margin-left: 5px">
+<!--{select}--><select id="{i#id}">{v#list}</select>
+<!--{option}--><option value="{v#id}">{v#tl}</option>
+<!--{moditem}--><div style="float: left; text-align: center; margin-left: 5px">
 	<span>{v#own}</span><br />
 	<span>{v#nm}</span><br />
 	<span>
-		<a href="#" id="{i#insert}-{v#id}">Вставить</a>&nbsp;
-		<a href="#" id="{i#remove}-{v#id}">Удалить</a>
+		<a href="#" id="{i#insert}-{v#id}">{#mod.sitemap.editor.moditem.1}</a>&nbsp;
+		<a href="#" id="{i#remove}-{v#id}">{#mod.sitemap.editor.moditem.2}</a>
 	</span>	
 </div>
-
-<!--{mods}-->
-<div class='hd'>Список доступных элементов шаблона модулей</div>
+<!--{mods}--><div class='hd'>{#mod.sitemap.editor.mods.1}</div>
 <div class='bd'>
 	<div class="field linespace-1" style="width: 600px">
 		<div id="{i#table}" style="height: 220px; overflow-y:auto;"></div>
@@ -104,46 +95,39 @@
 		<input id='{i#bcancel}' type="button" value="Отмена" />
 	</div>
 </div>
-
-<!--{modstable}-->
-<table class="bk-table-def" style="width: 100%">
+<!--{modstable}--><table class="bk-table-def" style="width: 100%">
 	<thead>
 		<tr>
-			<th>Модуль</th>
-			<th>Кирпич</th>
+			<th>{#mod.sitemap.editor.modstable.1}</th>
+			<th>{#mod.sitemap.editor.modstable.2}</th>
 			<th></th>
 		</tr>
 	</thead>
 	<tbody>{v#rows}</tbody>
 </table>
-
-<!--{modsrow}-->
-<tr>
+<!--{modsrow}--><tr>
 	<td>{v#own}</td>
 	<td>{v#nm}</td>
-	<td><a href="#" id="{i#select}-{v#id}">Выбрать</a></td>
+	<td><a href="#" id="{i#select}-{v#id}">{#mod.sitemap.editor.modsrow.1}</a></td>
 <tr>
-
-<!--{linkeditor}-->
-<div class='hd'>{#sitemap.linkeditor.hd}</div>
+<!--{linkeditor}--><div class='hd'>{#mod.sitemap.linkeditor.hd}</div>
 <div class='bd'>
 	<div class="field linespace-1" style="width: 600px">
 		<p>
-			{#sitemap.linkeditor.hd2}
+			{#mod.sitemap.linkeditor.hd2}
 			<input type="text" id="{i#mtitle}" style="width: 400px" />	
 		</p>
 		<p>
-			{#sitemap.linkeditor.descr}
+			{#mod.sitemap.linkeditor.descr}
 			<input type="text" id="{i#mdesc}" style="width: 400px" />
 		</p>
 		<p>
-			{#sitemap.linkeditor.link}
+			{#mod.sitemap.linkeditor.link}
 			<input type="text" id="{i#mlink}" style="width: 400px" />
 		</p>
 	</div>
 	<div class="buttons right">
-		<input id='{i#bsave}' type="button" value="{#sitemap.linkeditor.bsave}" />
-		<input id='{i#bcancel}' type="button" value="{#sitemap.linkeditor.bcancel}" />
+		<input id='{i#bsave}' type="button" value="{#mod.sitemap.linkeditor.bsave}" />
+		<input id='{i#bcancel}' type="button" value="{#mod.sitemap.linkeditor.bcancel}" />
 	</div>
 </div>
-

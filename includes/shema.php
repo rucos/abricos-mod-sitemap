@@ -64,10 +64,12 @@ if ($updateManager->isInstall() && !$isPrevVersionCore){
 	
 	$modBosExs = file_exists(CWD."/modules/bos/module.php");
 
-	$mainpage = "
+	if (Abricos::$LNG == 'ru'){
+		
+		$mainpage = "
 <h2>Добро пожаловать!</h2>
 
-<p>Поздравляем! Платформа <a href='http://abricos.org' title='Система управления контентом (CMS), платформа интернет-приложений'>Абрикос</a> успешно установлена на Ваш сайт.</p>
+<p>Поздравляем! Платформа <a href='http://ru.abricos.org' title='Система управления контентом (CMS), платформа интернет-приложений'>Абрикос</a> успешно установлена на Ваш сайт.</p>
 
 <p>С чего начать?</p>
 
@@ -76,27 +78,27 @@ if ($updateManager->isInstall() && !$isPrevVersionCore){
 Необходимо установить новый пароль и e-mail адрес на эту учетную запись. 
 Для этого авторизуйтесь под учетной записью <i>admin</i>, пароль <i>admin</i> и  
 перейдите в ";
-	
-	if ($modBosExs){
-		$mainpage .= "<a href='/bos/#app=uprofile/ws/showws/'>профиль пользователя</a>";
-	}else{
-		$mainpage .= "<a href='/user/'>Панель управления</a> -&gt; раздел 'Профиль пользователя'";
-	}
-	
-	$mainpage .= " 
+		
+		if ($modBosExs){
+			$mainpage .= "<a href='/bos/#app=uprofile/ws/showws/'>профиль пользователя</a>";
+		}else{
+			$mainpage .= "<a href='/user/'>Панель управления</a> -&gt; раздел 'Профиль пользователя'";
+		}
+		
+		$mainpage .= " 
 для редактирования.</p>
 
 <h4>Базовые настройки сайта</h4>
 <p>
-	 ";
-	
-	if ($modBosExs){
-		$mainpage .= "<a href='/bos/#app=user/board/showBoardPanel'>Панель управления</a>";
-	}else{
-		$mainpage .= "<a href='/user/'>Панель управления</a>";
-	}
-	 
-	 $mainpage .= "
+		 ";
+		
+		if ($modBosExs){
+			$mainpage .= "<a href='/bos/#app=user/board/showBoardPanel'>Панель управления</a>";
+		}else{
+			$mainpage .= "<a href='/user/'>Панель управления</a>";
+		}
+		 
+		 $mainpage .= "
  - это основной инструмент администратора сайта. <br />
 
 Для настройки сайта и управления его содержанием Вам понадобятся как минимум две вкладки: <br />
@@ -110,11 +112,61 @@ if ($updateManager->isInstall() && !$isPrevVersionCore){
 	
 <h3>Дополнительная информация</h3>
 <p>
-	<a href='http://abricos.org' title='Платформы Абрикос - система управления сайтом, WebOS'>Официальный сайт платформы Абрикос</a><br />
-	<a href='http://abricos.org/mods/' title='Интернет-магазин, Блог, Новости, Менеджер задач, Финансы (домашняя бухгалтерия) и пр.'>Дополнительные модули к платформе Абрикос</a><br />
-	<a href='http://forum.abricos.org' title='Форум'>Форум по платформе Абрикос</a><br />
+	<a href='http://ru.abricos.org' title='Платформы Абрикос - система управления сайтом, WebOS'>Официальный сайт платформы Абрикос</a><br />
+	<a href='http://ru.abricos.org/mods/' title='Интернет-магазин, Блог, Новости, Менеджер задач, Финансы (домашняя бухгалтерия) и пр.'>Дополнительные модули к платформе Абрикос</a><br />
+	<a href='http://ru.abricos.org/forum/' title='Форум'>Форум по платформе Абрикос</a><br />
 </p>
-	";
+		";
+	} else {
+		$mainpage = "
+<h2>Welcome!</h2>
+
+<p>Congratulations! <a href='http://abricos.org' title=''>Abricos Platform</a> has been successfully installed on your site.</p>
+
+<p>Where to start?</p>
+
+<h4>For security reasons, change the password for the account <i>admin</i></h4>
+<pBy default, the system creates an administrative user <i>admin</i>.
+You need to install the new password and e-mail address on the account. 
+To do this, log in using login <i>admin</i>, password <i>admin</i> and go to your ";
+		if ($modBosExs){
+			$mainpage .= "<a href='/bos/#app=uprofile/ws/showws/'>user profile </a>";
+		}else{
+			$mainpage .= "<a href='/user/'>Control Panel</a> -&gt; section 'User Profile'";
+		}
+		
+		$mainpage .= "
+ to edit.</p>
+
+<h4>Basic configuration of the site</h4>
+<p>
+		";
+		
+		if ($modBosExs){
+			$mainpage .= "<a href='/bos/#app=user/board/showBoardPanel'>Control Panel</a>";
+		}else{
+			$mainpage .= "<a href='/user/'>Control Panel</a>";
+		}
+			
+		$mainpage .= "
+- is the main tool the site administrator. <br />
+
+To set up the site and manage the content you want at least two tabs: <br />
+
+<i>General Settings</i> - allows you to edit the name, a short description, e-mail administrator, site style, etc.; <br />
+
+<i>Website Structure</i> - you can create and edit site menu items, while managing the sections and subsections of the site..
+</p>
+
+<h3>Additional information</h3>
+<p>
+<a href='http://abricos.org' title=''>Official Website</a><br />
+<a href='http://abricos.org/mods/' title=''>Additional modules</a><br />
+<a href='http://abricos.org/forum/' title='Forum'>Forum</a><br />
+</p>
+		";
+		
+	}
 	
 	$db->query_write("
 		INSERT INTO `".$pfx."content` (`body`, `dateline`, `deldate`, `modman`) VALUES
@@ -122,30 +174,50 @@ if ($updateManager->isInstall() && !$isPrevVersionCore){
 	");
 	$mainpageId = $db->insert_id();
 
-	$about = "<h1>О проекте</h1><p><a href='http://abricos.org'>Абрикос</a> - это современная система управления web-контентом (CMS) и платформа интернет приложений.</p>";
+	if (Abricos::$LNG == 'ru'){
+		$about = "<h2>О проекте</h2><p><a href='http://ru.abricos.org'>Абрикос</a> - это современная система управления web-контентом (CMS) и платформа интернет приложений.</p>";
+		
+	}else{
+		$about = "<h2>About</h2><p><a href='http://abricos.org'>Abricos Platform</a> - this is a Content Management System (CMS) and Web Application Platform.</p>";
+	}
 	$db->query_write("
 		INSERT INTO `".$pfx."content` (`body`, `dateline`, `deldate`, `modman`) VALUES
 		('".bkstr($about)."', ".TIMENOW.", 0, 'sitemap')
 	");
 	$aboutpageId = $db->insert_id();
 	
-	$db->query_write("
-		INSERT INTO `".$pfx."sys_menu` 
-		(`parentmenuid`, `menutype`, `name`, `title`, `descript`, `link`, `language`, `menuorder`, `level`, `off`, `dateline`, `deldate`) VALUES
-		(0, 1, '', 'Главная', 'Главная страница сайта Abricos', '/', 'ru', 0, 0, 0, 0, 0)
-	");
+
+	if (Abricos::$LNG == 'ru'){
+		$db->query_write("
+			INSERT INTO `".$pfx."sys_menu` 
+			(`parentmenuid`, `menutype`, `name`, `title`, `descript`, `link`, `language`, `menuorder`, `level`, `off`, `dateline`, `deldate`) VALUES
+			(0, 1, '', 'Главная', 'Главная страница сайта Abricos', '/', '".Abricos::$LNG."', 0, 0, 0, 0, 0)
+		");
+		$db->query_write("
+			INSERT INTO `".$pfx."sys_menu` 
+			(`parentmenuid`, `menutype`, `name`, `title`, `descript`, `link`, `language`, `menuorder`, `level`, `off`, `dateline`, `deldate`) VALUES
+			(0, 0, 'about', 'О проекте', '', '', '".Abricos::$LNG."', 50, 0, 0, 0, 0)
+		");
+		$aboutmenuId = $db->insert_id();
+	}else{
+		$db->query_write("
+			INSERT INTO `".$pfx."sys_menu`
+			(`parentmenuid`, `menutype`, `name`, `title`, `descript`, `link`, `language`, `menuorder`, `level`, `off`, `dateline`, `deldate`) VALUES
+			(0, 1, '', 'Home', 'Home Page', '/', '".Abricos::$LNG."', 0, 0, 0, 0, 0)
+		");
+		$db->query_write("
+			INSERT INTO `".$pfx."sys_menu` 
+			(`parentmenuid`, `menutype`, `name`, `title`, `descript`, `link`, `language`, `menuorder`, `level`, `off`, `dateline`, `deldate`) VALUES
+			(0, 0, 'about', 'About', '', '', '".Abricos::$LNG."', 50, 0, 0, 0, 0)
+		");
+		$aboutmenuId = $db->insert_id();
+	}
 	
-	$db->query_write("
-		INSERT INTO `".$pfx."sys_menu` 
-		(`parentmenuid`, `menutype`, `name`, `title`, `descript`, `link`, `language`, `menuorder`, `level`, `off`, `dateline`, `deldate`) VALUES
-		(0, 0, 'about', 'О проекте', '', '', 'ru', 50, 0, 0, 0, 0)
-	");
-	$aboutmenuId = $db->insert_id();
 	
 	$db->query_write("
 		INSERT INTO `".$pfx."sys_page` (`menuid`, `contentid`, `pagename`, `title`, `language`, `metakeys`, `metadesc`, `usecomment`, `dateline`, `deldate`, `mods`) VALUES
-		(0, ".$mainpageId.", 'index', '', 'ru', '', '', 0, ".TIMENOW.", 0, ''),
-		(".$aboutmenuId.", ".$aboutpageId.", 'index', '', 'ru', '', '', 0, ".TIMENOW.", 0, '')
+		(0, ".$mainpageId.", 'index', '', '".Abricos::$LNG."', '', '', 0, ".TIMENOW.", 0, ''),
+		(".$aboutmenuId.", ".$aboutpageId.", 'index', '', '".Abricos::$LNG."', '', '', 0, ".TIMENOW.", 0, '')
 	");
 }
 
