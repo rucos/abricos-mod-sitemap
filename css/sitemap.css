@@ -86,9 +86,27 @@ html .vmenuf ul li a.smvm-opcl {
 }
 
 /* * * Горизонтальное меню - полное * * */
+.hmenuf {
+	position: relative;
+}
 .hmenuf .hmenufline li {
 	float: left;
 	margin-right: 10px;
+}
+.hmenuf .vmenuf {
+	position: absolute;
+}
+.hmenuf .vmenuf .wrap {
+	position: relative;
+}
+.hmenuf .vmenuf .closebtn {
+	position: absolute; top: 7px; right: 7px;
+}
+.hmenuf .vmenuf .closebtn a {
+	background: url("../images/close.png") no-repeat scroll 50% 50% transparent;
+	display: block;
+	height: 13px;
+	width: 13px;
 }
 
 /** 

@@ -8,7 +8,7 @@
 	</ul>
 [/bkvar]
 [bkvar=item]
-	<li class="{v#sel} level-{v#lvl}">
+	<li id="smvm-{v#id}-li" class="{v#sel} level-{v#lvl}">
 		<a id="smvm-{v#id}" class="smvm-opcl" href="{v#link}"></a>
 		<a id="smvmtl-{v#id}" class="smvmtl-opcl {v#sel}" href="{v#link}" title="{v#tl}">{v#tl}</a>
 		{v#child}
@@ -26,10 +26,17 @@
 <div class="hmenuf">
 	<div class="hmenufline">
 		{v#result}
+		<div class="clear"></div>
 	</div>
-	<div class="clear"></div>
-	<div class="vmenuf">
-		{v#childs}
+	<div class="vmenuf hide">
+		<div class="wrap">
+			<div class="closebtn">
+				<a href="#" class="closebtna"></a>
+			</div>
+		
+			{v#childs}
+			<div class="clear"></div>
+		</div>
 	</div>
 </div>
 

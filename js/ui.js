@@ -66,50 +66,93 @@ Component.entryPoint = function(NS){
 	};
 	
 	
-	var HMenu = function(el){
-		this.init(el);
+	var HMenu = function(el, pel){
+		this.init(el, pel);
 	};
 	HMenu.prototype = {
-		init: function(el){
-			
+		init: function(el, pel){
 			this.el = el;
+			this.pel = pel;
+			this.elVMenu = Dom.getElementsByClassName('vmenuf', "", pel)[0];
+			this.elSelected = Dom.getElementsByClassName('selected', "", el)[0];
 			
 			var __self = this;
 			E.on(el, 'click', function(e){
 				var el = E.getTarget(e);
 				if (__self.onClick(el)){ E.preventDefault(e); }
 			});
+			
+			this.selectedItem = null;
+			
+			var checkParent = function(cel){
+				if (cel == pel) { return true; }
+				if (cel.parentNode){
+					return checkParent(cel.parentNode);
+				}
+				return false;
+			};
+			
+			E.on(document.body, 'click', function(e){
+				var cel = E.getTarget(e);
+				if (!checkParent(cel)){
+					__self.closeChildMenu();
+				}else{
+					if (Dom.hasClass(cel, 'closebtn')
+						|| Dom.hasClass(cel, 'closebtna')){
+						__self.closeChildMenu();
+						E.preventDefault(e);
+					}			
+				}
+			});
+		},
+		closeChildMenu: function(){
+			Dom.addClass(this.elSelected, 'selected');
+			Dom.addClass(this.elVMenu, 'hide');
 		},
 		onClick: function(el){
 			if (Dom.hasClass(el, 'smvm-opcl')
 				|| Dom.hasClass(el, 'smvmtl-opcl')){
-				this.changeStatus(el);
+				this.changeStatus(el); // TODO: чистой воды костыль!
+				return this.changeStatus(el);
 			}
 			return true;
 		},
 		changeStatus: function(item){
-			var id = (item.id || "").replace('smvmtl', 'smvm');
-			var child = Dom.get(id+'-c');
 			
-			if (L.isNull(child)){ return; }
+			var id = (item.id || "").replace('smvmtl', 'smvm'),
+				child = Dom.get(id+'-c'),
+				elLi = Dom.get(id+'-li');
+			
+			if (L.isNull(child) || L.isNull(elLi)){ return false; }
+			
+			var rgm = Dom.getRegion(this.el),
+				rg = Dom.getRegion(elLi),
+				y = rg.top+rg.height,
+				mh = Math.max(rgm.top+rgm.height-y, 0),
+				elVMenu = this.elVMenu;
+
+			Dom.setY(elVMenu, y);
+			Dom.setStyle(elVMenu, 'width', rgm.width+'px');
+			Dom.setStyle(elVMenu, 'min-height', mh+'px');
+			Dom.removeClass(elVMenu, 'hide');
+
+			
+			var els = Dom.getElementsByClassName('selected', "", this.el);
+			for (var i=0;i<els.length;i++){
+				Dom.removeClass(els[i], 'selected');
+			}
+			Dom.addClass(elLi, 'selected');
+			
+			Dom.addClass(this.selectedItem, 'hide');
+			this.selectedItem = child;
+			
 			if (Dom.hasClass(child, 'hide')){
 				Dom.removeClass(child, 'hide');
 			}else{
 				Dom.addClass(child, 'hide');
 			}
-			this.updateStatus(item);
-		},
-		updateStatus: function(item){
-			var child = Dom.get(item.id+'-c');
-			if (L.isNull(child)){
-				Dom.addClass(item.parentNode, 'nochild');
-				return; 
-			} 
-			if (Dom.hasClass(child, 'hide')){
-				Dom.removeClass(item.parentNode, 'open');
-			}else{
-				Dom.addClass(item.parentNode, 'open');
-			}
+			
+			return true;
 		}
 	};
 	
@@ -122,10 +165,14 @@ Component.entryPoint = function(NS){
 		for (var i=0;i<menus.length;i++){
 			new VMenu(menus[i]);
 		}
-
-		var menus = Dom.getElementsByClassName('hmenufline');
+		
+		var hmenus = Dom.getElementsByClassName('hmenuf');
+		var arr = [];
 		for (var i=0;i<menus.length;i++){
-			new HMenu(menus[i]);
+			var menus = Dom.getElementsByClassName('hmenufline', '', hmenus[i]);
+			for (var ii=0;ii<menus.length;ii++){
+				arr[arr.length] = new HMenu(menus[ii], hmenus[i]);
+			}
 		}
 	};
 	
