@@ -2,12 +2,10 @@
 /**
  * Модуль "Карта сайта"
  * 
- * @version $Id$
  * @package Abricos
  * @subpackage Sitemap
- * @copyright Copyright (C) 2011 Abricos All rights reserved.
  * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
- * @author Alexander Kuzmin (roosit@abricos.org)
+ * @author Alexander Kuzmin <roosit@abricos.org>
  */
 
 /**
@@ -29,7 +27,7 @@ class SitemapModule extends Ab_Module {
 	public $page = null;
 	
 	function __construct(){
-		$this->version = "0.2.5";
+		$this->version = "0.2.5.1";
 		$this->name = "sitemap";
 		$this->takelink = "__super";
 		$this->permission = new SitemapPermission($this);

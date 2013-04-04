@@ -2,12 +2,10 @@
 /**
  * Выборка страницы из БД по идентификатор
  * 
- * @version $Id$
  * @package Abricos
  * @subpackage Sitemap
- * @copyright Copyright (C) 2011 Abricos. All rights reserved.
  * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
- * @author Alexander Kuzmin (roosit@abricos.org)
+ * @author Alexander Kuzmin <roosit@abricos.org>
  */
 
 // выборка контента из БД

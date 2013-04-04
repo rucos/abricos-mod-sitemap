@@ -1,6 +1,4 @@
-/**
- * Вертикальное меню - стандартное 
- */
+/* * * Вертикальное меню - стандартное * * */
 .vmenu,
 .vmenuf { 
 	font-family: Tahoma,Verdana,Arial,sans-serif;
@@ -59,9 +57,7 @@
 	text-decoration: none;
 }
 
-/** 
- * Вертикальное меню - полное 
- */
+/* * * Вертикальное меню - полное * * */
 .vmenuf li ul { 
 	margin-left: 15px; 
 } 
@@ -89,6 +85,11 @@ html .vmenuf ul li a.smvm-opcl {
 	display: inline; /* убиваем баг с двойными полями в IE6 */
 }
 
+/* * * Горизонтальное меню - полное * * */
+.hmenuf .hmenufline li {
+	float: left;
+	margin-right: 10px;
+}
 
 /** 
  * Хлебные крошки 

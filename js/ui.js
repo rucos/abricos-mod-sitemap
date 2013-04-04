@@ -7,19 +7,13 @@ var Component = new Brick.Component();
 Component.requires = {
 	yahoo:['dom']
 };
-Component.entryPoint = function(){
+Component.entryPoint = function(NS){
 	
 	var Dom = YAHOO.util.Dom,
 		E = YAHOO.util.Event,
 		L = YAHOO.lang;
 	
-	var NS = this.namespace,
-		TMG = this.template;
-	
-	var API = NS.API;
 	NS['UI'] = NS['UI'] || {}; 
-	
-(function(){
 	
 	var VMenu = function(el){
 		this.init(el);
@@ -71,15 +65,68 @@ Component.entryPoint = function(){
 		}
 	};
 	
+	
+	var HMenu = function(el){
+		this.init(el);
+	};
+	HMenu.prototype = {
+		init: function(el){
+			
+			this.el = el;
+			
+			var __self = this;
+			E.on(el, 'click', function(e){
+				var el = E.getTarget(e);
+				if (__self.onClick(el)){ E.preventDefault(e); }
+			});
+		},
+		onClick: function(el){
+			if (Dom.hasClass(el, 'smvm-opcl')
+				|| Dom.hasClass(el, 'smvmtl-opcl')){
+				this.changeStatus(el);
+			}
+			return true;
+		},
+		changeStatus: function(item){
+			var id = (item.id || "").replace('smvmtl', 'smvm');
+			var child = Dom.get(id+'-c');
+			
+			if (L.isNull(child)){ return; }
+			if (Dom.hasClass(child, 'hide')){
+				Dom.removeClass(child, 'hide');
+			}else{
+				Dom.addClass(child, 'hide');
+			}
+			this.updateStatus(item);
+		},
+		updateStatus: function(item){
+			var child = Dom.get(item.id+'-c');
+			if (L.isNull(child)){
+				Dom.addClass(item.parentNode, 'nochild');
+				return; 
+			} 
+			if (Dom.hasClass(child, 'hide')){
+				Dom.removeClass(item.parentNode, 'open');
+			}else{
+				Dom.addClass(item.parentNode, 'open');
+			}
+		}
+	};
+	
 	var firstInit = false;
 	NS.UI.vmenuInit = function(){
 		if (firstInit){ return; }
 		firstInit = true; 
+		
 		var menus = Dom.getElementsByClassName('vmenuf');
 		for (var i=0;i<menus.length;i++){
 			new VMenu(menus[i]);
 		}
+
+		var menus = Dom.getElementsByClassName('hmenufline');
+		for (var i=0;i<menus.length;i++){
+			new HMenu(menus[i]);
+		}
 	};
 	
-})();
 };

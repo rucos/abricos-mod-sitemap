@@ -1,9 +1,7 @@
 <?php
 /**
- * @version $Id$
  * @package Abricos
  * @subpackage Sitemap
- * @copyright Copyright (C) 2008 Abricos All rights reserved.
  * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
  * @author Alexander Kuzmin (roosit@abricos.org)
  */
@@ -62,6 +60,7 @@ if (!function_exists("sitemap_pub_menublock_out")){
 			"last" => ($menu->isLast && empty($menu->child)) ? "last" : "",	 
 			"tl" => $menu->title,
 			"link" => $menu->link,
+			"lvl" => ($menu->level-1),
 			"child" => $lst
 		));
 	}
