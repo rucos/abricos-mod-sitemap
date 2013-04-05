@@ -6,8 +6,38 @@
  * @author Alexander Kuzmin <roosit@abricos.org>
  */
 
+
+class SitemapDBQuery {
+	
+	const FIELDS_MENU = "
+		menuid as id,
+		parentmenuid as pid,
+		menutype as tp,
+		name as nm,
+		title as tl,
+		descript as dsc,
+		link as lnk,
+		menuorder as ord,
+		level as lvl,
+		off
+	";
+	
+	public static function MenuList(Ab_Database $db){
+		$sql = "
+			SELECT
+			".SitemapQuery::FIELDS_MENU."
+			FROM ".$db->prefix."sys_menu
+			WHERE deldate=0 AND language='".Abricos::$LNG."'
+			ORDER BY menuorder
+		";
+		return $db->query_read($sql);
+	}
+	
+	
+}
+
 /**
- * Статичные функции запросов к базе данных
+ * (Устарели) Статичные функции запросов к базе данных
  * 
  * @package Abricos 
  * @subpackage Sitemap

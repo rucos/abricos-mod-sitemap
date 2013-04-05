@@ -6,29 +6,9 @@
  * @author Alexander Kuzmin <roosit@abricos.org>
  */
 
-require_once 'dbquery.php';
+require_once 'classes.php';
 
 class SitemapManager extends Ab_ModuleManager {
-	
-	/**
-	 * SitemapMenuList
-	 *
-	 * @var SitemapMenuList
-	 */
-	private $menu = null;
-	
-	/**
-	 * SitemapMenuList
-	 *
-	 * @var SitemapMenuList
-	 */
-	private $menuFull = null;
-	
-	/**
-	 * 
-	 * @var SitemapModule
-	 */
-	public $module = null;
 	
 	/**
 	 * @var SitemapManager
@@ -40,14 +20,6 @@ class SitemapManager extends Ab_ModuleManager {
 	public function __construct(SitemapModule $module){
 		parent::__construct($module);
 		SitemapManager::$instance = $this;
-	}
-	
-	public function DisableRoles(){
-		$this->_disableRoles = true;
-	}
-	
-	public function EnableRoles(){
-		$this->_disableRoles = false;
 	}
 	
 	public function IsAdminRole(){
@@ -64,6 +36,109 @@ class SitemapManager extends Ab_ModuleManager {
 		if ($this->IsWriteRole()){ return true; }
 		return $this->IsRoleEnable(SitemapAction::VIEW);
 	}
+	
+	public function AJAX($d){
+		switch($d->do){
+			case 'bricks': return $this->BrickList();
+		}
+		return null;
+	}
+	
+	private $_cacheMenuList;
+	public function MenuList ($clearCache = false){
+		if (!$this->IsViewRole()){ return false; }
+	
+		if ($clearCache){ $this->_cacheMenuList = null; }
+	
+		if (!empty($this->_cacheMenuList)){
+			return $this->_cacheMenuList;
+		}
+	
+		$list = array();
+		$rows = SitemapDBQuery::MenuList($this->db);
+		while (($d = $this->db->fetch_array($rows))){
+			array_push($list, new SMMenuItem($d));
+		}
+	
+		$mList = new SMMenuItemList();
+		
+		$count = count($list);
+		for ($i=0; $i<$count; $i++){
+			$item = $list[$i];
+				
+			if ($item->parentid == 0){
+				$mList->Add($item);
+			}else{
+				for ($ii=0; $ii<$count; $ii++){
+					$pitem = $list[$ii];
+						
+					if ($pitem->id == $item->parentid){
+						$item->level = $pitem->level+1; 
+						$pitem->childs->Add($item);
+						break;
+					}
+				}
+			}
+		}
+		
+		// есть ли модули участвующие в построении подменю
+		$count = $mList->Count();
+		for ($i=0;$i<$count;$i++){
+			$item = $mList->GetByIndex($i);
+			$module = Abricos::GetModule($item->name);
+			
+			if (empty($module) 
+					|| !method_exists($module, 'Sitemap_IsMenuBuild')
+					|| !$module->Sitemap_IsMenuBuild()){ 
+				continue; 
+			}
+			$manager = $module->GetManager();
+			if (empty($manager)
+					|| !method_exists($manager, 'Sitemap_MenuBuild')){ 
+				continue; 
+			}
+			
+			$manager->Sitemap_MenuBuild($item);
+		}
+		
+		$this->_cacheMenuList = $mList;
+		return $mList;
+	}
+	
+	
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+	 * TODO: старые методы - на удаление
+	 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	
+	public function DisableRoles(){
+		$this->_disableRoles = true;
+	}
+	
+	public function EnableRoles(){
+		$this->_disableRoles = false;
+	}
+	
+	
+	/**
+	 * SitemapMenuList
+	 *
+	 * @var SitemapMenuList
+	 */
+	private $menu = null;
+	
+	/**
+	 * SitemapMenuList
+	 *
+	 * @var SitemapMenuList
+	 */
+	private $menuFull = null;
+	
+	/**
+	 *
+	 * @var SitemapModule
+	 */
+	public $module = null;	
 	
 	private $newmenuid = 0;
 	private $createmenu = false;
@@ -109,7 +184,7 @@ class SitemapManager extends Ab_ModuleManager {
 		$p = $tsrs->p;
 		switch ($name){
 			case 'pagemenu': return $this->Menu($p->id);
-			case 'menulist': return $this->MenuList();
+			case 'menulist': return $this->MenuListDbData();
 			case 'pagelist': return $this->PageList();
 			case 'link': return $this->Link($p->id);
 			case 'page': return $this->Page($p->id);
@@ -119,14 +194,6 @@ class SitemapManager extends Ab_ModuleManager {
 		
 		return null;
 	}
-	
-	public function AJAX($d){
-		switch($d->do){
-			case 'bricks': return $this->BrickList();
-		}
-		return null;
-	}
-	
 	
 	public function MenuAppend($d){
 		if (!$this->IsAdminRole()){ return null; }
@@ -146,7 +213,7 @@ class SitemapManager extends Ab_ModuleManager {
 		return SitemapQuery::MenuByPageId($this->db, $pageid);		
 	}
 	
-	public function MenuList(){
+	public function MenuListDbData(){
 		if (!$this->IsAdminRole()){ return null; }
 		return SitemapQuery::MenuList($this->db, true);
 	}
