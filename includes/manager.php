@@ -60,7 +60,7 @@ class SitemapManager extends Ab_ModuleManager {
 			array_push($list, new SMMenuItem($d));
 		}
 	
-		$mList = new SMMenuItemList();
+		$mList = new SMMenuItemList(null);
 		
 		$count = count($list);
 		for ($i=0; $i<$count; $i++){
@@ -73,7 +73,6 @@ class SitemapManager extends Ab_ModuleManager {
 					$pitem = $list[$ii];
 						
 					if ($pitem->id == $item->parentid){
-						$item->level = $pitem->level+1; 
 						$pitem->childs->Add($item);
 						break;
 					}
@@ -99,6 +98,16 @@ class SitemapManager extends Ab_ModuleManager {
 			}
 			
 			$manager->Sitemap_MenuBuild($item);
+		}
+
+		$path = implode("/", Abricos::$adress->dir);
+		$mItem = $mList->FindByPath($path);
+		
+		if (!empty($mItem)){
+			do{
+				$mItem->isSelect = true;
+				$mItem = $mItem->parent;
+			}while(!empty($mItem));
 		}
 		
 		$this->_cacheMenuList = $mList;

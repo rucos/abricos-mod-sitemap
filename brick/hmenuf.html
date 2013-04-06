@@ -2,20 +2,14 @@
 [script]brick_hmenuf.php[/script]
 [mcss=sitemap]sitemap.css[/mcss]
 
-[bkvar=hmenu]
-	<ul>
-		{v#rows}
-	</ul>
-[/bkvar]
-
 [bkvar=menu]
-	<ul id="smvm-{v#id}-c" class="{v#hide} level-{v#lvl}">
+	<ul id="smvm-{v#id}-c" class="hide level-{v#lvl}">
 		{v#rows}
 	</ul>
 [/bkvar]
 
 [bkvar=item]
-	<li id="smvm-{v#id}-li" class="{v#sel} level-{v#lvl}">
+	<li id="smvm-{v#id}-li" class="{v#sel} level-{v#lvl} {v#nochild}">
 		<div class="">
 			<a id="smvm-{v#id}" class="smvm-opcl" href="{v#link}"></a>
 			<a id="smvmtl-{v#id}" class="smvmtl-opcl {v#sel}" href="{v#link}" title="{v#tl}">{v#tl}</a>
@@ -25,7 +19,6 @@
 [/bkvar]
 
 [p=from][/p]
-[p=level]0[/p]
 
 [*]-->
 <div class="hmenuf">

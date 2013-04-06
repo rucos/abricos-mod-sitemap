@@ -28,11 +28,10 @@ class SitemapDBQuery {
 			".SitemapQuery::FIELDS_MENU."
 			FROM ".$db->prefix."sys_menu
 			WHERE deldate=0 AND language='".Abricos::$LNG."'
-			ORDER BY menuorder
+			ORDER BY parentmenuid, menuorder
 		";
 		return $db->query_read($sql);
 	}
-	
 	
 }
 

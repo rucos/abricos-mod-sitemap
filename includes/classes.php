@@ -10,6 +10,11 @@ require_once 'dbquery.php';
 
 
 class SMMenuItem extends SMItem {
+
+	/**
+	 * @var SMMenuItem
+	 */
+	public $parent = null;
 	
 	/**
 	 * Заголовок
@@ -33,11 +38,6 @@ class SMMenuItem extends SMItem {
 	 */
 	public $childs;
 	
-	/**
-	 * @var integer
-	 */
-	public $level = 0;
-	
 	public $isSelect = false;
 	
 	public function __construct($d){
@@ -47,9 +47,33 @@ class SMMenuItem extends SMItem {
 		$this->name = strval($d['nm']);
 		$this->parentid = intval($d['pid']);
 		
-		$this->childs = new SMMenuItemList();
+		$this->childs = new SMMenuItemList($this);
+	}
+	
+	private $_calcURI = null;
+	public function URI(){
+		if (is_null($this->_calcURI)){
+			if (!empty($this->parent)){
+				$this->_calcURI = $this->parent->URI().$this->name."/";
+			}else{
+				$this->_calcURI = "/".$this->name."/";
+			}
+		}
+		return $this->_calcURI;
 	}
 
+	private $_calcLevel = null;
+	public function Level(){
+		if (is_null($this->_calcLevel)){
+			if (!empty($this->parent)){
+				$this->_calcLevel = $this->parent->Level()+1;
+			}else{
+				$this->_calcLevel = 1;
+			}
+		}
+		return $this->_calcLevel;
+	}
+	
 	public function ToAJAX(){
 		$ret = parent::ToAJAX();
 		$ret->tl = $this->title;
@@ -78,6 +102,22 @@ class SMMenuItem extends SMItem {
 }
 
 class SMMenuItemList extends SMItemList {
+	
+	/**
+	 * @var SMMenuItem
+	 */
+	public $owner;
+	
+	public function __construct($mItem){
+		parent::__construct();
+		
+		$this->owner = $mItem;
+	}
+	
+	public function Add(SMMenuItem $item){
+		parent::Add($item);
+		$item->parent = $this->owner;
+	}
 
 	/**
 	 * @return SMMenuItem
@@ -139,9 +179,12 @@ class SMMenuItemList extends SMItemList {
 		if (substr($path, strlen($path)-1, 1) == "/"){
 			$path = substr($path, 0, strlen($path)-1);
 		}
+		if (substr($path, 0, 1) == "/"){
+			$path = substr($path, 1);
+		}
 		
 		$arr = explode("/", $path);
-		
+
 		$item = $this->GetByName($arr[0]);
 		if (count($arr) > 1 && !empty($item)){
 			$narr = array();
