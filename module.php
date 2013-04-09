@@ -22,6 +22,11 @@
  */
 class SitemapModule extends Ab_Module {
 	
+	/**
+	 * @var SitemapModule
+	 */
+	public static $instance = null;
+	
 	private $_manager = null;
 	
 	public $page = null;
@@ -31,6 +36,8 @@ class SitemapModule extends Ab_Module {
 		$this->name = "sitemap";
 		$this->takelink = "__super";
 		$this->permission = new SitemapPermission($this);
+		
+		SitemapModule::$instance = $this;
 	}
 	
 	/**

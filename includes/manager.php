@@ -100,8 +100,7 @@ class SitemapManager extends Ab_ModuleManager {
 			$manager->Sitemap_MenuBuild($item);
 		}
 
-		$path = implode("/", Abricos::$adress->dir);
-		$mItem = $mList->FindByPath($path);
+		$mItem = $mList->FindByPath(Abricos::$adress->dir);
 		
 		if (!empty($mItem)){
 			do{

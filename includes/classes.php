@@ -169,12 +169,19 @@ class SMMenuItemList extends SMItemList {
 	}
 	
 	/**
-	 * Поиск элемента по пути меню
+	 * Поиск элемента по адресу
 	 * 
-	 * @param SMMenuItem $path
+	 * Пример адреса: eshop/myfolder1/subfolder2
+	 * 
+	 * @return SMMenuItem
 	 */
-	public function FindByPath($path){
+	public function FindByPath($path, $isNotEMathing = false){
+		if (is_array($path)){
+			$path = implode("/", $path);
+		}
 		$path = trim($path);
+
+		if (empty($path)){ return ""; }
 		
 		if (substr($path, strlen($path)-1, 1) == "/"){
 			$path = substr($path, 0, strlen($path)-1);
@@ -191,7 +198,11 @@ class SMMenuItemList extends SMItemList {
 			for ($i=1;$i<count($arr);$i++){
 				array_push($narr, $arr[$i]);
 			}
-			return $item->childs->FindByPath(implode("/", $narr));
+			$cItem = $item->childs->FindByPath(implode("/", $narr));
+			if (empty($cItem) && $isNotEMathing){
+				return $item;
+			}
+			return $cItem;
 		}
 		return $item;
 	}
