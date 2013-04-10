@@ -116,7 +116,9 @@ class SMMenuItemList extends SMItemList {
 	
 	public function Add(SMMenuItem $item){
 		parent::Add($item);
-		$item->parent = $this->owner;
+		if (empty($item->parent)){
+			$item->parent = $this->owner;
+		}
 	}
 
 	/**
