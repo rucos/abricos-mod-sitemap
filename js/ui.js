@@ -71,9 +71,10 @@ Component.entryPoint = function(NS){
 	};
 	HMenu.prototype = {
 		init: function(el, pel){
+			
 			this.el = el;
 			this.pel = pel;
-			this.elVMenu = Dom.getElementsByClassName('vmenuf', "", pel)[0];
+			this.elVMenu = Dom.getElementsByClassName('ttmenu', "", pel)[0];
 			this.elSelected = Dom.getElementsByClassName('selected', "", el)[0];
 			
 			var __self = this;
@@ -117,7 +118,7 @@ Component.entryPoint = function(NS){
 			return true;
 		},
 		changeStatus: function(item){
-			
+// Brick.console(item);			
 			var id = (item.id || "").replace('smvmtl', 'smvm'),
 				child = Dom.get(id+'-c'),
 				elLi = Dom.get(id+'-li');
@@ -131,7 +132,7 @@ Component.entryPoint = function(NS){
 				elVMenu = this.elVMenu;
 
 			Dom.setY(elVMenu, y);
-			Dom.setStyle(elVMenu, 'width', rgm.width+'px');
+			Dom.setStyle(elVMenu, 'width', (rgm.width-2)+'px');
 			Dom.setStyle(elVMenu, 'min-height', mh+'px');
 			Dom.removeClass(elVMenu, 'hide');
 
@@ -167,8 +168,9 @@ Component.entryPoint = function(NS){
 		
 		var hmenus = Dom.getElementsByClassName('hmenuf');
 		var arr = [];
-		for (var i=0;i<menus.length;i++){
+		for (var i=0;i<hmenus.length;i++){
 			var menus = Dom.getElementsByClassName('hmenufline', '', hmenus[i]);
+			Brick.console(menus);
 			for (var ii=0;ii<menus.length;ii++){
 				arr[arr.length] = new HMenu(menus[ii], hmenus[i]);
 			}

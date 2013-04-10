@@ -107,7 +107,7 @@ for ($i=0; $i<$cnt; $i++){
 		$tree->list = array();
 		$tree->item = $mi;
 		
-		sitemap_brick_hmenuf_treelist($tree, $mi, 2);
+		sitemap_brick_hmenuf_treelist($tree, $mi, 1);
 		array_push($childs, $tree);
 	}
 }
@@ -117,7 +117,7 @@ if ($mmItem->childs->Count() > 0){
 	$tree->list = array();
 	$tree->item = $mmItem;
 	
-	sitemap_brick_hmenuf_treelist($tree, $mmItem, 2);
+	sitemap_brick_hmenuf_treelist($tree, $mmItem, 1);
 	array_push($childs, $tree);
 }
 
@@ -126,10 +126,17 @@ for ($i=0; $i<count($childs); $i++){
 	$tree = $childs[$i];
 	
 	$ccnt = count($tree->list);
-	$colCnt = intval($ccnt / 4);
-	
+	$colCnt = ceil($ccnt / 4);
 	$j = 0; $lstCol = ""; $lstCols = "";
 	for ($ii=0; $ii<$ccnt; $ii++){
+		if ($j >= $colCnt){
+			$lstCols .= Brick::ReplaceVarByData($v['col'], array(
+				"rows" => $lstCol,
+				"lastcol" => ""
+			));
+			$lstCol = "";
+			$j = 0;
+		}
 		
 		$mi = $tree->list[$ii]->item;
 		$level = $tree->list[$ii]->level;
@@ -141,9 +148,11 @@ for ($i=0; $i<count($childs); $i++){
 			"link" => $mi->URI(),
 			"lvl" => $level
 		));
+		$j++;
 	}
 	$lstCols .= Brick::ReplaceVarByData($v['col'], array(
-		"rows" => $lstCol
+		"rows" => $lstCol,
+		"lastcol" => "lastcol"
 	));
 	
 	$sChilds .= Brick::ReplaceVarByData($v['menu'], array(

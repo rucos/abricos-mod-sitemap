@@ -90,19 +90,47 @@ html .vmenuf ul li a.smvm-opcl {
 	position: relative;
 }
 .hmenuf .hmenufline li {
+	height: 34px;
 	float: left;
 	margin-right: 10px;
 }
-.hmenuf .vmenuf {
+.hmenuf .ttmenu {
 	position: absolute;
+	background-color: #FCFEFD;
+	border: 1px solid #D7D9D8;
+	z-index: 1000;
 }
-.hmenuf .vmenuf .wrap {
+.hmenuf .ttmenu .wrap {
 	position: relative;
+	padding: 10px 0 15px 5px;
 }
-.hmenuf .vmenuf .closebtn {
+
+.hmenuf .menucol {
+	border-right: 1px dotted #000000;
+	display: inline-block;
+	padding-right: 10px;
+	vertical-align: top;
+	width: 23%;
+}
+.hmenuf .lastcol {
+	border-right: none;
+}
+.hmenuf .menucol li {
+	padding-left: 10px;
+	line-height: 1em;
+	height: 30px;
+}
+.hmenuf .menucol .level-3 {
+	padding-left: 20px;
+}
+.hmenuf .menucol .level-4 {
+	padding-left: 40px;
+}
+
+.hmenuf .ttmenu .closebtn {
 	position: absolute; top: 7px; right: 7px;
 }
-.hmenuf .vmenuf .closebtn a {
+.hmenuf .ttmenu .closebtn a {
 	background: url("../images/close.png") no-repeat scroll 50% 50% transparent;
 	display: block;
 	height: 13px;
