@@ -200,7 +200,7 @@ class SMMenuItemList extends SMItemList {
 			for ($i=1;$i<count($arr);$i++){
 				array_push($narr, $arr[$i]);
 			}
-			$cItem = $item->childs->FindByPath(implode("/", $narr));
+			$cItem = $item->childs->FindByPath(implode("/", $narr), $isNotEMathing);
 			if (empty($cItem) && $isNotEMathing){
 				return $item;
 			}
