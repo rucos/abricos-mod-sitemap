@@ -118,7 +118,7 @@ Component.entryPoint = function(NS){
 			return true;
 		},
 		changeStatus: function(item){
-// Brick.console(item);			
+
 			var id = (item.id || "").replace('smvmtl', 'smvm'),
 				child = Dom.get(id+'-c'),
 				elLi = Dom.get(id+'-li');
@@ -170,7 +170,7 @@ Component.entryPoint = function(NS){
 		var arr = [];
 		for (var i=0;i<hmenus.length;i++){
 			var menus = Dom.getElementsByClassName('hmenufline', '', hmenus[i]);
-			Brick.console(menus);
+
 			for (var ii=0;ii<menus.length;ii++){
 				arr[arr.length] = new HMenu(menus[ii], hmenus[i]);
 			}
