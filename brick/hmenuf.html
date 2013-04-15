@@ -3,9 +3,9 @@
 [mcss=sitemap]sitemap.css[/mcss]
 
 [bkvar=lineitem]
-	<li id="smvm-{v#id}-li" class="{v#sel}">
+	<td id="smvm-{v#id}-li" class="{v#sel}">
 		<a id="smvmtl-{v#id}" class="smvmtl-opcl {v#sel}" href="{v#link}" title="{v#tl}">{v#tl}</a>
-	</li>
+	</td>
 [/bkvar]
 
 [bkvar=menu]
@@ -34,9 +34,9 @@
 [*]-->
 <div class="hmenuf">
 	<div class="hmenufline">
-		<ul class="hmenulist">
-			{v#result}
-		</ul>
+		<table class="hmenulist">
+			<tbody><tr>{v#result}</tr></tbody>
+		</table>
 		<div class="clear"></div>
 	</div>
 	<div class="ttmenu hide">

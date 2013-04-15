@@ -89,11 +89,21 @@ html .vmenuf ul li a.smvm-opcl {
 .hmenuf {
 	position: relative;
 }
-.hmenuf .hmenufline li {
-	height: 34px;
-	float: left;
-	margin-right: 10px;
+.hmenuf .hmenufline table {
+	width: 100%;
 }
+.hmenuf .hmenufline td {
+	vertical-align: middle;
+	text-align: center;
+	height: 32px;
+	padding: 0 10px;
+}
+
+.hmenuf .hmenufline .morebutton {
+	width: 65px;
+	text-align: right;
+}
+
 .hmenuf .ttmenu {
 	position: absolute;
 	background-color: #FCFEFD;
