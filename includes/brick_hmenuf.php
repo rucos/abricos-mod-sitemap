@@ -24,36 +24,6 @@ if (!empty($p['from'])){
 }
 
 if (!function_exists("sitemap_brick_hmenuf_buildmenu")){
-	/*
-	function sitemap_brick_hmenuf_builditem(SMMenuItem $mi, $isLast, $notChild = false, $level){
-		$brick = Brick::$builder->brick;
-		return Brick::ReplaceVarByData($brick->param->var['item'], array(
-			"id" => $mi->id,
-			"sel" => $mi->isSelect ? "selected" : "",
-			"last" => $isLast ? "last" : "",
-			"tl" => $mi->title,
-			"link" => $mi->URI(),
-			"lvl" => $level,
-			"child" => $notChild ? "" : sitemap_brick_hmenuf_buildmenu($mi, $level+1),
-			"nochild" => $mi->childs->Count() > 0 ? "" : "nochild"
-		));
-	}
-	function sitemap_brick_hmenuf_buildmenu(SMMenuItem $mi, $level){
-		$cnt = $mi->childs->Count();
-		if ($cnt == 0){ return ""; }
-
-		$brick = Brick::$builder->brick;
-		$lst = "";
-		for ($i=0; $i<$cnt; $i++){
-			$lst .= sitemap_brick_hmenuf_builditem($mi->childs->GetByIndex($i), $i==$cnt-1, false, $level);
-		}
-		return Brick::ReplaceVarByData($brick->param->var['menu'], array(
-			"id" => $mi->id,
-			"lvl" => $level,
-			"rows" => $lst
-		));
-	}
-	/**/
 	function sitemap_brick_hmenuf_treelist($tree, SMMenuItem $mi, $level){
 		$level = $level+1;
 		for ($i=0; $i<$mi->childs->Count(); $i++){
