@@ -54,7 +54,7 @@ Component.entryPoint = function(NS){
 		updateStatus: function(item){
 			var child = Dom.get(item.id+'-c');
 			if (L.isNull(child)){
-				// Dom.addClass(item.parentNode, 'nochild');
+				Dom.addClass(item.parentNode, 'nochild');
 				return; 
 			} 
 			if (Dom.hasClass(child, 'hide')){
