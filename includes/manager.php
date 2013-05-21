@@ -22,6 +22,14 @@ class SitemapManager extends Ab_ModuleManager {
 		SitemapManager::$instance = $this;
 	}
 	
+	public function DisableRoles(){
+		$this->_disableRoles = true;
+	}
+	
+	public function EnableRoles(){
+		$this->_disableRoles = false;
+	}
+	
 	public function IsAdminRole(){
 		if ($this->_disableRoles){ return true; }
 		return $this->IsRoleEnable(SitemapAction::ADMIN);
@@ -113,19 +121,31 @@ class SitemapManager extends Ab_ModuleManager {
 		return $mList;
 	}
 	
-	
+	private $_cachePageByAddress = null;
+	public function PageByCurrentAddress(){
+		if (!$this->IsViewRole()){ return null; }
+		
+		if (!is_null($this->_cachePageByAddress)){
+			return $this->_cachePageByAddress;
+		}
+		
+		$menuid = 0;
+		$mItem = $this->MenuList()->FindByPath(Abricos::$adress->dir);
+		if (!empty($mItem)){ 
+			$menuid = $mItem->id; 
+		}
+		
+		$d = SitemapDBQuery::PageByName($this->db, $menuid, Abricos::$adress->contentName);
+		if (empty($d)){ return null; }
+		
+		$page = new SitemapPage($d);
+		
+		return $page;
+	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
 	 * TODO: старые методы - на удаление
 	 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-	
-	public function DisableRoles(){
-		$this->_disableRoles = true;
-	}
-	
-	public function EnableRoles(){
-		$this->_disableRoles = false;
-	}
 	
 	
 	/**
@@ -170,13 +190,13 @@ class SitemapManager extends Ab_ModuleManager {
 				break;
 			case 'page':
 				foreach ($rows as $r){
-					if ($r->f == 'a'){	$this->PageAppend($r->d); }
-					if ($r->f == 'u'){	$this->PageUpdate($r->d); }
+					if ($r->f == 'a'){	$this->old_PageAppend($r->d); }
+					if ($r->f == 'u'){	$this->old_PageUpdate($r->d); }
 				}
 				break;
 			case 'pagelist':
 				foreach ($rows as $r){
-					if ($r->f == 'd'){ $this->PageRemove($r->d->id); }
+					if ($r->f == 'd'){ $this->old_PageRemove($r->d->id); }
 				}
 				break;				
 			case 'link':
@@ -193,9 +213,9 @@ class SitemapManager extends Ab_ModuleManager {
 		switch ($name){
 			case 'pagemenu': return $this->Menu($p->id);
 			case 'menulist': return $this->MenuListDbData();
-			case 'pagelist': return $this->PageList();
+			case 'pagelist': return $this->old_PageList();
 			case 'link': return $this->Link($p->id);
-			case 'page': return $this->Page($p->id);
+			case 'page': return $this->old_Page($p->id);
 			case 'templates': return $this->TemplateList();
 			case 'bricks': return $this->BrickList();
 		}
@@ -231,26 +251,26 @@ class SitemapManager extends Ab_ModuleManager {
 		SitemapQuery::MenuRemove($this->db, $menuid);
 	}
 	
-	public function PageAppend($d){
+	public function old_PageAppend($d){
 		if (!$this->IsAdminRole()){ return null; }
 		if ($this->createmenu){
 			$d->mid = $this->newmenuid;
 		}
 		SitemapQuery::PageCreate($this->db, $d);
 	}
-	public function PageUpdate($d){
+	public function old_PageUpdate($d){
 		if (!$this->IsAdminRole()){ return null; }
 		SitemapQuery::PageUpdate($this->db, $d);
 	}
-	public function PageList(){
+	public function old_PageList(){
 		if (!$this->IsAdminRole()){ return null; }
 		return SitemapQuery::PageList($this->db);
 	}
-	public function PageRemove($pageid){
+	public function old_PageRemove($pageid){
 		if (!$this->IsAdminRole()){ return null; }
 		SitemapQuery::PageRemove($this->db, $pageid);
 	}
-	public function Page($pageid, $retArray = false){
+	public function old_Page($pageid, $retArray = false){
 		if (!$this->IsAdminRole()){ return null; }
 		
 		return SitemapQuery::PageById($this->db, $pageid, $retArray);
@@ -357,7 +377,7 @@ class SitemapManager extends Ab_ModuleManager {
 		return $menu;
 	}
 	
-	public function GetPage(Ab_URI $adress){
+	public function Getold_Page(Ab_URI $adress){
 		$pagename = $adress->contentName;
 		$page = null;
 		$db = $this->db;

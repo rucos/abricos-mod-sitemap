@@ -25,13 +25,39 @@ class SitemapDBQuery {
 	public static function MenuList(Ab_Database $db){
 		$sql = "
 			SELECT
-			".SitemapQuery::FIELDS_MENU."
+			".SitemapDBQuery::FIELDS_MENU."
 			FROM ".$db->prefix."sys_menu
 			WHERE deldate=0 AND language='".Abricos::$LNG."'
 			ORDER BY parentmenuid, menuorder
 		";
 		return $db->query_read($sql);
 	}
+	
+	const FIELDS_PAGE = "
+		a.pageid as id,
+		a.menuid as mid,
+		a.pagename as nm,
+		a.title as tl,
+		a.metakeys as mtks,
+		a.metadesc as mtdsc,
+		a.template as tpl,
+		a.mods as mods,
+		a.editormode as em,
+		a.contentid as cid,
+		c.body as bd
+	";
+	
+	public static function PageByName(Ab_Database $db, $menuid, $pagename){
+		$sql = "
+			SELECT
+				".SitemapDBQuery::FIELDS_PAGE."
+			FROM ".$db->prefix."sys_page a
+			LEFT JOIN ".$db->prefix."content c ON a.contentid=c.contentid
+			WHERE a.menuid=".bkint($menuid)." AND a.pagename='".bkstr($pagename)."' AND a.language='".Abricos::$LNG."'
+			LIMIT 1
+		";
+		return $db->query_first($sql);
+	}	
 	
 }
 

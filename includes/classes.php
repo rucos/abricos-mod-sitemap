@@ -8,8 +8,7 @@
 
 require_once 'dbquery.php';
 
-
-class SMMenuItem extends SMItem {
+class SMMenuItem extends AbricosItem {
 
 	/**
 	 * @var SMMenuItem
@@ -101,7 +100,7 @@ class SMMenuItem extends SMItem {
 	}
 }
 
-class SMMenuItemList extends SMItemList {
+class SMMenuItemList extends AbricosList {
 	
 	/**
 	 * @var SMMenuItem
@@ -210,70 +209,50 @@ class SMMenuItemList extends SMItemList {
 	}
 }
 
-
-class SMItem {
-	public $id;
+class SitemapPage extends AbricosItem {
+	public $menuid;
+	public $name;
+	public $title;
+	public $metaKeys;
+	public $metaDesc;
+	public $template;
+	public $mods;
+	public $editorMode;
+	public $contentid;
+	public $body;
 	
 	public function __construct($d){
-		$this->id = intval($d['id']);
+		parent::__construct($d);
+		$this->menuid	= intval($d['mid']);
+		$this->name		= strval($d['nm']);
+		$this->title	= strval($d['tl']);
+		$this->body		= strval($d['bd']);
+		$this->metaKeys	= strval($d['mtks']);
+		$this->metaDesc	= strval($d['mtdsc']);
+		$this->template	= strval($d['tpl']);
+		$this->mods		= strval($d['mods']);
+		$this->editorMode = intval($d['em']);
+		$this->contentid= intval($d['cid']);
 	}
 	
 	public function ToAJAX(){
-		$ret = new stdClass();
-		$ret->id = $this->id;
+		$ret = parent::ToAJAX();
+		$ret->mid = $this->menuid;
+		$ret->nm = $this->name;
+		$ret->tl = $this->title;
+		$ret->bd = $this->body;
+		$ret->mtks = $this->metaKeys;
+		$ret->mtdsc = $this->metaDesc;
+		$ret->tpl = $this->template;
+		$ret->mods = $this->mods;
+		$ret->em = $this->editorMode;
+		$ret->cid = $this->contentid;
 		return $ret;
 	}
 }
 
-class SMItemList {
-	protected $_list = array();
-	protected $_map = array();
-	
-	public function __construct(){
-		$this->_list = array();
-		$this->_map = array();
-	}
-	
-	public function Add(SMItem $item){
-		$index = count($this->_list);
-		$this->_list[$index] = $item;
-		$this->_map[$item->id] = $index;
-	}
-	
-	public function Count(){
-		return count($this->_list);
-	}
-	
-	/**
-	 * @param integer $index
-	 * @return SMItem
-	 */
-	public function GetByIndex($index){
-		return $this->_list[$index];
-	}
-	
-	/**
-	 * @param integer $id
-	 * @return SMItem
-	 */
-	public function Get($id){
-		$index = $this->_map[$id];
-		return $this->_list[$index];
-	}
-	
-	public function ToAJAX(){
-		$list = array();
-		$count = $this->Count();
-		for ($i=0; $i<$count; $i++){
-			array_push($list, $this->GetByIndex($i)->ToAJAX());
-		}
-	
-		$ret = new stdClass();
-		$ret->list = $list;
-	
-		return $ret;
-	}	
-}
+class SitemapPageList extends AbricosList { }	
+
 
 class SitemapConfig {
 	
