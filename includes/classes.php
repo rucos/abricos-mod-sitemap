@@ -251,7 +251,7 @@ class SitemapPage extends AbricosItem {
 	}
 }
 
-class SitemapPageList extends AbricosList { }	
+class SitemapPageList extends AbricosList { }
 
 
 class SitemapConfig {

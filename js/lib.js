@@ -9,6 +9,7 @@ var Component = new Brick.Component();
 Component.requires = { 
 	mod:[
         {name: 'sys', files: ['item.js','number.js']},
+        {name: 'widget', files: ['notice.js']},
         {name: '{C#MODNAME}', files: ['roles.js']}
 	]		
 };
@@ -26,6 +27,100 @@ Component.entryPoint = function(NS){
 	};
 	NS.Item = SysNS.Item;
 	NS.ItemList = SysNS.ItemList;
+	
+	var Page = function(d){
+		d = L.merge({
+			'nm': '',
+			'tl': '',
+			'bd': '',
+			'mid': 0,
+			'mods': '',
+			'em': 0,
+			'mtdsc': '',
+			'mtks': '',
+			'tpl': ''
+		}, d || {});
+		Page.superclass.constructor.call(this, d);
+	};
+	YAHOO.extend(Page, NS.Item, {
+		update: function(d){
+			this.name = d['nm'];
+			this.title = d['tl'];
+			this.body = d['bd'];
+			this.menuId = d['mid']|0;
+			this.mods = d['mods'];
+			this.editorMode = d['em']|0;
+			this.metaKeys = d['mtks'];
+			this.metaDesc = d['mtdsc'];
+			this.template = d['tpl'];
+		}
+	});
+	NS.Page = Page;	
+	
+	var Menu = function(manager, d){
+		this.manager = manager;
+		d = L.merge({
+			'pid': 0,
+			'tl':'', // заголовок
+			'nm': '', // имя (URL)
+			'ord': 0,
+			'childs': []
+		}, d || {});
+		Menu.superclass.constructor.call(this, d);
+	};
+	YAHOO.extend(Menu, SysNS.Item, {
+		init: function(d){
+			this.parent		= null;
+			this.childs		= new NS.MenuList(d['childs']);
+			
+			var __self = this;
+			this.childs.foreach(function(menu){
+				menu.parent = __self;
+			});
+			Menu.superclass.init.call(this, d);
+		},
+		update: function(d){
+			this.parentid	= d['pid']|0;
+			this.title		= d['tl'];
+			this.name		= d['nm'];
+			this.order		= d['ord']|0;
+		},
+		getPathLine: function(){
+			var line = [this];
+			if (!L.isNull(this.parent)){
+				var pline = this.parent.getPathLine();
+				pline[pline.length] = this;
+				line = pline;
+			}
+			return line;
+		}
+	});		
+	NS.Menu = Menu;
+	
+	
+	var MenuList = function(d){
+		MenuList.superclass.constructor.call(this, d, Menu, {
+			'order': '!order,title'
+		});
+	};
+	YAHOO.extend(MenuList, SysNS.ItemList, {
+		find: function(menuid){
+			var fmenu = null;
+			this.foreach(function(menu){
+				if (menu.id == menuid){
+					fmenu = menu;
+					return true;
+				}
+				var ffmenu = menu.childs.find(menuid);
+				if (!L.isNull(ffmenu) && ffmenu.id == menuid){
+					fmenu = ffmenu;
+					return true;
+				}
+			});
+			return fmenu;
+		}
+	});
+	NS.MenuList = MenuList;	
 	
 	var MBrick = function(d){
 		d = L.merge({
@@ -48,16 +143,26 @@ Component.entryPoint = function(NS){
 	YAHOO.extend(MBrickList, NS.ItemList, {});
 	NS.MBrickList = MBrickList;
 
-	var SitemapManager = function(callback){
+	var Manager = function(callback){
 		this.init(callback);
 	};
-	SitemapManager.prototype = {
+	Manager.prototype = {
 		init: function(callback){
+			NS.manager = this;
 			
+			this.menuList = new NS.MenuList();
 			this.brickList = null;
+			this.templates = [];
 
-			NS.sitemapManager = this;
-			NS.life(callback, this);
+			var __self = this;
+			this.ajax({
+				'do': 'initdata'
+			}, function(d){
+				__self._updateTemplates(d);
+				__self.menuList = __self._updateMenuList(d);
+				
+				NS.life(callback, __self);
+			});
 		},
 		ajax: function(data, callback){
 			Brick.ajax('{C#MODNAME}', {
@@ -65,6 +170,54 @@ Component.entryPoint = function(NS){
 				'event': function(request){
 					NS.life(callback, request.data);
 				}
+			});
+		},
+		_updateTemplates: function(d){
+			if (!L.isValue(d) || !L.isValue(d['templates'])){
+				return null;
+			}
+			this.templates = d['templates'];
+		},
+		_updateMenuList: function(d){
+			if (!L.isValue(d) || !L.isValue(d['menus']) || !L.isValue(d['menus']['list'])){
+				return null;
+			}
+			var list = new NS.MenuList(d['menus']['list']);
+				
+			var rootItem = list.find(0);
+			if (!L.isNull(rootItem)){
+				// rootItem.title = this.getLang('menu.title');
+				rootItem.title = 'Root';
+			}
+			
+			return list;
+		},
+		menuListLoad: function(callback){
+			if (!L.isNull(this.menuList)){
+				NS.life(callback, this.menuList);
+				return;
+			}
+			var __self = this;
+			this.ajax({
+				'do': 'menulist'
+			}, function(d){
+				__self.menuList = __self._updateMenuList(d);
+				NS.life(callback, __self.menuList);
+			});
+		},
+		_updatePage: function(d){
+			if (!L.isValue(d) || !L.isValue(d['page'])){ return null; }
+
+			return new Page(d['page']);
+		},
+		pageLoad: function(pageid, callback){
+			var __self = this;
+			this.ajax({
+				'do': 'page',
+				'pageid': pageid
+			}, function(d){
+				var page = __self._updatePage(d);
+				NS.life(callback, page);
 			});
 		},
 		loadBrickList: function(callback){
@@ -86,14 +239,14 @@ Component.entryPoint = function(NS){
 			});
 		}
 	};
-	NS.SitemapManager = SitemapManager;
-	NS.sitemapManager = null;
+	NS.Manager = Manager;
+	NS.manager = null;
 	
-	NS.initSitemapManager = function(callback){
-		if (L.isNull(NS.sitemapManager)){
-			NS.sitemapManager = new SitemapManager(callback);
+	NS.initManager = function(callback){
+		if (L.isNull(NS.manager)){
+			NS.manager = new Manager(callback);
 		}else{
-			NS.life(callback, NS.sitemapManager);
+			NS.life(callback, NS.manager);
 		}
 	};
 };

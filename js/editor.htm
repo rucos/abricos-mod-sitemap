@@ -1,5 +1,18 @@
-<!--{pageeditor}--><div class='hd'>{#mod.sitemap.pageeditor.hd}</div>
+<!--{pageeditorpanel}-->
+<div class='hd'>{#mod.sitemap.pageeditor.hd}</div>
 <div class='bd'>
+	<div id="{i#widget}"></div>
+</div>
+
+<!--{pageeditorwidget}-->
+<div id="{i#id}">
+
+	<div id="{i#nullitem}" class="nullitem" style="display: none">
+		Элемент не найден или не достаточно прав для просмотра
+	</div>
+
+	<div id="{i#view}">
+
 	<div class="buttons-top right">
 		<input id='{i#bsave}' type="button" value="{#mod.sitemap.pageeditor.bsave}" />
 		<input id='{i#bcancel}' type="button" value="{#mod.sitemap.pageeditor.bcancel}" />
@@ -74,8 +87,10 @@
 			</div>
 		</div>
 		</div>
+		</div>
 	</div>
 </div>
+
 <!--{select}--><select id="{i#id}">{v#list}</select>
 <!--{option}--><option value="{v#id}">{v#tl}</option>
 <!--{moditem}--><div style="float: left; text-align: center; margin-left: 5px">

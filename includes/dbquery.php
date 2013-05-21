@@ -59,6 +59,18 @@ class SitemapDBQuery {
 		return $db->query_first($sql);
 	}	
 	
+	public static function Page(Ab_Database $db, $pageid){
+		$sql = "
+			SELECT
+				".SitemapDBQuery::FIELDS_PAGE."
+			FROM ".$db->prefix."sys_page a
+			LEFT JOIN ".$db->prefix."content c ON a.contentid=c.contentid
+			WHERE a.pageid=".bkint($pageid)." AND a.language='".Abricos::$LNG."'
+			LIMIT 1
+		";
+		return $db->query_first($sql);
+	}
+	
 }
 
 /**

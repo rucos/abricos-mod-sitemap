@@ -47,9 +47,26 @@ class SitemapManager extends Ab_ModuleManager {
 	
 	public function AJAX($d){
 		switch($d->do){
+			case 'initdata': return $this->InitDataToAJAX();
+			case 'menulist': return $this->MenuListToAJAX();
+			case 'page': return $this->PageToAJAX($d->pageid);
 			case 'bricks': return $this->BrickList();
+			case 'templatelist': return $this->TemplateListToAJAX();
 		}
 		return null;
+	}
+	
+	public function InitDataToAJAX(){
+		if (!$this->IsAdminRole()){ return null; }
+		$ret = new stdClass();
+		
+		$obj = $this->TemplateListToAJAX();
+		$ret->templates = $obj->templates;
+		
+		$obj = $this->MenuListToAJAX();
+		$ret->menus = $obj->menus;
+		
+		return $ret;
 	}
 	
 	private $_cacheMenuList;
@@ -121,6 +138,18 @@ class SitemapManager extends Ab_ModuleManager {
 		return $mList;
 	}
 	
+	public function MenuListToAJAX(){
+		if (!$this->IsAdminRole()){ return null; }
+		
+		$list = $this->MenuList();
+		if (empty($list)){ return null; }
+		
+		$ret = new stdClass();
+		$ret->menus = $list->ToAJAX();
+		
+		return $ret;
+	}
+	
 	private $_cachePageByAddress = null;
 	public function PageByCurrentAddress(){
 		if (!$this->IsViewRole()){ return null; }
@@ -142,6 +171,60 @@ class SitemapManager extends Ab_ModuleManager {
 		
 		return $page;
 	}
+	
+	/**
+	 * 
+	 * @param integer $pageid
+	 * @return SitemapPage
+	 */
+	public function Page($pageid){
+		if (!$this->IsViewRole()){ return null; }
+		
+		$d = SitemapDBQuery::Page($this->db, $pageid);
+		if (empty($d)){ return null; }
+		
+		return new SitemapPage($d);
+	}
+	
+	public function PageToAJAX($pageid){
+		if (!$this->IsAdminRole()){ return null; }
+		
+		$page = $this->Page($pageid);
+		if (empty($page)){ return null; }
+		
+		$ret = new stdClass();
+		$ret->page = $page->ToAJAX();
+		return $ret;
+	}
+	
+	
+	public function TemplateList(){
+		if (!$this->IsAdminRole()){ return null; }
+	
+		$rows = array();
+		$dir = dir(CWD."/tt");
+		while (false !== ($entry = $dir->read())) {
+			if ($entry == "." || $entry == ".." || empty($entry) ){
+				continue;
+			}
+			$files = globa(CWD."/tt/".$entry."/*.html");
+			foreach ($files as $file){
+				$bname = basename($file);
+				array_push($rows, $entry.":".substr($bname, 0, strlen($bname)-5));
+			}
+		}
+		return $rows;
+	}
+	
+	public function TemplateListToAJAX(){
+		$list = $this->TemplateList();
+		if (empty($list)){ return null; }
+		
+		$ret = new stdClass();
+		$ret->templates = $list;
+		return $ret;
+	}
+	
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
 	 * TODO: старые методы - на удаление
@@ -289,27 +372,6 @@ class SitemapManager extends Ab_ModuleManager {
 	public function Link($linkid){
 		if (!$this->IsAdminRole()){ return null; }
 		return SitemapQuery::MenuById($this->db, $linkid);
-	}
-	
-	public function TemplateList(){
-		if (!$this->IsAdminRole()){ return null; }
-		
-		$rows = array();
-		$dir = dir(CWD."/tt");
-		while (false !== ($entry = $dir->read())) {
-			if ($entry == "." || $entry == ".." || empty($entry) ){
-				continue;
-			}
-			$files = globa(CWD."/tt/".$entry."/*.html");
-			foreach ($files as $file){
-				$bname = basename($file);
-				$row = array();
-				$row['nm'] = $entry;
-				$row['vl'] = substr($bname, 0, strlen($bname)-5);
-				array_push($rows, $row);
-			}
-		}
-		return $rows;
 	}
 	
 	public function BrickList(){
