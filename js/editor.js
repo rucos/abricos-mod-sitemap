@@ -41,6 +41,8 @@ Component.entryPoint = function(NS){
 	
 	var PageEditorWidget = function(container, page, cfg){
 		cfg = L.merge({
+			'onCancel': null,
+			'onSave': null
 		}, cfg || {});
 		
 		PageEditorWidget.superclass.constructor.call(this, container, {
@@ -104,49 +106,33 @@ Component.entryPoint = function(NS){
 	 		if (page.name == 'index'){
 	 			this.elHide('pgnamecont');
 	 		}
-	 		
-	 		this._mods = page.mods;
-			
-			return;
-			
-			if (this.pageId > 0){
-				
-				
-				if (this.withMenu){
-				}
-				
-				this.renderMods();
-			}else{
-				if (this.withMenu){
-				}
-			}			
-		}
-	});
-	NS.PageEditorWidget = PageEditorWidget;
-	
-	var PageEditorPanel = function(page, cfg){
-		this.page = page;
-		cfg = L.merge({
-			'onSaveCallback': null,
-			'overflow': true
-		}, cfg || {});
-		PageEditorPanel.superclass.constructor.call(this, cfg);
-	};
-	YAHOO.extend(PageEditorPanel, Brick.widget.Dialog, {
-		initTemplate: function(){
-			return buildTemplate(this, 'pageeditorpanel').replace('pageeditorpanel');
-		},
-		onLoad: function(){
-			this.editorWidget = new PageEditorWidget(this._TM.getEl('pageeditorpanel.widget'), this.page, this.pcfg);
-		}
-		
-		/*
-		renderElements: function(){
 
+	 		this.renderMods();
 		},
-		onClick: function(el){
+		renderMods: function(){
+			var TM = this._TM, page = this.page, lst = "";
+	 		this.modsid = {};
+	 		if (L.isString(page.mods) && page.mods.length > 0){
+				var o = YAHOO.lang.JSON.parse(page.mods), i = 0;
+
+				for (var own in o){
+					for (var bk in o[own]){
+						this.modsid[i] = { 'own': own, 'bk': bk};
+						lst += TM.replace('moditem', {
+							'own': own,
+							'nm': bk, 
+							'id': i 
+						});
+						i++;
+					}
+				}
+				this.elSetHTML('modlist', lst);	 		
+	 		}else{
+				this.elSetHTML('modlist', lst);	 		
+	 		}
+		},
+		onClick: function(el, tp){
 			var TId = this._TId;
-			var tp = TId['pageeditor']; 
 			switch(el.id){
 			case tp['bcancel']: this.close(); return true;
 			case tp['bsave']: this.save(); return true;
@@ -163,6 +149,43 @@ Component.entryPoint = function(NS){
 				this.removeModule(numid); return true;
 			}
 			return false;
+		},
+		close: function(){
+			NS.life(this.cfg['onCancel']);
+		},
+		save: function(){
+			
+		}
+	});
+	NS.PageEditorWidget = PageEditorWidget;
+	
+	var PageEditorPanel = function(page, cfg){
+		this.page = page;
+		cfg = L.merge({
+			'onClose': null,
+			'overflow': true
+		}, cfg || {});
+		this.ccfg = cfg;
+		PageEditorPanel.superclass.constructor.call(this, cfg);
+	};
+	YAHOO.extend(PageEditorPanel, Brick.widget.Dialog, {
+		initTemplate: function(){
+			return buildTemplate(this, 'pageeditorpanel').replace('pageeditorpanel');
+		},
+		onLoad: function(){
+			var __self = this, cfg = this.ccfg;
+			var closeCallback = function(){
+				NS.life(cfg['close']);
+			};
+			this.editorWidget = new PageEditorWidget(this._TM.getEl('pageeditorpanel.widget'), this.page, {
+				'onClose': closeCallback,
+				'onSave': closeCallback
+			});
+		}
+		
+		/*
+		renderElements: function(){
+
 		},
 		destroy: function(){
 			this.editor.destroy();
@@ -263,27 +286,7 @@ Component.entryPoint = function(NS){
 			this.renderMods();
 		},
 		renderMods: function(){
-			var TM = this._TM;
-			var smods = this._mods; 
-			if (smods == ''){ return; }
 			
-			var o = J.parse(smods);
-			this.modsid = {};
-
-			var lst = "", i=0;
-			
-			for (var own in o){
-				for (var bk in o[own]){
-					this.modsid[i] = { 'own': own, 'bk': bk};
-					lst += TM.replace('moditem', {
-						'own': own,
-						'nm': bk, 
-						'id': i 
-					});
-					i++;
-				}
-			}
-			this.el('modlist').innerHTML = lst;
 		},
 		insertModule: function(id){
 			var o = this.modsid[id];
