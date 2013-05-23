@@ -50,6 +50,7 @@ class SitemapManager extends Ab_ModuleManager {
 			case 'initdata': return $this->InitDataToAJAX();
 			case 'menulist': return $this->MenuListToAJAX();
 			case 'page': return $this->PageToAJAX($d->pageid);
+			case 'pagesave': return $this->PageSaveToAJAX($d->pageid);
 			case 'bricks': return $this->BrickList();
 			case 'templatelist': return $this->TemplateListToAJAX();
 		}
@@ -195,6 +196,12 @@ class SitemapManager extends Ab_ModuleManager {
 		$ret = new stdClass();
 		$ret->page = $page->ToAJAX();
 		return $ret;
+	}
+	
+	public function PageSaveToAJAX($pageid, $sd){
+		if (!$this->IsAdminRole()){ return null; }
+		
+		
 	}
 	
 	

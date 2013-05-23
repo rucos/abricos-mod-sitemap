@@ -5,29 +5,41 @@
 		<input id="{i#bclose}" type="button" value="{#mod.sitemap.manager.managerpanel.2}" />
 	</div>
 </div>
-<!--{managerwidget}--><div class="bk_sitemap-def"> 
-	<div class="bk_sitemap-page">{#mod.sitemap.def.page}</div>
-	<div class="bk_sitemap-status"><!-- {#mod.sitemap.def.status} --></div>
-	<div class="bk_sitemap-modify">{#mod.sitemap.def.modify}</div>
+
+<!--{managerwidget}-->
+<div id="{i#id}" class="aw-sitemap">
+
+	<div id="{i#loading}" class="loading">
+		<img src="/images/loading.gif" /> Идет загрузка данных <br /> Пожалуйста, подождите...
+	</div>
+
+	<div id="{i#view}" class="" style="display: none">
+		<div class="bk_sitemap-def"> 
+			<div class="bk_sitemap-page">{#mod.sitemap.def.page}</div>
+			<div class="bk_sitemap-status"><!-- {#mod.sitemap.def.status} --></div>
+			<div class="bk_sitemap-modify">{#mod.sitemap.def.modify}</div>
+		</div>
+		<ul class="bk_sitemap-root">
+			<li class="bk_sitemap-level-0"> 
+				<div class="bk_sitemap-page bk_sitemap-left-root">
+					<span class="w1">
+						<a title="/" href="/" target="_blank"><span class="bk_sitemap-title">{#mod.sitemap.panel.title}&nbsp;</span></a>
+					</span>
+				</div>
+				<div class="bk_sitemap-status bk_sitemap-published-status"><!-- {#mod.sitemap.status.published} --></div>
+				<div class="bk_sitemap-modify">
+					<img src="/images/empty.gif" alt="" />
+					<img src="/images/empty.gif" alt="" />
+					<img id="{i#rootedit}" class="img_link" alt="{#mod.sitemap.modify.edit}" title="{#mod.sitemap.modify.edit}" src="/modules/sitemap/images/edit.gif"/>
+					<img id="{i#rootadd}" class="img_link" alt="{#mod.sitemap.modify.add}" title="{#mod.sitemap.modify.add}" src="/modules/sitemap/images/plus.png"/>
+					<img src="/images/empty.gif" alt="" />
+				</div>
+			</li>
+		</ul>
+		<ul id="{i#items}" class="bk_sitemap"></ul>
+	</div>
 </div>
-<ul class="bk_sitemap-root">
-	<li class="bk_sitemap-level-0"> 
-		<div class="bk_sitemap-page bk_sitemap-left-root">
-			<span class="w1">
-				<a title="/" href="/" target="_blank"><span class="bk_sitemap-title">{#mod.sitemap.panel.title}&nbsp;</span></a>
-			</span>
-		</div>
-		<div class="bk_sitemap-status bk_sitemap-published-status"><!-- {#mod.sitemap.status.published} --></div>
-		<div class="bk_sitemap-modify">
-			<img src="/images/empty.gif" alt="" />
-			<img src="/images/empty.gif" alt="" />
-			<img id="{i#rootedit}" class="img_link" alt="{#mod.sitemap.modify.edit}" title="{#mod.sitemap.modify.edit}" src="/modules/sitemap/images/edit.gif"/>
-			<img id="{i#rootadd}" class="img_link" alt="{#mod.sitemap.modify.add}" title="{#mod.sitemap.modify.add}" src="/modules/sitemap/images/plus.png"/>
-			<img src="/images/empty.gif" alt="" />
-		</div>
-	</li>
-</ul>
-<ul id="{i#items}" class="bk_sitemap"></ul>
+
 <!--{maplist}--><ul id="{i#id}-{v#id}" class="relative">{v#list}</ul>
 <!--{mapitem}--><li class="bk_sitemap-level-{v#level} {v#childstatus}"> 
 	<div class="bk_sitemap-page">

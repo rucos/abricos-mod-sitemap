@@ -93,6 +93,13 @@ Component.entryPoint = function(NS){
 				line = pline;
 			}
 			return line;
+		},
+		URL: function(){
+			var url = "/", pline = this.getPathLine();
+			for (var i=1;i<pline.length;i++){
+				url += pline[i].name+'/';
+			}
+			return url;
 		}
 	});		
 	NS.Menu = Menu;
@@ -205,21 +212,6 @@ Component.entryPoint = function(NS){
 				NS.life(callback, __self.menuList);
 			});
 		},
-		_updatePage: function(d){
-			if (!L.isValue(d) || !L.isValue(d['page'])){ return null; }
-
-			return new Page(d['page']);
-		},
-		pageLoad: function(pageid, callback){
-			var __self = this;
-			this.ajax({
-				'do': 'page',
-				'pageid': pageid
-			}, function(d){
-				var page = __self._updatePage(d);
-				NS.life(callback, page);
-			});
-		},
 		loadBrickList: function(callback){
 			if (L.isNull(!this.brickList)){
 				NS.life(callback, this.brickList);
@@ -236,6 +228,31 @@ Component.entryPoint = function(NS){
 				var bkList = new MBrickList(d);
 				__self.brickList = bkList;
 				NS.life(callback, bkList);
+			});
+		},
+		_updatePage: function(d){
+			if (!L.isValue(d) || !L.isValue(d['page'])){ return null; }
+
+			return new Page(d['page']);
+		},
+		pageLoad: function(pageid, callback){
+			var __self = this;
+			this.ajax({
+				'do': 'page',
+				'pageid': pageid
+			}, function(d){
+				var page = __self._updatePage(d);
+				NS.life(callback, page);
+			});
+		},
+		pageSave: function(pageid, sd, callback){
+			var __self = this;
+			this.ajax({
+				'do': 'pagesave',
+				'savedata': sd
+			}, function(d){
+				var page = __self._updatePage(d);
+				NS.life(callback, page);
 			});
 		}
 	};

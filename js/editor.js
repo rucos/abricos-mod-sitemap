@@ -38,7 +38,6 @@ Component.entryPoint = function(NS){
 		Brick.mod.sys.data = new Brick.util.data.byid.DataSet('sys');
 	}
 	
-	
 	var PageEditorWidget = function(container, page, cfg){
 		cfg = L.merge({
 			'onCancel': null,
@@ -53,6 +52,13 @@ Component.entryPoint = function(NS){
 		init: function(page, cfg){
 			this.page = page;
 			this.cfg = cfg;
+			this.editor = null;
+		},
+		destroy: function(){
+			if (L.isValue(this.editor)){
+				this.editor.destroy();
+			}
+			PageEditorWidget.superclass.destroy.call(this);
 		},
 		onLoad: function(page, cfg){
 			if (!L.isValue(page)){
@@ -132,13 +138,13 @@ Component.entryPoint = function(NS){
 	 		}
 		},
 		onClick: function(el, tp){
-			var TId = this._TId;
 			switch(el.id){
 			case tp['bcancel']: this.close(); return true;
 			case tp['bsave']: this.save(); return true;
 			case tp['baddmod']: this.selectModule(); return true;
 			}
 			
+			var TId = this._TId;
 			var prefix = el.id.replace(/([0-9]+$)/, '');
 			var numid = el.id.replace(prefix, "");
 			
@@ -153,8 +159,39 @@ Component.entryPoint = function(NS){
 		close: function(){
 			NS.life(this.cfg['onCancel']);
 		},
+		nameTranslite: function(){
+			var el = this.gel('mname');
+			var title = this.gel('mtitle');
+			if (!el.value && title.value){
+				el.value = Brick.util.Translite.ruen(title.value);
+			}
+		},
 		save: function(){
+			var __self = this;
+			this.nameTranslite();
+			var sd = {
+				'page': {
+					'nm': this.gel('pgname').value,
+					'tl': this.gel('pgtitle').value,
+					'mtks': this.gel('pgkeys').value,
+					'mtdsc': this.gel('pgdesc').value,
+					'tpl': this.gel('select.id').value,
+					'mods': this._mods,
+					'bd': this.editor.getContent(),
+					'em': this.editor.get('mode') == Brick.widget.Editor.MODE_CODE ? 1 : 0					
+				},
+				'menu': {
+					'id': this.page.menuId,
+					'tl': this.gel('mtitle').value,
+					'dsc': this.gel('mdesc').value,
+					'nm': this.gel('mname').value,
+					'off': this.gel('moff').value
+				}
+			};
 			
+			NS.manager.pageSave(this.page.id, sd, function(){
+				NS.life(__self.cfg['onSave']);
+			});
 		}
 	});
 	NS.PageEditorWidget = PageEditorWidget;
@@ -175,30 +212,16 @@ Component.entryPoint = function(NS){
 		onLoad: function(){
 			var __self = this, cfg = this.ccfg;
 			var closeCallback = function(){
-				NS.life(cfg['close']);
+				__self.close();
+				NS.life(cfg['onClose']);
 			};
 			this.editorWidget = new PageEditorWidget(this._TM.getEl('pageeditorpanel.widget'), this.page, {
-				'onClose': closeCallback,
+				'onCancel': closeCallback,
 				'onSave': closeCallback
 			});
 		}
 		
 		/*
-		renderElements: function(){
-
-		},
-		destroy: function(){
-			this.editor.destroy();
-			DATA.onComplete.unsubscribe(this.dsComplete);
-			PageEditorPanel.superclass.destroy.call(this);
-		},
-		nameTranslite: function(){
-			var el = this.el('mname');
-			var title = this.el('mtitle');
-			if (!el.value && title.value){
-				el.value = Brick.util.Translite.ruen(title.value);
-			}
-		},
 		save: function(){
 			this.nameTranslite();
 			

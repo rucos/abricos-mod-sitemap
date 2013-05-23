@@ -19,7 +19,9 @@ Component.entryPoint = function(NS){
 	
 	var Dom = YAHOO.util.Dom,
 		E = YAHOO.util.Event,
-		L = YAHOO.lang;
+		L = YAHOO.lang,
+		buildTemplate = this.buildTemplate,
+		BW = Brick.mod.widget.Widget;
 	
 	var API = NS.API;
 
@@ -76,7 +78,49 @@ Component.entryPoint = function(NS){
 		});
 	};
 
-	
+	var ManagerWidget = function(container, cfg){
+		cfg = L.merge({}, cfg || {});
+		
+		ManagerWidget.superclass.constructor.call(this, container, {
+			'buildTemplate': buildTemplate, 'tnames': 'managerwidget,maplist,mapitem,mapitempage,imgtypelink,imgtypemenu,biempty,biup,bidown,biadd,bieditp,biedit,birem,biremp' 
+		}, cfg);
+	};
+	YAHOO.extend(ManagerWidget, BW, {
+		init: function(cfg){
+			this.cfg = cfg;
+		},
+		onLoad: function(){
+			var __self = this;
+			NS.initManager(function(man){
+				__self._onLoadManager();
+			});
+		},
+		_onLoadManager: function(){
+			this.elHide('loading');
+			this.elShow('view');
+			this.renderList();
+		},
+		renderList: function(){
+			var rootItem = NS.manager.menuList.find(0);
+			this.renderItem(rootItem);
+		},
+		renderItem: function(menuItem){
+			
+			var TM = this._TM, T = this._T, lst = "";
+			
+			menuItem.childs.foreach(function(item){
+				lst += TM.replace('mapitempage', {
+					'url': item.URL(),
+					'title': item.name,
+					'level': item.level,
+					'buttons': T['biempty']+T['biempty']+T['bieditp']+T['biempty']+T['biremp'],
+					'id': item.id
+				});
+			});
+		}
+	});
+	NS.ManagerWidget = ManagerWidget;
+	/*
 	var ManagerWidget = function(container){
 		container = L.isString(container) ? Dom.get(container) : container;
 		this.init(container);
@@ -285,6 +329,7 @@ Component.entryPoint = function(NS){
 	};
 	
 	NS.ManagerWidget = ManagerWidget;
+	/**/
 	
 	var mapnode = function(parent, row, level){
 		this.parent = parent;
