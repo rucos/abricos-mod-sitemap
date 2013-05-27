@@ -160,7 +160,10 @@ class SitemapManager extends Ab_ModuleManager {
 		}
 		
 		$menuid = 0;
-		$mItem = $this->MenuList()->FindByPath(Abricos::$adress->dir);
+		$mItem = $this->MenuList()->FindByPath(Abricos::$adress->dir, true);
+		if (empty($mItem) && Abricos::$adress->level>0){
+			return null;
+		}
 		if (!empty($mItem)){ 
 			$menuid = $mItem->id; 
 		}
