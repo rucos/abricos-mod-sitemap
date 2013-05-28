@@ -68,6 +68,9 @@ class SitemapManager extends Ab_ModuleManager {
 		$obj = $this->MenuListToAJAX();
 		$ret->menus = $obj->menus;
 		
+		$obj = $this->PageListToAJAX();
+		$ret->pages = $obj->pages;
+		
 		return $ret;
 	}
 	
@@ -177,15 +180,31 @@ class SitemapManager extends Ab_ModuleManager {
 		return $page;
 	}
 	
+	/**
+	 * @return SitemapPageList
+	 */
 	public function PageList(){
 		if (!$this->IsViewRole()){ return null; }
 		
-		// $list = new sitema
+		$list = new SitemapPageList();
 		
+		$rows = SitemapDBQuery::PageList($this->db);
+		while (($d = $this->db->fetch_array($rows))){
+			$list->Add(new SitemapPage($d));
+		}
+		return $list;
+	}
+	
+	public function PageListToAJAX(){
+		$list = $this->PageList();
+		if (empty($list)){ return null; }
+		
+		$ret = new stdClass();
+		$ret->pages = $list->ToAJAX();
+		return $ret;
 	}
 	
 	/**
-	 * 
 	 * @param integer $pageid
 	 * @return SitemapPage
 	 */

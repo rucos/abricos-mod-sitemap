@@ -32,33 +32,58 @@ Component.entryPoint = function(NS){
 		d = L.merge({
 			'nm': '',
 			'tl': '',
-			'bd': '',
 			'mid': 0,
+			'dtl': null
+		}, d || {});
+		Page.superclass.constructor.call(this, d);
+	};
+	YAHOO.extend(Page, NS.Item, {
+		init: function(d){
+			this.detail = null;
+			Page.superclass.init.call(this, d);
+		},
+		update: function(d){
+			this.name = d['nm'];
+			this.title = d['tl'];
+			this.menuId = d['mid']|0;
+			
+			if (L.isValue(d['dtl'])){
+				this.detail = new PageDetail();
+			}
+		}
+	});
+	NS.Page = Page;
+	
+	var PageDetail = function(d){
+		d = L.merge({
+			'bd': '',
 			'mods': '',
 			'em': 0,
 			'mtdsc': '',
 			'mtks': '',
 			'tpl': ''
 		}, d || {});
-		Page.superclass.constructor.call(this, d);
+		this.init(d);
 	};
-	YAHOO.extend(Page, NS.Item, {
-		update: function(d){
-			this.name = d['nm'];
-			this.title = d['tl'];
+	PageDetail.prototype = {
+		init: function(d){
 			this.body = d['bd'];
-			this.menuId = d['mid']|0;
 			this.mods = d['mods'];
 			this.editorMode = d['em']|0;
 			this.metaKeys = d['mtks'];
 			this.metaDesc = d['mtdsc'];
 			this.template = d['tpl'];
 		}
-	});
-	NS.Page = Page;	
+	};
+	NS.PageDetail = PageDetail;
 	
-	var Menu = function(manager, d){
-		this.manager = manager;
+	var PageList = function(d){
+		PageList.superclass.constructor.call(this, d, Page, {});
+	};
+	YAHOO.extend(PageList, SysNS.ItemList, {});
+	NS.PageList = PageList;
+	
+	var Menu = function(d){
 		d = L.merge({
 			'pid': 0,
 			'tl':'', // заголовок
@@ -103,7 +128,6 @@ Component.entryPoint = function(NS){
 		}
 	});		
 	NS.Menu = Menu;
-	
 	
 	var MenuList = function(d){
 		MenuList.superclass.constructor.call(this, d, Menu, {
@@ -158,6 +182,7 @@ Component.entryPoint = function(NS){
 			NS.manager = this;
 			
 			this.menuList = new NS.MenuList();
+			this.pageList = new NS.PageList();
 			this.brickList = null;
 			this.templates = [];
 
@@ -167,6 +192,7 @@ Component.entryPoint = function(NS){
 			}, function(d){
 				__self._updateTemplates(d);
 				__self.menuList = __self._updateMenuList(d);
+				__self.pageList = __self._updatePageList(d);
 				
 				NS.life(callback, __self);
 			});
@@ -190,13 +216,22 @@ Component.entryPoint = function(NS){
 				return null;
 			}
 			var list = new NS.MenuList(d['menus']['list']);
-				
+Brick.console(list);			
+			/*
 			var rootItem = list.find(0);
 			if (!L.isNull(rootItem)){
 				// rootItem.title = this.getLang('menu.title');
 				rootItem.title = 'Root';
 			}
-			
+			/**/
+			return list;
+		},
+		_updatePageList: function(d){
+			if (!L.isValue(d) || !L.isValue(d['pages']) || !L.isValue(d['pages']['list'])){
+				return null;
+			}
+			var list = new NS.MenuList(d['pages']['list']);
+
 			return list;
 		},
 		menuListLoad: function(callback){

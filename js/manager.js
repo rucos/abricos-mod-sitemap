@@ -108,6 +108,7 @@ Component.entryPoint = function(NS){
 			
 			var TM = this._TM, T = this._T, lst = "";
 			
+			/*
 			menuItem.childs.foreach(function(item){
 				lst += TM.replace('mapitempage', {
 					'url': item.URL(),
@@ -116,6 +117,11 @@ Component.entryPoint = function(NS){
 					'buttons': T['biempty']+T['biempty']+T['bieditp']+T['biempty']+T['biremp'],
 					'id': item.id
 				});
+			});
+			/**/
+// Brick.console(menuItem);			
+			menuItem.childs.foreach(function(item){
+// Brick.console(item);
 			});
 		}
 	});
