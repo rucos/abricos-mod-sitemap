@@ -213,6 +213,33 @@ class SitemapPage extends AbricosItem {
 	public $menuid;
 	public $name;
 	public $title;
+	
+	/**
+	 * @var SitemapPageDetail
+	 */
+	public $detail = null;
+	
+	public function __construct($d){
+		parent::__construct($d);
+		$this->menuid	= intval($d['mid']);
+		$this->name		= strval($d['nm']);
+		$this->title	= strval($d['tl']);
+	}
+	
+	public function ToAJAX(){
+		$ret = parent::ToAJAX();
+		$ret->mid = $this->menuid;
+		$ret->nm = $this->name;
+		$ret->tl = $this->title;
+		
+		if (!empty($this->detail)){
+			$ret->dtl = $this->detail->ToAJAX();
+		}
+		return $ret;
+	}
+}
+
+class SitemapPageDetail {
 	public $metaKeys;
 	public $metaDesc;
 	public $template;
@@ -222,10 +249,6 @@ class SitemapPage extends AbricosItem {
 	public $body;
 	
 	public function __construct($d){
-		parent::__construct($d);
-		$this->menuid	= intval($d['mid']);
-		$this->name		= strval($d['nm']);
-		$this->title	= strval($d['tl']);
 		$this->body		= strval($d['bd']);
 		$this->metaKeys	= strval($d['mtks']);
 		$this->metaDesc	= strval($d['mtdsc']);
@@ -236,19 +259,15 @@ class SitemapPage extends AbricosItem {
 	}
 	
 	public function ToAJAX(){
-		$ret = parent::ToAJAX();
-		$ret->mid = $this->menuid;
-		$ret->nm = $this->name;
-		$ret->tl = $this->title;
+		$ret = new stdClass();
 		$ret->bd = $this->body;
 		$ret->mtks = $this->metaKeys;
 		$ret->mtdsc = $this->metaDesc;
 		$ret->tpl = $this->template;
 		$ret->mods = $this->mods;
 		$ret->em = $this->editorMode;
-		$ret->cid = $this->contentid;
 		return $ret;
-	}
+	}	
 }
 
 class SitemapPageList extends AbricosList { }

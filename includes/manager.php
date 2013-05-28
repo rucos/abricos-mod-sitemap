@@ -49,8 +49,9 @@ class SitemapManager extends Ab_ModuleManager {
 		switch($d->do){
 			case 'initdata': return $this->InitDataToAJAX();
 			case 'menulist': return $this->MenuListToAJAX();
+			case 'pagelist': return $this->PageListToAJAX();
 			case 'page': return $this->PageToAJAX($d->pageid);
-			case 'pagesave': return $this->PageSaveToAJAX($d->pageid);
+			case 'pagesave': return $this->PageSaveToAJAX($d->pageid, $d->savedata);
 			case 'bricks': return $this->BrickList();
 			case 'templatelist': return $this->TemplateListToAJAX();
 		}
@@ -176,6 +177,13 @@ class SitemapManager extends Ab_ModuleManager {
 		return $page;
 	}
 	
+	public function PageList(){
+		if (!$this->IsViewRole()){ return null; }
+		
+		// $list = new sitema
+		
+	}
+	
 	/**
 	 * 
 	 * @param integer $pageid
@@ -201,12 +209,24 @@ class SitemapManager extends Ab_ModuleManager {
 		return $ret;
 	}
 	
-	public function PageSaveToAJAX($pageid, $sd){
+	public function PageSave($pageid, $sd){
 		if (!$this->IsAdminRole()){ return null; }
 		
+		print_r($sd);
 		
 	}
 	
+	public function PageSaveToAJAX($pageid, $sd){
+		if (!$this->IsAdminRole()){ return null; }
+		
+		print_r($sd);
+		$pageid = $this->PageSave($pageid, $sd);
+		
+	}
+	
+	public function MenuSave($menuid, $sd){
+		
+	}
 	
 	public function TemplateList(){
 		if (!$this->IsAdminRole()){ return null; }

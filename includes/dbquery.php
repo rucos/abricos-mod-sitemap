@@ -6,7 +6,6 @@
  * @author Alexander Kuzmin <roosit@abricos.org>
  */
 
-
 class SitemapDBQuery {
 	
 	const FIELDS_MENU = "
@@ -29,6 +28,22 @@ class SitemapDBQuery {
 			FROM ".$db->prefix."sys_menu
 			WHERE deldate=0 AND language='".Abricos::$LNG."'
 			ORDER BY parentmenuid, menuorder
+		";
+		return $db->query_read($sql);
+	}
+	
+	public static function PageList(Ab_Database $db){
+		$sql = "
+			SELECT
+				a.pageid as id,
+				a.menuid as mid,
+				a.pagename as nm,
+				a.title as tl
+			
+			FROM ".$db->prefix."sys_page a
+			LEFT JOIN ".$db->prefix."content c ON a.contentid=c.contentid
+			WHERE a.menuid=".bkint($menuid)." AND a.pagename='".bkstr($pagename)."' 
+				AND a.language='".Abricos::$LNG."' AND a.deldate=0
 		";
 		return $db->query_read($sql);
 	}
