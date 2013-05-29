@@ -32,6 +32,17 @@ class SitemapDBQuery {
 		return $db->query_read($sql);
 	}
 	
+	public static function MenuOrderUpdate(Ab_Database $db, $menuid, $order){
+		$sql = "
+			UPDATE ".$db->prefix."sys_menu
+			SET menuorder=".bkint($order)."
+			WHERE menuid=".bkint($menuid)."
+			LIMIT 1
+		";
+		$db->query_write($sql);
+	}
+	
+	
 	public static function PageList(Ab_Database $db){
 		$sql = "
 			SELECT

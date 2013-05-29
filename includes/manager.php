@@ -49,6 +49,7 @@ class SitemapManager extends Ab_ModuleManager {
 		switch($d->do){
 			case 'initdata': return $this->InitDataToAJAX();
 			case 'menulist': return $this->MenuListToAJAX();
+			case 'menusaveorders': return $this->MenuSaveOrders($d->savedata);
 			case 'pagelist': return $this->PageListToAJAX();
 			case 'page': return $this->PageToAJAX($d->pageid);
 			case 'pagesave': return $this->PageSaveToAJAX($d->pageid, $d->savedata);
@@ -153,6 +154,14 @@ class SitemapManager extends Ab_ModuleManager {
 		$ret->menus = $list->ToAJAX();
 		
 		return $ret;
+	}
+	
+	public function MenuSaveOrders($sd){
+		if (!$this->IsAdminRole()){ return null; }
+		
+		foreach($sd as $d){
+			SitemapDBQuery::MenuOrderUpdate($this->db, $d->id, $d->o);
+		}
 	}
 	
 	private $_cachePageByAddress = null;

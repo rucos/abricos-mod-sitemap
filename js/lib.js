@@ -259,6 +259,14 @@ Component.entryPoint = function(NS){
 				NS.life(callback, __self.menuList);
 			});
 		},
+		menuSaveOrders: function(sd, callback){
+			this.ajax({
+				'do': 'menusaveorders',
+				'savedata': sd
+			}, function(d){
+				NS.life(callback);
+			});
+		},
 		loadBrickList: function(callback){
 			if (L.isNull(!this.brickList)){
 				NS.life(callback, this.brickList);

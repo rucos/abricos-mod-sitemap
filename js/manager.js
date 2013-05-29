@@ -25,15 +25,6 @@ Component.entryPoint = function(NS){
 	
 	var API = NS.API;
 
-	var tSetVar = Brick.util.Template.setProperty;
-
-	if (!Brick.objectExists('Brick.mod.sitemap.data')){
-		Brick.mod.sitemap.data = new Brick.util.data.byid.DataSet('sitemap');
-	}
-	var DATA = Brick.mod.sitemap.data;
-	
-	var buildTemplate = this.buildTemplate;
-
 	/**
 	 * Панель администратора.
 	 * 
@@ -109,7 +100,7 @@ Component.entryPoint = function(NS){
 			menuList.foreach(function(item){
 				var btns = "";
 				btns += (index == 0 ? T['biempty'] : T['biup']);
-				btns += (item.order < menuList.count()-2 ? T['bidown'] : T['biempty']);
+				btns += (item.order < menuList.count()-1 ? T['bidown'] : T['biempty']);
 				btns += T['biedit'];
 				btns += (L.isValue(item.link) ? T['biempty'] : T['biadd']);
 				btns += T['birem'];
@@ -220,6 +211,36 @@ Component.entryPoint = function(NS){
 			if (!L.isValue(item)){ return; }
 			item.expand = !item.expand;
 			this.renderList();
+		},
+		itemMove: function(menuid, act){
+			var item = NS.manager.menuList.find(menuid);
+			if (L.isNull(item)){ return; }
+			
+			var list = L.isNull(item.parent) ? NS.manager.menuList : item.parent.childs;
+			
+			for (var i=0;i<list.count();i++){ list.getByIndex(i).order = i;}
+			for (var i=0;i<list.count();i++){
+				var item = list.getByIndex(i);
+				if (item.id == menuid){
+					if (act == 'up'){
+						list.getByIndex(i-1).order = i;
+						list.getByIndex(i).order = i-1;
+					}else if(act == 'down'){
+						list.getByIndex(i).order = i+1;
+						list.getByIndex(i+1).order = i;
+					}
+				}
+			}
+			list.reorder();
+			var sd = [];
+			list.foreach(function(item){
+				sd[sd.length] = {
+					'id': item.id,
+					'o': item.order
+				};
+			});
+			NS.manager.menuSaveOrders(sd);
+			this.render();
 		}
 	});
 	NS.ManagerWidget = ManagerWidget;
@@ -382,25 +403,6 @@ Component.entryPoint = function(NS){
 			img.src = Brick.util.Language.getc('mod.sitemap.img.'+(status?'collapse':'expand'));
 			var node = this.root.find(id);
 			node.options.expand = status;
-		},
-		itemMove: function(id, act){
-			var item = this.root.find(id);
-			if (L.isNull(item)){ return; }
-			var i, list = item.parent.child;
-			for (i=0;i<list.length;i++){ list[i].row.update({'ord': i}); }
-			for (i=0;i<list.length;i++){
-				if (list[i].id == id){
-					if (act == 'up'){
-						list[i-1].row.update({'ord': i});
-						list[i].row.update({'ord': i-1});
-					}else if(act == 'down'){
-						list[i].row.update({'ord': i+1});
-						list[i+1].row.update({'ord': i});
-					}
-				}
-			}
-			this.tables['menulist'].applyChanges();
-			DATA.request();
 		},
 		removeMenu: function(menuid){
 			var menu = DATA.get('menulist').getRows().getById(menuid);
