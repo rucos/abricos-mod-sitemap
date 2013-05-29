@@ -88,6 +88,7 @@ Component.entryPoint = function(NS){
 	YAHOO.extend(ManagerWidget, BW, {
 		init: function(cfg){
 			this.cfg = cfg;
+			this._isLoadManager = false;
 		},
 		onLoad: function(){
 			var __self = this;
@@ -98,18 +99,14 @@ Component.entryPoint = function(NS){
 		_onLoadManager: function(){
 			this.elHide('loading');
 			this.elShow('view');
-			this.renderList();
+			this._isLoadManager = true;
+			this.render();
 		},
-		renderList: function(){
-			var rootItem = NS.manager.menuList.find(0);
-			this.renderItem(rootItem);
-		},
-		renderItem: function(menuItem){
-			
+		buildList: function(menuList){
+			var __self = this;
 			var TM = this._TM, T = this._T, lst = "";
 			
-			/*
-			menuItem.childs.foreach(function(item){
+			NS.manager.pageList.foreach(function(item){
 				lst += TM.replace('mapitempage', {
 					'url': item.URL(),
 					'title': item.name,
@@ -118,11 +115,110 @@ Component.entryPoint = function(NS){
 					'id': item.id
 				});
 			});
-			/**/
-// Brick.console(menuItem);			
-			menuItem.childs.foreach(function(item){
-// Brick.console(item);
+
+			lst = ""; // temp
+			menuList.foreach(function(item){
+				
+				var btns = "";
+				btns += (item.order == 0 ? T['biempty'] : T['biup']);
+				btns += (item.order < item.childs.count()-1 ? T['bidown'] : T['biempty']);
+				btns += T['biedit'];
+				btns += (L.isValue(item.link) ? T['biempty'] : T['biadd']);
+				btns += T['birem'];
+				
+				var lstChilds = "";
+				if (item.childs.count() > 0){
+					lstChilds = TM.replace('maplist', {
+						'id': item.id,
+						'list': __self.buildList(item.childs)
+					});
+				}
+				
+				lst += TM.replace('mapitem', {
+					'imgtype': TM.replace(L.isValue(item.link) ? 'imgtypelink' : 'imgtypemenu'),
+					'url': item.URL(),
+					'title': item.title,
+					'level': item.level,
+					'childstatus': item.childs.count() > 0 ? 'children-visible' : 'no-children',
+					'buttons': btns,
+					'id': item.id,
+					'child': lstChilds
+				});
+				
 			});
+			return lst;
+		},
+		render: function(){
+			if (!this._isLoadManager){ return; }
+			
+			var list = NS.manager.menuList;
+			this.elSetHTML('items', this.buildList(list));
+			
+			this.renderList(list);
+		},
+		renderList: function(list){
+			list = list || NS.manager.menuList;
+			var __self = this, TId = this._TId;
+			
+			list.foreach(function(item){
+				var container = Dom.get(TId['maplist']['id']+'-'+item.id);
+				var img = Dom.get(TId['mapitem']['expand']+'-'+item.id);
+				if (!L.isNull(img)){ img.style.display = item.childs.count() > 0 ? '' : 'none'; }
+				
+				img.src = Brick.util.Language.getc('mod.sitemap.img.'+(item.expand?'collapse':'expand'));
+				Dom.setStyle(container, 'display', item.expand ? '' : 'none');
+				__self.renderList(item.childs);
+				
+			});
+		},
+		onClick: function(el, tp){
+			var TId = this._TId;
+			
+			switch(el.id){
+			case tp['rootedit']: 
+				// var row = this.tables['pagelist'].getRows().find({'mid': 0, 'nm': 'index'});
+				// API.showPageEditorPanel(row.id, false, 0);
+				return true;
+			case tp['rootadd']: 
+				// new NS.ItemCreatePanel(0);
+				return true;
+			}
+			
+			var prefix = el.id.replace(/([0-9]+$)/, '');
+			var numid = el.id.replace(prefix, "");
+			
+			switch(prefix){
+			case (TId['mapitem']['expand']+'-'):
+				this.itemChangeExpand(numid);
+				return true;
+			case (TId['biup']['id']+'-'): this.itemMove(numid, 'up'); return true;
+			case (TId['bidown']['id']+'-'): this.itemMove(numid, 'down'); return true;
+			case (TId['biadd']['id']+'-'):
+				new NS.ItemCreatePanel(numid);
+				return true;
+			case (TId['bieditp']['id']+'-'):
+				API.showPageEditorPanel(numid);
+				return true;
+			case (TId['biedit']['id']+'-'):
+				var item = this.root.find(numid);
+				if (item.link){
+					API.showLinkEditorPanel(numid);
+				}else{
+					var row = this.tables['pagelist'].getRows().find({'mid': numid, 'nm': 'index'});
+					API.showPageEditorPanel(row.id, true);
+				}
+				return true;
+			case (TId['birem']['id']+'-'): this.removeMenu(numid); return true;
+			case (TId['biremp']['id']+'-'): this.removePage(numid); return true;
+			}
+			return false;
+		},
+		itemChangeExpand: function(menuid){
+			var list = NS.manager.menuList;
+			var item = list.find(menuid);
+			if (!L.isValue(item)){ return; }
+			item.expand = !item.expand;
+			this.renderList();
 		}
 	});
 	NS.ManagerWidget = ManagerWidget;
@@ -220,18 +316,6 @@ Component.entryPoint = function(NS){
 			
 			this.initNode(root);
 		}, 
-		initNode: function(node){
-			var TId = this._TId;
-			
-			var img = Dom.get(TId['mapitem']['expand']+'-'+node.id);
-			if (!L.isNull(img)){ img.style.display = node.child.length > 0 ? '' : 'none'; }
-			if (node.child.length == 0){ return; }
-			this.itemChangeEC(node.id, node.options.expand);
-			
-			for (var i=0;i<node.child.length;i++){
-				this.initNode(node.child[i]);
-			}
-		},
 		renderNode: function(node){
 			
 			var TM = this._TM, T = this._T, TId = this._TId;

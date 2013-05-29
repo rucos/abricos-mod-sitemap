@@ -96,12 +96,9 @@ Component.entryPoint = function(NS){
 	YAHOO.extend(Menu, SysNS.Item, {
 		init: function(d){
 			this.parent		= null;
+			this.level		= 1;
 			this.childs		= new NS.MenuList(d['childs']);
 			
-			var __self = this;
-			this.childs.foreach(function(menu){
-				menu.parent = __self;
-			});
 			Menu.superclass.init.call(this, d);
 		},
 		update: function(d){
@@ -131,7 +128,7 @@ Component.entryPoint = function(NS){
 	
 	var MenuList = function(d){
 		MenuList.superclass.constructor.call(this, d, Menu, {
-			'order': '!order,title'
+			'order': 'order,title'
 		});
 	};
 	YAHOO.extend(MenuList, SysNS.ItemList, {
@@ -216,14 +213,16 @@ Component.entryPoint = function(NS){
 				return null;
 			}
 			var list = new NS.MenuList(d['menus']['list']);
-Brick.console(list);			
-			/*
-			var rootItem = list.find(0);
-			if (!L.isNull(rootItem)){
-				// rootItem.title = this.getLang('menu.title');
-				rootItem.title = 'Root';
-			}
-			/**/
+			
+			var upd = function(lst, parent){
+				
+				lst.foreach(function(item){
+					item.parent = parent;
+					item.level = L.isValue(parent) ? parent.level+1 : 1;
+					upd(item.childs, item);
+				});
+			};
+			upd(list, null);
 			return list;
 		},
 		_updatePageList: function(d){
