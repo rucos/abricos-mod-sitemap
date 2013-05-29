@@ -50,6 +50,19 @@ Component.entryPoint = function(NS){
 			if (L.isValue(d['dtl'])){
 				this.detail = new PageDetail();
 			}
+		},
+		URL: function(){
+			var url = "/";
+			
+			var menuItem = NS.manager.menuList.find(this.menuid);
+			if (L.isValue(menuItem)){
+				url = menuItem.URL();
+			}
+			if (this.name != "index"){
+				url += "/"+this.name+".html";
+			}
+			
+			return url;
 		}
 	});
 	NS.Page = Page;
@@ -229,8 +242,8 @@ Component.entryPoint = function(NS){
 			if (!L.isValue(d) || !L.isValue(d['pages']) || !L.isValue(d['pages']['list'])){
 				return null;
 			}
-			var list = new NS.MenuList(d['pages']['list']);
-
+			
+			var list = new NS.PageList(d['pages']['list']);
 			return list;
 		},
 		menuListLoad: function(callback){

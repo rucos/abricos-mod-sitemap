@@ -42,8 +42,7 @@ class SitemapDBQuery {
 			
 			FROM ".$db->prefix."sys_page a
 			LEFT JOIN ".$db->prefix."content c ON a.contentid=c.contentid
-			WHERE a.menuid=".bkint($menuid)." AND a.pagename='".bkstr($pagename)."' 
-				AND a.language='".Abricos::$LNG."' AND a.deldate=0
+			WHERE a.language='".Abricos::$LNG."' AND a.deldate=0
 		";
 		return $db->query_read($sql);
 	}

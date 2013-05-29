@@ -104,24 +104,12 @@ Component.entryPoint = function(NS){
 		},
 		buildList: function(menuList){
 			var __self = this;
-			var TM = this._TM, T = this._T, lst = "";
+			var TM = this._TM, T = this._T, lst = "", index=0;
 			
-			NS.manager.pageList.foreach(function(item){
-				lst += TM.replace('mapitempage', {
-					'url': item.URL(),
-					'title': item.name,
-					'level': item.level,
-					'buttons': T['biempty']+T['biempty']+T['bieditp']+T['biempty']+T['biremp'],
-					'id': item.id
-				});
-			});
-
-			lst = ""; // temp
 			menuList.foreach(function(item){
-				
 				var btns = "";
-				btns += (item.order == 0 ? T['biempty'] : T['biup']);
-				btns += (item.order < item.childs.count()-1 ? T['bidown'] : T['biempty']);
+				btns += (index == 0 ? T['biempty'] : T['biup']);
+				btns += (item.order < menuList.count()-2 ? T['bidown'] : T['biempty']);
 				btns += T['biedit'];
 				btns += (L.isValue(item.link) ? T['biempty'] : T['biadd']);
 				btns += T['birem'];
@@ -134,6 +122,19 @@ Component.entryPoint = function(NS){
 					});
 				}
 				
+				NS.manager.pageList.foreach(function(page){
+					if (page.name == 'index' || page.menuId != item.id){ return; }
+					lstChilds += TM.replace('mapitempage', {
+						'url': page.URL(),
+						'title': page.name+".html",
+						'level': item.level+1,
+						'buttons': T['biempty']+T['biempty']+T['bieditp']+T['biempty']+T['biremp'],
+						'id': page.id
+					});
+				});
+				
+
+				
 				lst += TM.replace('mapitem', {
 					'imgtype': TM.replace(L.isValue(item.link) ? 'imgtypelink' : 'imgtypemenu'),
 					'url': item.URL(),
@@ -144,7 +145,7 @@ Component.entryPoint = function(NS){
 					'id': item.id,
 					'child': lstChilds
 				});
-				
+				index++;
 			});
 			return lst;
 		},
