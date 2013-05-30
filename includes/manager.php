@@ -223,7 +223,10 @@ class SitemapManager extends Ab_ModuleManager {
 		$d = SitemapDBQuery::Page($this->db, $pageid);
 		if (empty($d)){ return null; }
 		
-		return new SitemapPage($d);
+		$page = new SitemapPage($d);
+		$page->detail = new SitemapPageDetail($d);
+		
+		return $page;
 	}
 	
 	public function PageToAJAX($pageid){

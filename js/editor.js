@@ -1,8 +1,6 @@
 /*
-* @version $Id$
-* @copyright Copyright (C) 2008 Abricos All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
-*/
+ * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+ */
 
 /**
  * @module Sitemap
@@ -24,24 +22,14 @@ Component.entryPoint = function(NS){
 		buildTemplate = this.buildTemplate,
 		BW = Brick.mod.widget.Widget;
 
-	var J = YAHOO.lang.JSON;
-
 	var TMG = this.template;
-	var buildTemplate = this.buildTemplate;
-	
-	if (!NS.data){
-		NS.data = new Brick.util.data.byid.DataSet('sitemap');
-	}
-	var DATA = NS.data;
-	
-	if (!Brick.objectExists('Brick.mod.sys.data')){
-		Brick.mod.sys.data = new Brick.util.data.byid.DataSet('sys');
-	}
 	
 	var PageEditorWidget = function(container, page, cfg){
 		cfg = L.merge({
 			'onCancel': null,
-			'onSave': null
+			'onSave': null,
+			'onLoadDetail': null,
+			'parentMenuItem': null
 		}, cfg || {});
 		
 		PageEditorWidget.superclass.constructor.call(this, container, {
@@ -62,23 +50,41 @@ Component.entryPoint = function(NS){
 		},
 		onLoad: function(page, cfg){
 			if (!L.isValue(page)){
+				this.elHide('loading,view');
 				this.elShow('nullitem');
-				this.elHide('view');
+				NS.life(cfg['onLoadDetail'], page);
 				return;
 			}
+
+			if (L.isValue(page.detail)){
+				this._onLoadDetail(page, cfg);
+			}else{
+				var __self = this;
+				NS.manager.pageLoad(page.id, function(){
+					__self._onLoadDetail(page, cfg);
+					NS.life(cfg['onLoadDetail'], page);
+				});
+			}
+		},
+		_onLoadDetail: function(page, cfg){
+			this.elHide('loading');
+			this.elShow('view');
+			
 			var TM = this._TM;
 			
 			new YAHOO.widget.TabView(this.gel('tab'));
+			
+			var detail = page.detail;
 
 			var Editor = Brick.widget.Editor;
 			this.editor = new Editor(this.gel('editor'), {
 				'width': '750px', height: '250px', 
-				'mode': page.editorMode>0 ? Editor.MODE_CODE : Editor.MODE_VISUAL,
-				'value': page.body
+				'mode': detail.editorMode>0 ? Editor.MODE_CODE : Editor.MODE_VISUAL,
+				'value': detail.body
 			});
 			
-			var mItem = NS.manager.menuList.find(page.menuId);
-			if (L.isValue(mItem) && page.menuId > 0 && page.name == 'index'){
+			var mItem = NS.manager.menuList.find(page.menuid);
+			if (L.isValue(mItem) && page.menuid > 0 && page.name == 'index'){
 				this.elShow('menucont');
 				
 				this.elSetValue({
@@ -101,11 +107,11 @@ Component.entryPoint = function(NS){
 			this.elSetHTML('templates', TM.replace('select', {'list': s}));
 			
 			this.elSetValue({
-				'pgtitle': page.title,
-		 		'pgkeys': page.metaKeys,
-		 		'pgdesc': page.metaDesc,
 		 		'pgname': page.name,
-		 		'select.id': page.template
+				'pgtitle': page.title,
+		 		'pgkeys': detail.metaKeys,
+		 		'pgdesc': detail.metaDesc,
+		 		'select.id': detail.template
 			});
 
 			
@@ -181,7 +187,7 @@ Component.entryPoint = function(NS){
 					'em': this.editor.get('mode') == Brick.widget.Editor.MODE_CODE ? 1 : 0					
 				},
 				'menu': {
-					'id': this.page.menuId,
+					'id': this.page.menuid,
 					'tl': this.gel('mtitle').value,
 					'dsc': this.gel('mdesc').value,
 					'nm': this.gel('mname').value,
@@ -217,7 +223,10 @@ Component.entryPoint = function(NS){
 			};
 			this.editorWidget = new PageEditorWidget(this._TM.getEl('pageeditorpanel.widget'), this.page, {
 				'onCancel': closeCallback,
-				'onSave': closeCallback
+				'onSave': closeCallback,
+				'onLoadDetail': function(){
+					__self.center();
+				}
 			});
 		}
 		

@@ -45,10 +45,10 @@ Component.entryPoint = function(NS){
 		update: function(d){
 			this.name = d['nm'];
 			this.title = d['tl'];
-			this.menuId = d['mid']|0;
+			this.menuid = d['mid']|0;
 			
 			if (L.isValue(d['dtl'])){
-				this.detail = new PageDetail();
+				this.detail = new PageDetail(d['dtl']);
 			}
 		},
 		URL: function(){
@@ -93,7 +93,19 @@ Component.entryPoint = function(NS){
 	var PageList = function(d){
 		PageList.superclass.constructor.call(this, d, Page, {});
 	};
-	YAHOO.extend(PageList, SysNS.ItemList, {});
+	YAHOO.extend(PageList, SysNS.ItemList, {
+		find: function(menuid, name){
+			name = name || 'index';
+			var fpage = null;
+			this.foreach(function(page){
+				if (page.menuid == menuid && page.name == name){
+					fpage = page;
+					return true;
+				}
+			});
+			return fpage;
+		}
+	});
 	NS.PageList = PageList;
 	
 	var Menu = function(d){
@@ -211,9 +223,16 @@ Component.entryPoint = function(NS){
 			Brick.ajax('{C#MODNAME}', {
 				'data': data || {},
 				'event': function(request){
-					NS.life(callback, request.data);
+					
+					setTimeout(function(){ // DEBUG
+
+						NS.life(callback, request.data);
+						
+					}, 1500);
 				}
 			});
+			
+			
 		},
 		_updateTemplates: function(d){
 			if (!L.isValue(d) || !L.isValue(d['templates'])){
@@ -287,8 +306,17 @@ Component.entryPoint = function(NS){
 		},
 		_updatePage: function(d){
 			if (!L.isValue(d) || !L.isValue(d['page'])){ return null; }
+		
+			var page = this.pageList.get(d['page']['id']);
+			
+			if (L.isValue(page)){
+				page.update(d['page']);
+			}else{
+				page = new Page(d['page']);
+				this.pageList.add(page);
+			}
 
-			return new Page(d['page']);
+			return page;
 		},
 		pageLoad: function(pageid, callback){
 			var __self = this;

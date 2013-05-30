@@ -17,7 +17,7 @@ Component.entryPoint = function(){
 	
 	var menuItem = new cp.MenuItem(this.moduleName);
 	menuItem.icon = '/modules/sitemap/js/images/cp_icon.gif';
-	menuItem.entryComponent = 'api';
+	menuItem.entryComponent = 'manager';
 	menuItem.entryPoint = 'Brick.mod.sitemap.API.showManagerWidget';
 	
 	cp.MenuManager.add(menuItem);
