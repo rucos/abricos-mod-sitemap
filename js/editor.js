@@ -198,6 +198,7 @@ Component.entryPoint = function(NS){
 				},
 				'menu': {
 					'id': this.page.menuid,
+					'pid': L.isValue(this.cfg['parentMenuItem']) ? this.cfg['parentMenuItem'].id : 0,
 					'tl': this.gel('mtitle').value,
 					'dsc': this.gel('mdesc').value,
 					'nm': this.gel('mname').value,
@@ -232,6 +233,7 @@ Component.entryPoint = function(NS){
 				NS.life(cfg['onClose']);
 			};
 			this.editorWidget = new PageEditorWidget(this._TM.getEl('pageeditorpanel.widget'), this.page, {
+				'parentMenuItem': cfg['parentMenuItem'],
 				'onCancel': closeCallback,
 				'onSave': closeCallback,
 				'onLoadDetail': function(){
@@ -354,6 +356,7 @@ Component.entryPoint = function(NS){
 	
 	NS.PageEditorPanel = PageEditorPanel;
 	
+	/*
 	NS.API.showPageEditorPanelObj = function(param){
 		param = L.merge({
 			pageid: 0, 
@@ -370,7 +373,7 @@ Component.entryPoint = function(NS){
 			var widget = new NS.PageEditorPanel(pageId, withMenu, parentMenuId, isOnlyPage);
 			widget.saveCallBack = saveCallBack;
 		});
-	};
+	};/**/
 	
 	var Mods = function(callback){
 		this.callback = callback;

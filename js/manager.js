@@ -164,7 +164,7 @@ Component.entryPoint = function(NS){
 				new NS.MenuItemCreatePanel(numid);
 				return true;
 			case (TId['bieditp']['id']+'-'):
-				API.showPageEditorPanel(numid);
+				// API.showPageEditorPanel(numid);
 				return true;
 			case (TId['biedit']['id']+'-'):
 				var item = NS.manager.menuList.find(numid);

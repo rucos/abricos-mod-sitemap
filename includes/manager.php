@@ -250,11 +250,32 @@ class SitemapManager extends Ab_ModuleManager {
 	public function PageSaveToAJAX($pageid, $sd){
 		if (!$this->IsAdminRole()){ return null; }
 		
+		
+		$menuid = $this->MenuSave($sd->menu);
+		
 		$pageid = $this->PageSave($pageid, $sd);
 	}
 	
-	public function MenuSave($menuid, $sd){
+	public function MenuSave($sd){
+		if (!$this->IsAdminRole()){ return null; }
+
+		$menuid = intval($sd->id);
 		
+		$utmf  = Abricos::TextParser(true);
+		$sd->tl = $utmf->Parser($sd->tl);
+		if (empty($sd->tl)){ return null; }
+		
+		$sd->dsc = $utmf->Parser($sd->dsc);
+		$sd->pid = intval($sd->pid);
+		
+		$sd->nm = trim($sd->nm);
+		$sd->nm = translateruen(empty($sd->nm) ? translateruen($sd->tl) : $sd->nm);
+		
+		if ($menuid == 0){
+			
+		} else {
+			
+		}
 	}
 	
 	public function TemplateList(){
