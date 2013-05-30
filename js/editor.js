@@ -56,7 +56,7 @@ Component.entryPoint = function(NS){
 				return;
 			}
 
-			if (L.isValue(page.detail)){
+			if (L.isValue(page.detail) || page.id == 0){
 				this._onLoadDetail(page, cfg);
 			}else{
 				var __self = this;
@@ -83,8 +83,17 @@ Component.entryPoint = function(NS){
 				'value': detail.body
 			});
 			
-			var mItem = NS.manager.menuList.find(page.menuid);
-			if (L.isValue(mItem) && page.menuid > 0 && page.name == 'index'){
+			var mItem;
+			
+			if (page.id == 0){
+				mItem = new NS.Menu({
+					'pid': L.isValue(cfg['parentMenuId']) ? cfg['parentMenuId'].id : 0
+				});
+			}else{
+				mItem = NS.manager.menuList.find(page.menuid);
+			}
+			
+			if (L.isValue(mItem) && page.name == 'index'){
 				this.elShow('menucont');
 				
 				this.elSetValue({
@@ -177,6 +186,7 @@ Component.entryPoint = function(NS){
 			this.nameTranslite();
 			var sd = {
 				'page': {
+					'id': this.page.id,
 					'nm': this.gel('pgname').value,
 					'tl': this.gel('pgtitle').value,
 					'mtks': this.gel('pgkeys').value,

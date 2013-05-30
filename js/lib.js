@@ -47,7 +47,7 @@ Component.entryPoint = function(NS){
 			this.title = d['tl'];
 			this.menuid = d['mid']|0;
 			
-			if (L.isValue(d['dtl'])){
+			if (L.isValue(d['dtl']) || d['id'] == 0){
 				this.detail = new PageDetail(d['dtl']);
 			}
 		},
@@ -224,11 +224,11 @@ Component.entryPoint = function(NS){
 				'data': data || {},
 				'event': function(request){
 					
-					setTimeout(function(){ // DEBUG
+					// setTimeout(function(){ // DEBUG
 
 						NS.life(callback, request.data);
 						
-					}, 1500);
+					// }, 1500);
 				}
 			});
 			

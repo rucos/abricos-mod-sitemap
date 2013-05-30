@@ -250,9 +250,7 @@ class SitemapManager extends Ab_ModuleManager {
 	public function PageSaveToAJAX($pageid, $sd){
 		if (!$this->IsAdminRole()){ return null; }
 		
-		print_r($sd);
 		$pageid = $this->PageSave($pageid, $sd);
-		
 	}
 	
 	public function MenuSave($menuid, $sd){
