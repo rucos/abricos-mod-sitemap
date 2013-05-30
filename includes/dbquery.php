@@ -32,6 +32,41 @@ class SitemapDBQuery {
 		return $db->query_read($sql);
 	}
 	
+	public static function MenuAppend(Ab_Database $db, $d){
+		$sql = "
+			INSERT INTO ".$db->prefix."sys_menu
+			(parentmenuid, name, link, title, descript, menutype, menuorder, off, language) VALUES (
+				".bkint($d->pid).",
+				'".bkstr($d->nm)."',
+				'".bkstr($d->lnk)."',
+				'".bkstr($d->tl)."',
+				'".bkstr($d->dsc)."',
+				".bkint($d->tp).",
+				".bkint($d->ord).",
+				".bkint($d->off).",
+				'".Abricos::$LNG."'
+			)
+		";
+		$db->query_write($sql);
+		return $db->insert_id();
+	}
+	
+	public static function MenuUpdate(Ab_Database $db, $d){
+		$sql = "
+			UPDATE ".$db->prefix."sys_menu
+			SET
+				parentmenuid=".bkint($d->pid).",
+				name='".bkstr($d->nm)."',
+				link='".bkstr($d->lnk)."',
+				title='".bkstr($d->tl)."',
+				descript='".bkstr($d->dsc)."',
+				menuorder=".bkint($d->ord).",
+				off=".bkint($d->off)."
+			WHERE menuid='".bkint($d->id)."'
+			";
+		$db->query_write($sql);
+	}
+	
 	public static function MenuOrderUpdate(Ab_Database $db, $menuid, $order){
 		$sql = "
 			UPDATE ".$db->prefix."sys_menu
@@ -253,40 +288,6 @@ class SitemapQuery {
 		return $db->query_read($sql);
 	}
 	
-	public static function MenuCreate(Ab_Database $db, $d){
-		$sql = "
-			INSERT INTO ".$db->prefix."sys_menu 
-			(parentmenuid, name, link, title, descript, menutype, menuorder, off, language) VALUES (
-				".bkint($d->pid).", 
-				'".bkstr($d->nm)."', 
-				'".bkstr($d->lnk)."', 
-				'".bkstr($d->tl)."',
-				'".bkstr($d->dsc)."', 
-				".bkint($d->tp).",
-				".bkint($d->ord).",
-				".bkint($d->off).",
-				'".Abricos::$LNG."'
-			)
-		";
-		$db->query_write($sql);
-		return $db->insert_id();
-	}
-	
-	public static function MenuUpdate(Ab_Database $db, $d){
-		$sql = "
-			UPDATE ".$db->prefix."sys_menu 
-			SET
-				parentmenuid=".bkint($d->pid).", 
-				name='".bkstr($d->nm)."', 
-				link='".bkstr($d->lnk)."', 
-				title='".bkstr($d->tl)."',
-				descript='".bkstr($d->dsc)."',
-				menuorder=".bkint($d->ord).",
-				off=".bkint($d->off)."
-			WHERE menuid='".bkint($d->id)."'
-		";
-		$db->query_write($sql);
-	}
 	
 	public static function MenuById(Ab_Database $db, $menuid){
 		$sql = "

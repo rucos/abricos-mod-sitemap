@@ -52,7 +52,7 @@ class SitemapManager extends Ab_ModuleManager {
 			case 'menusaveorders': return $this->MenuSaveOrders($d->savedata);
 			case 'pagelist': return $this->PageListToAJAX();
 			case 'page': return $this->PageToAJAX($d->pageid);
-			case 'pagesave': return $this->PageSaveToAJAX($d->pageid, $d->savedata);
+			case 'pagesave': return $this->PageSaveToAJAX($d->savedata);
 			case 'bricks': return $this->BrickList();
 			case 'templatelist': return $this->TemplateListToAJAX();
 		}
@@ -156,6 +156,25 @@ class SitemapManager extends Ab_ModuleManager {
 		return $ret;
 	}
 	
+	public function Menu($menuid){
+		if (!$this->IsViewRole()){ return null; }
+		
+		$list = $this->MenuList();
+		$item = $list->Find($menuid);
+		
+		return $item;
+	}
+	
+	public function MenuToAJAX($menuid){
+		$menu = $this->Menu($menuid);
+		
+		if (empty($menu)){ return null; }
+		
+		$ret = new stdClass();
+		$ret->menu = $menu->ToAJAX();
+		return $ret;
+	}
+	
 	public function MenuSaveOrders($sd){
 		if (!$this->IsAdminRole()){ return null; }
 		
@@ -240,20 +259,31 @@ class SitemapManager extends Ab_ModuleManager {
 		return $ret;
 	}
 	
-	public function PageSave($pageid, $sd){
+	public function PageSave($pageid, $fsd){
 		if (!$this->IsAdminRole()){ return null; }
+
+		$menuid = $this->MenuSave($fsd->menu);
+		if (is_null($menuid)){ return null; }
 		
-		print_r($sd);
+		$sd = $fsd->page;
+		
+		$pageid = intval($sd->id);
+		
+		$utmf  = Abricos::TextParser(true);
+		$sd->tl = $utmf->Parser($sd->tl);
 		
 	}
 	
-	public function PageSaveToAJAX($pageid, $sd){
+	public function PageSaveToAJAX($sd){
 		if (!$this->IsAdminRole()){ return null; }
 		
 		
-		$menuid = $this->MenuSave($sd->menu);
-		
 		$pageid = $this->PageSave($pageid, $sd);
+		
+		
+
+		// $ret = new stdClass();
+		// $obj = $this->Menu($pageid);
 	}
 	
 	public function MenuSave($sd){
@@ -271,11 +301,20 @@ class SitemapManager extends Ab_ModuleManager {
 		$sd->nm = trim($sd->nm);
 		$sd->nm = translateruen(empty($sd->nm) ? translateruen($sd->tl) : $sd->nm);
 		
-		if ($menuid == 0){
-			
-		} else {
-			
+		if (!empty($sd->lnk)){
+			$sd->tp = 1;
+		}else{
+			$sd->tp = 0;
 		}
+		
+		if ($menuid == 0){
+			$menuid = SitemapDBQuery::MenuAppend($this->db, $sd);
+		} else {
+			SitemapDBQuery::MenuUpdate($this->db, $sd);
+		}
+		$this->_cacheMenuList = null;
+		
+		return $menuid;
 	}
 	
 	public function TemplateList(){
@@ -333,7 +372,7 @@ class SitemapManager extends Ab_ModuleManager {
 	
 	private $newmenuid = 0;
 	private $createmenu = false;
-	
+/*	
 	public function DSProcess($name, $rows){
 		$p = $rows->p;
 		$db = $this->db;
@@ -370,7 +409,7 @@ class SitemapManager extends Ab_ModuleManager {
 				break;
 		}
 	}
-	
+/*	
 	public function DSGetData($name, $tsrs){
 		$p = $tsrs->p;
 		switch ($name){
@@ -385,7 +424,7 @@ class SitemapManager extends Ab_ModuleManager {
 		
 		return null;
 	}
-	
+/*	
 	public function MenuAppend($d){
 		if (!$this->IsAdminRole()){ return null; }
 		// создание страницы в два этапа: 1-создание меню, 2-создание страницы в этом меню
@@ -403,7 +442,7 @@ class SitemapManager extends Ab_ModuleManager {
 		if (!$this->IsAdminRole()){ return null; }
 		return SitemapQuery::MenuByPageId($this->db, $pageid);		
 	}
-	
+/**/	
 	public function MenuListDbData(){
 		if (!$this->IsAdminRole()){ return null; }
 		return SitemapQuery::MenuList($this->db, true);
