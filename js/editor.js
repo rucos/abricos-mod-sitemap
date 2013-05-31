@@ -21,6 +21,8 @@ Component.entryPoint = function(NS){
 		L = YAHOO.lang,
 		buildTemplate = this.buildTemplate,
 		BW = Brick.mod.widget.Widget;
+	
+	var J = YAHOO.lang.JSON;
 
 	var TMG = this.template;
 	
@@ -217,106 +219,8 @@ Component.entryPoint = function(NS){
 			NS.manager.pageSave(this.page.id, sd, function(){
 				NS.life(__self.cfg['onSave']);
 			});
-		}
-	});
-	NS.PageEditorWidget = PageEditorWidget;
-	
-	var PageEditorPanel = function(page, cfg){
-		this.page = page;
-		cfg = L.merge({
-			'onClose': null,
-			'overflow': true
-		}, cfg || {});
-		this.ccfg = cfg;
-		PageEditorPanel.superclass.constructor.call(this, cfg);
-	};
-	YAHOO.extend(PageEditorPanel, Brick.widget.Dialog, {
-		initTemplate: function(){
-			return buildTemplate(this, 'pageeditorpanel').replace('pageeditorpanel');
-		},
-		onLoad: function(){
-			var __self = this, cfg = this.ccfg;
-			var closeCallback = function(){
-				__self.close();
-				NS.life(cfg['onClose']);
-			};
-			this.editorWidget = new PageEditorWidget(this._TM.getEl('pageeditorpanel.widget'), this.page, {
-				'parentMenuItem': cfg['parentMenuItem'],
-				'onCancel': closeCallback,
-				'onSave': closeCallback,
-				'onLoadDetail': function(){
-					__self.center();
-				}
-			});
-		}
-		
-		/*
-		save: function(){
-			this.nameTranslite();
-			
-			this._initTables();
-			var table = DATA.get('page');
-			
-			var page = this.pageId>0 ? this.rows['page'].getByIndex(0) : table.newRow();
-			var Editor = Brick.widget.Editor;
-			
-			if (this.pageId == 0){
-				DATA.get('page').getRows({id: 0}).add(page);
-			}
-			page.update({
-				'nm': this.elv('pgname'),
-				'tl': this.elv('pgtitle'),
-				'mtks': this.elv('pgkeys'),
-				'mtdsc': this.elv('pgdesc'),
-				'bd': this.editor.getContent(),
-				'tpl': this._TM.getEl('select.id').value,
-				'mods': this._mods,
-				'em': this.editor.get('mode') == Editor.MODE_CODE ? 1 : 0
-			});
-			if (this.pageId == 0){
-				page.cell['mid'] = this.parentMenuId;
-			}
-			table.applyChanges();
-			
-			if (this.withMenu){
-				var tableMenu = DATA.get('pagemenu');
-				var menu = this.pageId > 0 ? this.rows['pagemenu'].getByIndex(0) : tableMenu.newRow(); 
-				
-				if (this.pageId == 0){
-					this.rows['pagemenu'].add(menu);
-					menu.cell['pid'] = this.parentMenuId;
-				}
-				menu.update({
-					'tl': this.elv('mtitle'),
-					'dsc': this.elv('mdesc'),
-					'nm': this.elv('mname'),
-					'off': this.elv('moff')
-				});
-				tableMenu.applyChanges();
-			}
-			
-			if (!L.isNull(DATA.get('menulist'))){
-				DATA.get('menulist').getRows().clear();
-			}
-			
-			var pagelist = DATA.get('pagelist');
-			if (!L.isNull(pagelist)){
-				pagelist.getRows().clear();
-			}
-			var callback = this.saveCallBack; 
-			if (L.isFunction(callback)){
-				var onDsComplete;
-				onDsComplete = function(){
-					DATA.onComplete.unsubscribe(onDsComplete);
-					callback();
-				};
-				DATA.onComplete.subscribe(onDsComplete);
-			}
-			DATA.request();
-			this.close();
 		},
 		selectModule: function(){
-
 			var __self = this;
 			NS.initManager(function(man){
 				man.loadBrickList(function(list){
@@ -359,29 +263,41 @@ Component.entryPoint = function(NS){
 			this._mods = J.stringify(no);
 			this.renderMods();
 		}
-		/**/
+		
+	});
+	NS.PageEditorWidget = PageEditorWidget;
+	
+	var PageEditorPanel = function(page, cfg){
+		this.page = page;
+		cfg = L.merge({
+			'onClose': null,
+			'overflow': true
+		}, cfg || {});
+		this.ccfg = cfg;
+		PageEditorPanel.superclass.constructor.call(this, cfg);
+	};
+	YAHOO.extend(PageEditorPanel, Brick.widget.Dialog, {
+		initTemplate: function(){
+			return buildTemplate(this, 'pageeditorpanel').replace('pageeditorpanel');
+		},
+		onLoad: function(){
+			var __self = this, cfg = this.ccfg;
+			var closeCallback = function(){
+				__self.close();
+				NS.life(cfg['onClose']);
+			};
+			this.editorWidget = new PageEditorWidget(this._TM.getEl('pageeditorpanel.widget'), this.page, {
+				'parentMenuItem': cfg['parentMenuItem'],
+				'onCancel': closeCallback,
+				'onSave': closeCallback,
+				'onLoadDetail': function(){
+					__self.center();
+				}
+			});
+		}
 	});
 	
 	NS.PageEditorPanel = PageEditorPanel;
-	
-	/*
-	NS.API.showPageEditorPanelObj = function(param){
-		param = L.merge({
-			pageid: 0, 
-			withmenu: false, 
-			parentmenuid: 0, 
-			isonlypage: false,
-			savecallback: null
-		}, param || {});
-		NS.API.showPageEditorPanel(param.pageid, param.withmenu, param.parentmenuid, param.isonlypage, param.savecallback);
-	};
-	
-	NS.API.showPageEditorPanel = function(pageId, withMenu, parentMenuId, isOnlyPage, saveCallBack){
-		NS.roles.load(function(){
-			var widget = new NS.PageEditorPanel(pageId, withMenu, parentMenuId, isOnlyPage);
-			widget.saveCallBack = saveCallBack;
-		});
-	};/**/
 	
 	var Mods = function(callback){
 		this.callback = callback;

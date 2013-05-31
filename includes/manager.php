@@ -204,6 +204,7 @@ class SitemapManager extends Ab_ModuleManager {
 		if (empty($d)){ return null; }
 		
 		$page = new SitemapPage($d);
+		$page->detail = new SitemapPageDetail($d);
 		
 		return $page;
 	}

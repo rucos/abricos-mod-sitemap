@@ -136,7 +136,7 @@ Component.entryPoint = function(NS){
 		},
 		getPathLine: function(){
 			var line = [this];
-			if (!L.isNull(this.parent)){
+			if (L.isValue(this.parent)){
 				var pline = this.parent.getPathLine();
 				pline[pline.length] = this;
 				line = pline;
@@ -144,8 +144,9 @@ Component.entryPoint = function(NS){
 			return line;
 		},
 		URL: function(){
+			if (L.isValue(this.link)){ return this.link; }
 			var url = "/", pline = this.getPathLine();
-			for (var i=1;i<pline.length;i++){
+			for (var i=0;i<pline.length;i++){
 				url += pline[i].name+'/';
 			}
 			return url;

@@ -30,10 +30,10 @@ if ($man->IsAdminRole()){
 	));
 }
 
-$brick->content .= $page->body;
+$brick->content .= $page->detail->body;
 
-if (!empty($page->mods)){
-	$mods = json_decode($page->mods);
+if (!empty($page->detail->mods)){
+	$mods = json_decode($page->detail->mods);
 	foreach ($mods as $own => $val){
 		foreach ($mods->$own as $bkname => $val2){
 			Brick::$builder->LoadBrickS($own, $bkname, $brick);
@@ -43,11 +43,11 @@ if (!empty($page->mods)){
 if (!empty($page->title)){
 	Brick::$builder->SetGlobalVar('meta_title', $page->title);
 }
-if (!empty($page->metaKeys)){
-	Brick::$builder->SetGlobalVar('meta_keys', $page->metaKeys);
+if (!empty($page->detail->metaKeys)){
+	Brick::$builder->SetGlobalVar('meta_keys', $page->detail->metaKeys);
 }
-if (!empty($page->metaDesc)){
-	Brick::$builder->SetGlobalVar('meta_desc', $page->metaDesc);
+if (!empty($page->detail->metaDesc)){
+	Brick::$builder->SetGlobalVar('meta_desc', $page->detail->metaDesc);
 }
 
 ?>
