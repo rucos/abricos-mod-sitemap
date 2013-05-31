@@ -200,12 +200,20 @@ Component.entryPoint = function(NS){
 					'id': this.page.menuid,
 					'pid': L.isValue(this.cfg['parentMenuItem']) ? this.cfg['parentMenuItem'].id : 0,
 					'tl': this.gel('mtitle').value,
-					'dsc': this.gel('mdesc').value,
+					'mdsc': this.gel('mdesc').value,
 					'nm': this.gel('mname').value,
 					'off': this.gel('moff').value
 				}
 			};
-			
+			var menuid = sd['menu']['id'];
+			if (L.isValue(this.cfg['parentMenuItem'])){
+				sd['menu']['pid'] = this.cfg['parentMenuItem'].id;
+			}else if (menuid > 0){
+				var menu = NS.manager.menuList.find(menuid);
+				if (L.isValue(menu) && L.isValue(menu.parent)){
+					sd['menu']['pid'] = menu.parent.id;
+				}
+			}
 			NS.manager.pageSave(this.page.id, sd, function(){
 				NS.life(__self.cfg['onSave']);
 			});

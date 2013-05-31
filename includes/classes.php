@@ -41,12 +41,15 @@ class SMMenuItem extends AbricosItem {
 	
 	public $isSelect = false;
 	
+	public $link;
+	
 	public function __construct($d){
 		parent::__construct($d);
 
 		$this->title = strval($d['tl']);
 		$this->name = strval($d['nm']);
 		$this->parentid = intval($d['pid']);
+		$this->link = strval($d['lnk']);
 		$this->order = intval($d['ord']);
 		
 		$this->childs = new SMMenuItemList($this);
@@ -80,6 +83,7 @@ class SMMenuItem extends AbricosItem {
 		$ret = parent::ToAJAX();
 		$ret->tl = $this->title;
 		$ret->nm = $this->name;
+		$ret->lnk = $this->link;
 		$ret->ord = $this->order;
 		
 		if ($this->childs->Count()>0){

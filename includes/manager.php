@@ -259,6 +259,24 @@ class SitemapManager extends Ab_ModuleManager {
 		return $ret;
 	}
 	
+	public function PageSaveToAJAX($sd){
+		if (!$this->IsAdminRole()){
+			return null;
+		}
+	
+		$pageid = $this->PageSave($pageid, $sd);
+		if (empty($pageid)){ return null; }
+		
+		$page = $this->Page($pageid);
+		$menu = $this->Menu($page->menuid);
+		
+		$ret = new stdClass();
+		$ret->menu = $menu->ToAJAX();
+		$ret->page = $page->ToAJAX();
+		
+		return $ret;
+	}
+	
 	public function PageSave($pageid, $fsd){
 		if (!$this->IsAdminRole()){ return null; }
 
@@ -271,19 +289,23 @@ class SitemapManager extends Ab_ModuleManager {
 		
 		$utmf  = Abricos::TextParser(true);
 		$sd->tl = $utmf->Parser($sd->tl);
-		
-	}
-	
-	public function PageSaveToAJAX($sd){
-		if (!$this->IsAdminRole()){ return null; }
-		
-		
-		$pageid = $this->PageSave($pageid, $sd);
-		
-		
+		$sd->mid = intval($menuid);
 
-		// $ret = new stdClass();
-		// $obj = $this->Menu($pageid);
+		$sd->mks = $utmf->Parser($sd->mks);
+		$sd->mdsc = $utmf->Parser($sd->mdsc);
+		
+		if ($pageid == 0){
+			$pageid = SitemapDBQuery::PageAppend($this->db, $sd);
+		}else{
+			
+			$row = SitemapDBQuery::Page($this->db, $pageid);
+			if (empty($row)){ return null; }
+			
+			$sd->cid = $row['cid'];
+			SitemapDBQuery::PageUpdate($this->db, $sd);
+		}
+		
+		return $pageid;
 	}
 	
 	public function MenuSave($sd){

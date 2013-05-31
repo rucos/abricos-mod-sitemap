@@ -113,6 +113,7 @@ Component.entryPoint = function(NS){
 			'pid': 0,
 			'tl':'', // заголовок
 			'nm': '', // имя (URL)
+			'lnk': '',
 			'ord': 0,
 			'childs': []
 		}, d || {});
@@ -130,6 +131,7 @@ Component.entryPoint = function(NS){
 			this.parentid	= d['pid']|0;
 			this.title		= d['tl'];
 			this.name		= d['nm'];
+			this.link		= L.isString(d['lnk']) && d['lnk'].length > 0 ? d['lnk'] : null;
 			this.order		= d['ord']|0;
 		},
 		getPathLine: function(){

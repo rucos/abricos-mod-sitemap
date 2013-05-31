@@ -131,6 +131,49 @@ class SitemapDBQuery {
 		return $db->query_first($sql);
 	}
 	
+	public static function PageAppend(Ab_Database $db, $d){
+		$contentid = Ab_CoreQuery::CreateContent($db, $d->bd, 'sitemap');
+		$sql = "
+			INSERT INTO ".$db->prefix."sys_page
+			(pagename, menuid, contentid, language, title, 
+			 metakeys, metadesc, template, mods, editormode, dateline) VALUES (
+				'".bkstr($d->nm)."',
+				".bkint($d->mid).",
+				'".bkstr($contentid)."',
+				'".Abricos::$LNG."',
+				'".bkstr($d->tl)."',
+				'".bkstr($d->mks)."',
+				'".bkstr($d->mdsc)."',
+				'".bkstr($d->tpl)."',
+				'".bkstr($d->mods)."',
+				".bkint($d->em).",
+				".TIMENOW."
+			)
+		";
+		$db->query_write($sql);
+		return $db->insert_id();
+	}
+	
+	public static function PageUpdate(Ab_Database $db, $d){
+		Ab_CoreQuery::ContentUpdate($db, $d->cid, $d->bd);
+		$sql = "
+			UPDATE ".$db->prefix."sys_page
+			SET
+				pagename='".bkstr($d->nm)."',
+				title='".bkstr($d->tl)."',
+				metakeys='".bkstr($d->mtks)."',
+				metadesc='".bkstr($d->mtdsc)."',
+				mods='".bkstr($d->mods)."',
+				template='".bkstr($d->tpl)."',
+				editormode=".bkint($d->em).",
+				dateline='".TIMENOW."'
+			WHERE pageid='".bkint($d->id)."'
+			LIMIT 1
+		";
+		$db->query_write($sql);
+	}
+	
+	
 }
 
 /**
@@ -166,47 +209,7 @@ class SitemapQuery {
 		off
 	";
 	
-	public static function PageCreate(Ab_Database $db, $d){
-		$contentid = Ab_CoreQuery::CreateContent($db, $d->bd, 'sitemap');
-		$sql = "
-			INSERT INTO ".$db->prefix."sys_page
-			(pagename, menuid, contentid, language, title, metakeys, metadesc, template, mods, editormode, dateline) VALUES (
-				'".bkstr($d->nm)."',
-				".bkint($d->mid).",
-				'".bkstr($contentid)."',
-				'".Abricos::$LNG."',
-				'".bkstr($d->tl)."',
-				'".bkstr($d->mks)."',
-				'".bkstr($d->mdsc)."',
-				'".bkstr($d->tpl)."',
-				'".bkstr($d->mods)."',
-				".bkint($d->em).",
-				".TIMENOW."
-			)
-		";
-		$db->query_write($sql);
-		return $db->insert_id();
-	}
-	
 
-	public static function PageUpdate(Ab_Database $db, $d){
-		Ab_CoreQuery::ContentUpdate($db, $d->cid, $d->bd);
-		$sql = "
-			UPDATE ".$db->prefix."sys_page
-			SET
-				pagename='".bkstr($d->nm)."',
-				title='".bkstr($d->tl)."',
-				metakeys='".bkstr($d->mtks)."',
-				metadesc='".bkstr($d->mtdsc)."',
-				mods='".bkstr($d->mods)."',
-				template='".bkstr($d->tpl)."',
-				editormode=".bkint($d->em).",
-				dateline='".TIMENOW."'
-			WHERE pageid='".bkint($d->id)."'
-		";
-		$db->query_write($sql);
-	}
-	
 	public static function MenuByPageId(Ab_Database $db, $pageid){
 		$sql = "
 			SELECT
