@@ -24,8 +24,6 @@ Component.entryPoint = function(NS){
 	
 	var J = YAHOO.lang.JSON;
 
-	var TMG = this.template;
-	
 	var PageEditorWidget = function(container, page, cfg){
 		cfg = L.merge({
 			'onCancel': null,
@@ -337,88 +335,85 @@ Component.entryPoint = function(NS){
 	});
 
 	
-	/**
-	 * Редактор ссылки.
-	 * 
-	 * @class LinkEditorPanel
-	 * @constructor
-	 * @param {Integer} linkId Идентификатор ссылки.
-	 * @param {Integer} parentMenuId Идентификатор элемента меню, используется в том
-	 * случае, если linkId=0, т.е. создается новый элемент.
-	 */
-	var LinkEditorPanel = function(linkId, parentMenuId){
-		this.linkId = linkId || 0;
-		this.parentMenuId = parentMenuId || 0;
-		LinkEditorPanel.superclass.constructor.call(this);
+	var LinkEditorWidget = function(container, link, cfg){
+		cfg = L.merge({
+			'onCancel': null,
+			'onSave': null
+		}, cfg || {});
+		
+		LinkEditorWidget.superclass.constructor.call(this, container, {
+			'buildTemplate': buildTemplate, 'tnames': 'linkeditorwidget' 
+		}, link, cfg);
 	};
-	YAHOO.extend(LinkEditorPanel, Brick.widget.Dialog, {
-		el: function(name){ return Dom.get(this._TId['linkeditor'][name]); },
-		elv: function(name){ return Brick.util.Form.getValue(this.el(name)); },
-		setelv: function(name, value){ Brick.util.Form.setValue(this.el(name), value); },
-		initTemplate: function(){
-			var TM = TMG.build('linkeditor'), 
-				T = TM.data, TId = TM.idManager;
-			this._TM = TM; this._T = T; this._TId = TId;
-
-			return T['linkeditor']; 
+	YAHOO.extend(LinkEditorWidget, BW, {
+		init: function(link, cfg){
+			this.link = link;
+			this.cfg = cfg;
 		},
-		onLoad: function(){
-			if (this.linkId > 0){
-				this._initTables();
-				if (DATA.isFill(this.tables)){ this.renderElements(); }
-				DATA.onComplete.subscribe(this.dsComplete, this, true);
-			}else{
-				this.renderElements();
+		onLoad: function(link, cfg){
+			if (!L.isValue(link)){
+				this.elShow('nullitem');
+				return;
 			}
+			this.elShow('view');
+			
+			this.elSetValue({
+				'mtitle': link.title,
+				'mdesc': link.descript,
+				'mlink': link.link
+			});
 		},
-		_initTables: function(){
-			var tables = {'link': DATA.get('link', true)};
-			var rows = tables['link'].getRows({'id': this.linkId});
-			this.tables = tables;
-			this.rows = rows;
-		},
-		dsComplete: function(type, args){
-			if (args[0].checkWithParam('link', {id: this.linkId})){ 
-				this.renderElements(); 
-			}
-		},
-		renderElements: function(){
-			if (this.linkId > 0){
-				var d = this.rows.getByIndex(0).cell;
-		 		this.setelv('mtitle', d['tl']);
-		 		this.setelv('mdesc', d['dsc']);
-		 		this.setelv('mlink', d['lnk']);
-			}
-		},
-		onClick: function(el){
-			var tp = this._TId['linkeditor']; 
+		onClick: function(el, tp){
 			switch(el.id){
 			case tp['bcancel']: this.close(); return true;
 			case tp['bsave']: this.save(); return true;
 			}
 			return false;
 		},
+		close: function(){
+			NS.life(this.cfg['onCancel']);
+		},
 		save: function(){
-			this._initTables();
-			var row = this.linkId > 0 ? this.rows.getByIndex(0) : DATA.get('link').newRow();
-			if (this.linkId == 0){
-				this.rows.add(row);
-				row.update({
-					'pid': this.parentMenuId
-				});
-			}
-			row.update({
-				'tl': this.elv('mtitle'),
-				'dsc': this.elv('mdesc'),
-				'lnk': this.elv('mlink')
-			});
+			var sd = {
+				'id': this.link.id,
+				'tl': this.gel('mtitle').value,
+				'dsc': this.gel('mdesc').value,
+				'lnk': this.gel('mlink').value
+			};
 			
-			var menulist = DATA.get('menulist');
-			if ((row.isUpdate() && !L.isNull(menulist)) || row.isNew()){ menulist.getRows().clear(); }
-
-			DATA.get('link').applyChanges();
-			DATA.request();
-			this.close();
+			NS.manager.linkSave(this.link.id, sd, function(){
+				NS.life(__self.cfg['onSave']);
+			});
+		}
+	});
+	NS.LinkEditorWidget = LinkEditorWidget;
+	
+	/**
+	 * Редактор ссылки.
+	 */
+	var LinkEditorPanel = function(link, cfg){
+		this.link = link;
+		cfg = L.merge({
+			'onClose': null,
+			'overflow': true
+		}, cfg || {});
+		this.ccfg = cfg;
+		LinkEditorPanel.superclass.constructor.call(this);
+	};
+	YAHOO.extend(LinkEditorPanel, Brick.widget.Dialog, {
+		initTemplate: function(){
+			return buildTemplate(this, 'linkeditor').replace('linkeditor');
+		},
+		onLoad: function(){
+			var __self = this, cfg = this.ccfg;
+			var closeCallback = function(){
+				__self.close();
+				NS.life(cfg['onClose']);
+			};
+			this.editorWidget = new NS.LinkEditorWidget(this._TM.getEl('linkeditor.widget'), this.link, {
+				'onCancel': closeCallback,
+				'onSave': closeCallback
+			});
 		}
 	});
 	NS.LinkEditorPanel = LinkEditorPanel;

@@ -130,9 +130,14 @@
 	<td>{v#nm}</td>
 	<td><a href="#" id="{i#select}-{v#id}">{#mod.sitemap.editor.modsrow.1}</a></td>
 <tr>
-<!--{linkeditor}--><div class='hd'>{#mod.sitemap.linkeditor.hd}</div>
-<div class='bd'>
-	<div class="field linespace-1" style="width: 600px">
+
+<!--{linkeditorwidget}-->
+<div id="{i#id}">
+	<div id="{i#nullitem}" class="nullitem" style="display: none">
+		Элемент не найден или не достаточно прав для просмотра
+	</div>
+	
+	<div id="{i#view}" class="field linespace-1" style="width: 600px; display: none">
 		<p>
 			{#mod.sitemap.linkeditor.hd2}
 			<input type="text" id="{i#mtitle}" style="width: 400px" />	
@@ -150,4 +155,10 @@
 		<input id='{i#bsave}' type="button" value="{#mod.sitemap.linkeditor.bsave}" />
 		<input id='{i#bcancel}' type="button" value="{#mod.sitemap.linkeditor.bcancel}" />
 	</div>
+</div>
+
+<!--{linkeditor}-->
+<div class='hd'>{#mod.sitemap.linkeditor.hd}</div>
+<div class='bd'>
+	<div id="{i#widget}"></div>
 </div>

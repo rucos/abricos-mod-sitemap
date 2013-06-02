@@ -79,7 +79,7 @@ Component.entryPoint = function(NS){
 				btns += (index == 0 ? T['biempty'] : T['biup']);
 				btns += (item.order < menuList.count()-1 ? T['bidown'] : T['biempty']);
 				btns += T['biedit'];
-				btns += (L.isValue(item.link) ? T['biempty'] : T['biadd']);
+				btns += (item.isLink ? T['biempty'] : T['biadd']);
 				btns += T['birem'];
 				
 				var lstChilds = "";
@@ -102,7 +102,7 @@ Component.entryPoint = function(NS){
 				});
 				
 				lst += TM.replace('mapitem', {
-					'imgtype': TM.replace(L.isValue(item.link) ? 'imgtypelink' : 'imgtypemenu'),
+					'imgtype': TM.replace(item.isLink ? 'imgtypelink' : 'imgtypemenu'),
 					'url': item.URL(),
 					'title': item.title,
 					'level': item.level,
@@ -168,8 +168,8 @@ Component.entryPoint = function(NS){
 				return true;
 			case (TId['biedit']['id']+'-'):
 				var item = NS.manager.menuList.find(numid);
-				if (item.link){
-					API.showLinkEditorPanel(numid);
+				if (item.isLink){
+					new NS.LinkEditorPanel(item);
 				}else{
 					var page = NS.manager.pageList.find(numid, 'index');
 					new NS.PageEditorPanel(page);

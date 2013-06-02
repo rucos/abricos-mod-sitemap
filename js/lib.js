@@ -131,7 +131,8 @@ Component.entryPoint = function(NS){
 			this.parentid	= d['pid']|0;
 			this.title		= d['tl'];
 			this.name		= d['nm'];
-			this.link		= L.isString(d['lnk']) && d['lnk'].length > 0 ? d['lnk'] : null;
+			this.isLink		= L.isString(d['lnk']) && d['lnk'].length > 0;
+			this.link		= this.isLink ? d['lnk'] : null;
 			this.order		= d['ord']|0;
 		},
 		getPathLine: function(){
@@ -339,6 +340,17 @@ Component.entryPoint = function(NS){
 			}, function(d){
 				var page = __self._updatePage(d);
 				NS.life(callback, page);
+			});
+		},
+		linkSave: function(linkid, sd, callback){
+			var __self = this;
+			this.ajax({
+				'do': 'linksave',
+				'savedata': sd
+			}, function(d){
+				var link = null;
+				//var page = __self._updatePage(d);
+				NS.life(callback, link);
 			});
 		}
 	};
