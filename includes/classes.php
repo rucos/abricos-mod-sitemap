@@ -65,6 +65,9 @@ class SMMenuItem extends AbricosItem {
 	
 	private $_calcURI = null;
 	public function URI(){
+		if ($this->IsLink()){
+			return $this->link;
+		}
 		if (is_null($this->_calcURI)){
 			if (!empty($this->parent)){
 				$this->_calcURI = $this->parent->URI().$this->name."/";
