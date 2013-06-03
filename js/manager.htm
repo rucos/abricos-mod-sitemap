@@ -86,3 +86,23 @@
 	&nbsp;&nbsp;&nbsp;
 	<input id="{i#bcancel}" type="button" value="{#mod.sitemap.mnuadd.bcancel}" />
 </div>
+
+
+<!--{removepanel}-->
+<div class='hd'>Удаление элемента меню</div>
+<div class='bd aw-sitemap'>
+	<div id="{i#dialogremove}" class="field">
+		<p>
+			Вы действительно хотите удалить раздел элемент со всем его содержимым?
+		</p>
+		<div class="buttons right">
+			<span id="{i#btns}">
+				<input id="{i#bremove}" value="Удалить" type="button" />
+				<input id="{i#bcancel}" value="Отмена" type="button" />
+			</span>
+			<span id="{i#bloading}" style="display: none">
+				<img src="/images/loading.gif" /> Удаление...
+			</span>
+		</div>
+	</div>
+</div>

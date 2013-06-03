@@ -53,6 +53,8 @@ class SitemapManager extends Ab_ModuleManager {
 			case 'pagelist': return $this->PageListToAJAX();
 			case 'page': return $this->PageToAJAX($d->pageid);
 			case 'pagesave': return $this->PageSaveToAJAX($d->savedata);
+			case 'linksave': return $this->LinkSaveToAJAX($d->savedata);
+			case 'menuremove': return $this->MenuRemove($d->menuid);
 			case 'bricks': return $this->BrickList();
 			case 'templatelist': return $this->TemplateListToAJAX();
 		}
@@ -323,12 +325,7 @@ class SitemapManager extends Ab_ModuleManager {
 		
 		$sd->nm = trim($sd->nm);
 		$sd->nm = translateruen(empty($sd->nm) ? translateruen($sd->tl) : $sd->nm);
-		
-		if (!empty($sd->lnk)){
-			$sd->tp = 1;
-		}else{
-			$sd->tp = 0;
-		}
+		$sd->tp = 0;
 		
 		if ($menuid == 0){
 			$menuid = SitemapDBQuery::MenuAppend($this->db, $sd);
@@ -338,6 +335,67 @@ class SitemapManager extends Ab_ModuleManager {
 		$this->_cacheMenuList = null;
 		
 		return $menuid;
+	}
+	
+	public function MenuRemove($menuid){
+		if (!$this->IsAdminRole()){
+			return null;
+		}
+	
+		$menu = $this->Menu($menuid);
+		$childs = $menu->childs;
+		for ($i=0;$i<$childs->Count();$i++){
+			$childItem = $childs->GetByIndex($index);
+			$this->MenuRemove($childItem->id);
+		}
+		
+		SitemapDBQuery::MenuRemove($this->db, $menuid);
+	
+		$this->_cacheMenuList = null;
+		
+		return true;
+	}
+	
+	public function LinkSave($sd){
+		if (!$this->IsAdminRole()){ return null; }
+		
+		$linkid = intval($sd->id);
+
+		$utmf  = Abricos::TextParser(true);
+		$sd->tl = $utmf->Parser($sd->tl);
+		if (empty($sd->tl)){ return null; }
+		
+		$sd->dsc = $utmf->Parser($sd->dsc);
+		$sd->pid = intval($sd->pid);
+		
+		$sd->lnk = trim($sd->lnk);
+		if (empty($sd->lnk)){
+			$sd->lnk = "/";
+		}
+		$sd->tp = 1;
+		
+		if ($linkid == 0){
+			$linkid = SitemapDBQuery::MenuAppend($this->db, $sd);
+		} else {
+			SitemapDBQuery::MenuUpdate($this->db, $sd);
+		}
+		$this->_cacheMenuList = null;
+		
+		return $linkid;
+	}
+	
+	public function LinkSaveToAJAX($sd){
+		if (!$this->IsAdminRole()){ return null; }
+
+		$linkid = $this->LinkSave($sd);
+		if (empty($linkid)){ return null; }
+	
+		$menu = $this->Menu($linkid);
+	
+		$ret = new stdClass();
+		$ret->menu = $menu->ToAJAX();
+	
+		return $ret;
 	}
 	
 	public function TemplateList(){
@@ -465,57 +523,8 @@ class SitemapManager extends Ab_ModuleManager {
 		if (!$this->IsAdminRole()){ return null; }
 		return SitemapQuery::MenuByPageId($this->db, $pageid);		
 	}
-/**/	
-	public function MenuListDbData(){
-		if (!$this->IsAdminRole()){ return null; }
-		return SitemapQuery::MenuList($this->db, true);
-	}
-	
-	public function MenuRemove($menuid){
-		if (!$this->IsAdminRole()){ return null; }
-		SitemapQuery::MenuRemove($this->db, $menuid);
-	}
-	
-	public function old_PageAppend($d){
-		if (!$this->IsAdminRole()){ return null; }
-		if ($this->createmenu){
-			$d->mid = $this->newmenuid;
-		}
-		SitemapQuery::PageCreate($this->db, $d);
-	}
-	public function old_PageUpdate($d){
-		if (!$this->IsAdminRole()){ return null; }
-		SitemapQuery::PageUpdate($this->db, $d);
-	}
-	public function old_PageList(){
-		if (!$this->IsAdminRole()){ return null; }
-		return SitemapQuery::PageList($this->db);
-	}
-	public function old_PageRemove($pageid){
-		if (!$this->IsAdminRole()){ return null; }
-		SitemapQuery::PageRemove($this->db, $pageid);
-	}
-	public function old_Page($pageid, $retArray = false){
-		if (!$this->IsAdminRole()){ return null; }
+/**/
 		
-		return SitemapQuery::PageById($this->db, $pageid, $retArray);
-	}
-	
-	public function LinkAppend($d){
-		if (!$this->IsAdminRole()){ return null; }
-		SitemapQuery::MenuCreate($this->db, $d);
-	}
-	
-	public function LinkUpdate($d){
-		if (!$this->IsAdminRole()){ return null; }
-		SitemapQuery::MenuUpdate($this->db, $d);
-	}
-	
-	public function Link($linkid){
-		if (!$this->IsAdminRole()){ return null; }
-		return SitemapQuery::MenuById($this->db, $linkid);
-	}
-	
 	public function BrickList(){
 		if (!$this->IsAdminRole()){ return null; }
 		

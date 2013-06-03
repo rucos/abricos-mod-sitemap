@@ -21,8 +21,6 @@ Component.entryPoint = function(NS){
 		buildTemplate = this.buildTemplate,
 		BW = Brick.mod.widget.Widget;
 	
-	var API = NS.API;
-
 	var ManagerPanel = function(){
 		ManagerPanel.superclass.constructor.call(this, {
 			'width': '780px', fixedcenter: true
@@ -36,7 +34,6 @@ Component.entryPoint = function(NS){
 			this.managerWidget = new NS.ManagerWidget(this._TM.getEl('managerpanel.container'));
 		},
 		onClick: function(el){
-			
 			if (el.id == this._TId['managerpanel']['bclose']){
 				this.close(); return true;
 			}
@@ -139,15 +136,17 @@ Component.entryPoint = function(NS){
 			});
 		},
 		onClick: function(el, tp){
-			var TId = this._TId;
+			var TId = this._TId, __self = this, pcfg = {
+				'onSave': function(){ __self.render(); }
+			};
 			
 			switch(el.id){
 			case tp['rootedit']: 
 				var page = NS.manager.pageList.find(0, 'index');
-				new NS.PageEditorPanel(page);
+				new NS.PageEditorPanel(page, pcfg);
 				return true;
 			case tp['rootadd']:
-				new NS.MenuItemCreatePanel(0);
+				new NS.MenuItemCreatePanel(0, pcfg);
 				return true;
 			}
 			
@@ -161,7 +160,7 @@ Component.entryPoint = function(NS){
 			case (TId['biup']['id']+'-'): this.itemMove(numid, 'up'); return true;
 			case (TId['bidown']['id']+'-'): this.itemMove(numid, 'down'); return true;
 			case (TId['biadd']['id']+'-'):
-				new NS.MenuItemCreatePanel(numid);
+				new NS.MenuItemCreatePanel(numid, pcfg);
 				return true;
 			case (TId['bieditp']['id']+'-'):
 				// API.showPageEditorPanel(numid);
@@ -169,16 +168,22 @@ Component.entryPoint = function(NS){
 			case (TId['biedit']['id']+'-'):
 				var item = NS.manager.menuList.find(numid);
 				if (item.isLink){
-					new NS.LinkEditorPanel(item);
+					new NS.LinkEditorPanel(item, pcfg);
 				}else{
 					var page = NS.manager.pageList.find(numid, 'index');
-					new NS.PageEditorPanel(page);
+					new NS.PageEditorPanel(page, pcfg);
 				}
 				return true;
-			case (TId['birem']['id']+'-'): this.removeMenu(numid); return true;
+			case (TId['birem']['id']+'-'): this.menuRemove(numid); return true;
 			case (TId['biremp']['id']+'-'): this.removePage(numid); return true;
 			}
 			return false;
+		},
+		menuRemove: function(menuid){
+			var __self = this, item = NS.manager.menuList.find(menuid);
+			new NS.MenuItemRemovePanel(item, function(){
+				__self.render();
+			});
 		},
 		itemChangeExpand: function(menuid){
 			var list = NS.manager.menuList;
@@ -224,7 +229,10 @@ Component.entryPoint = function(NS){
 		return new NS.ManagerWidget(container);
 	};
 
-	var MenuItemCreatePanel = function(menuid){
+	var MenuItemCreatePanel = function(menuid, cfg){
+		this.ccfg = L.merge({
+			'onSave': null
+		}, cfg || {});
 		this.menuid = menuid;
 		MenuItemCreatePanel.superclass.constructor.call(this);
 	};
@@ -240,17 +248,25 @@ Component.entryPoint = function(NS){
 			}
 		},
 		create: function(){
+			var __self = this;
+			var onSave = function(){
+				NS.life(__self.ccfg['onSave']);
+			};
 			var pMenu = NS.manager.menuList.find(this.menuid);
 			
 			if (this._TM.getEl('mnuadd.type0').checked){
 				new NS.PageEditorPanel(new NS.Page({'nm': 'index'}), {
-					'parentMenuItem': pMenu
+					'parentMenuItem': pMenu,
+					'onSave': onSave
 				});
 			}else if(this._TM.getEl('mnuadd.type1').checked){
-				// API.showLinkEditorPanel(0, this.menuid);
+				new NS.LinkEditorPanel(new NS.Menu({
+					'pid': L.isValue(pMenu) ? pMenu.id : 0
+				}), {'onSave': onSave});
 			}else{
 				new NS.PageEditorPanel(new NS.Page(), {
-					'parentMenuItem': pMenu
+					'parentMenuItem': pMenu,
+					'onSave': onSave
 				});
 			}
 			this.close();
@@ -258,4 +274,36 @@ Component.entryPoint = function(NS){
 	});
 
 	NS.MenuItemCreatePanel = MenuItemCreatePanel;
+	
+	
+	var MenuItemRemovePanel = function(item, callback){
+		this.item = item;
+		this.callback = callback;
+		MenuItemRemovePanel.superclass.constructor.call(this, {fixedcenter: true});
+	};
+	YAHOO.extend(MenuItemRemovePanel, Brick.widget.Dialog, {
+		initTemplate: function(){
+			return buildTemplate(this, 'removepanel').replace('removepanel');
+		},
+		onClick: function(el){
+			var tp = this._TId['removepanel'];
+			switch(el.id){
+			case tp['bcancel']: this.close(); return true;
+			case tp['bremove']: this.remove(); return true;
+			}
+			return false;
+		},
+		remove: function(){
+			var TM = this._TM, gel = function(n){ return  TM.getEl('removepanel.'+n); },
+				__self = this;
+			Dom.setStyle(gel('btns'), 'display', 'none');
+			Dom.setStyle(gel('bloading'), 'display', '');
+			NS.manager.menuRemove(this.item.id, function(){
+				__self.close();
+				NS.life(__self.callback);
+			});
+		}
+	});
+	NS.MenuItemRemovePanel = MenuItemRemovePanel;
+
 };

@@ -182,7 +182,7 @@ Component.entryPoint = function(NS){
 			}
 		},
 		save: function(){
-			var __self = this;
+			var cfg = this.cfg;
 			this.nameTranslite();
 			var sd = {
 				'page': {
@@ -215,7 +215,7 @@ Component.entryPoint = function(NS){
 				}
 			}
 			NS.manager.pageSave(this.page.id, sd, function(){
-				NS.life(__self.cfg['onSave']);
+				NS.life(cfg['onSave']);
 			});
 		},
 		selectModule: function(){
@@ -267,12 +267,11 @@ Component.entryPoint = function(NS){
 	
 	var PageEditorPanel = function(page, cfg){
 		this.page = page;
-		cfg = L.merge({
+		this.ccfg = L.merge({
 			'onClose': null,
-			'overflow': true
+			'onSave': null
 		}, cfg || {});
-		this.ccfg = cfg;
-		PageEditorPanel.superclass.constructor.call(this, cfg);
+		PageEditorPanel.superclass.constructor.call(this, {'overflow': true});
 	};
 	YAHOO.extend(PageEditorPanel, Brick.widget.Dialog, {
 		initTemplate: function(){
@@ -286,10 +285,13 @@ Component.entryPoint = function(NS){
 			};
 			this.editorWidget = new PageEditorWidget(this._TM.getEl('pageeditorpanel.widget'), this.page, {
 				'parentMenuItem': cfg['parentMenuItem'],
-				'onCancel': closeCallback,
-				'onSave': closeCallback,
 				'onLoadDetail': function(){
 					__self.center();
+				},
+				'onCancel': closeCallback,
+				'onSave': function(){
+					NS.life(cfg['onSave']);
+					closeCallback();
 				}
 			});
 		}
@@ -374,6 +376,7 @@ Component.entryPoint = function(NS){
 			NS.life(this.cfg['onCancel']);
 		},
 		save: function(){
+			var __self = this;
 			var sd = {
 				'id': this.link.id,
 				'tl': this.gel('mtitle').value,
@@ -395,6 +398,7 @@ Component.entryPoint = function(NS){
 		this.link = link;
 		cfg = L.merge({
 			'onClose': null,
+			'onSave': null,
 			'overflow': true
 		}, cfg || {});
 		this.ccfg = cfg;
@@ -412,7 +416,10 @@ Component.entryPoint = function(NS){
 			};
 			this.editorWidget = new NS.LinkEditorWidget(this._TM.getEl('linkeditor.widget'), this.link, {
 				'onCancel': closeCallback,
-				'onSave': closeCallback
+				'onSave': function(){
+					NS.life(cfg['onSave']);
+					closeCallback();
+				}
 			});
 		}
 	});

@@ -35,14 +35,13 @@ class SitemapDBQuery {
 	public static function MenuAppend(Ab_Database $db, $d){
 		$sql = "
 			INSERT INTO ".$db->prefix."sys_menu
-			(parentmenuid, name, link, title, descript, menutype, menuorder, off, language) VALUES (
+			(parentmenuid, name, link, title, descript, menutype, off, language) VALUES (
 				".bkint($d->pid).",
 				'".bkstr($d->nm)."',
 				'".bkstr($d->lnk)."',
 				'".bkstr($d->tl)."',
 				'".bkstr($d->dsc)."',
 				".bkint($d->tp).",
-				".bkint($d->ord).",
 				".bkint($d->off).",
 				'".Abricos::$LNG."'
 			)
@@ -60,13 +59,29 @@ class SitemapDBQuery {
 				link='".bkstr($d->lnk)."',
 				title='".bkstr($d->tl)."',
 				descript='".bkstr($d->dsc)."',
-				menuorder=".bkint($d->ord).",
 				off=".bkint($d->off)."
 			WHERE menuid='".bkint($d->id)."'
 			";
 		$db->query_write($sql);
 	}
 	
+	public static function MenuRemove(Ab_Database $db, $menuid){
+		// remove pages
+		$sql = "
+			UPDATE ".$db->prefix."sys_page
+			SET deldate='".TIMENOW."'
+			WHERE menuid=".bkint($menuid)."
+		";
+		$db->query_write($sql);
+		
+		$db->query_write("
+			UPDATE ".$db->prefix."sys_menu
+			SET deldate='".TIMENOW."'
+			WHERE menuid=".bkint($menuid)."
+		");
+		$db->query_write($sql);
+	}
+		
 	public static function MenuOrderUpdate(Ab_Database $db, $menuid, $order){
 		$sql = "
 			UPDATE ".$db->prefix."sys_menu
@@ -348,35 +363,7 @@ class SitemapQuery {
 			WHERE pageid='".bkint($pageid)."'
 		");
 	}
-	
-	public static function MenuRemove(Ab_Database $db, $menuid){
-		// remove pages
-		$sql = "
-			SELECT pageid
-			FROM ".$db->prefix."sys_page
-			WHERE menuid=".bkint($menuid)."
-		";
-		$rows = $db->query_read($sql);
-		while (($row = $db->fetch_array($rows))){
-			SitemapQuery::PageRemove($db, $row['pageid']);
-		}
-		
-		// child list
-		$sql = "
-			SELECT menuid
-			FROM ".$db->prefix."sys_menu
-			WHERE parentmenuid=".bkint($menuid)."
-		";
-		$rows = $db->query_read($sql);
-		while (($row = $db->fetch_array($rows))){
-			SitemapQuery::MenuRemove($db, $row['menuid']);
-		}
-		$db->query_write("
-			UPDATE ".$db->prefix."sys_menu
-			SET deldate='".TIMENOW."'
-			WHERE menuid=".bkint($menuid)."
-		");
-	}
+
 }
 
 ?>

@@ -199,6 +199,18 @@ Component.entryPoint = function(NS){
 	};
 	YAHOO.extend(MBrickList, NS.ItemList, {});
 	NS.MBrickList = MBrickList;
+	
+	
+	var isValue = function(o, path){
+		if (!L.isValue(o)){ return false; }
+		path = path || "";
+		var a = path.split(".");
+		for (var j=0; j<a.length; j++) {
+			if (!L.isValue(o[a[j]])){ return false; }
+			o=o[a[j]];
+		}
+		return L.isValue(o);
+	};
 
 	var Manager = function(callback){
 		this.init(callback);
@@ -239,15 +251,12 @@ Component.entryPoint = function(NS){
 			
 		},
 		_updateTemplates: function(d){
-			if (!L.isValue(d) || !L.isValue(d['templates'])){
-				return null;
-			}
+			if (!isValue(d,'templates')){ return null; }
 			this.templates = d['templates'];
 		},
 		_updateMenuList: function(d){
-			if (!L.isValue(d) || !L.isValue(d['menus']) || !L.isValue(d['menus']['list'])){
-				return null;
-			}
+			if (!isValue(d, 'menus.list')){ return null; }
+			
 			var list = new NS.MenuList(d['menus']['list']);
 			
 			var upd = function(lst, parent){
@@ -260,6 +269,67 @@ Component.entryPoint = function(NS){
 			};
 			upd(list, null);
 			return list;
+		},
+		_updateMenu: function(d){
+			if (!isValue(d, 'menu')){ return null; }
+			
+			var di = d['menu'], menuid = di['id']|0;
+			
+			if (menuid == 0){ return null; }
+			
+			var menu = this.menuList.find(menuid);
+			
+			if (L.isNull(menu)){
+				menu = new Menu(di);
+				this.menuList.add(menu);
+			}else{
+				menu.update(di);
+			}
+			this._restructureMenuList();
+			
+			return menu;
+		},
+		_restructureMenuList: function(){
+			
+			var menuListToArray = function(list, arr){
+				list.foreach(function(item){
+					arr[arr.length] = item;
+					menuListToArray(item.childs, arr);
+				});
+			};
+
+			var arr = [], list = new MenuList();
+			menuListToArray(this.menuList, arr);
+			
+			this.menuList.clear();
+			for (var i=0;i<arr.length;i++){
+				var item = arr[i];
+				item.childs.clear();
+				item.parent = null;
+				item.level = 1;
+				list.add(item);
+			}
+			
+			for (var i=0;i<arr.length;i++){
+				var item = arr[i];
+				if (item.parentid == 0){
+					this.menuList.add(item);
+				}else{
+					var parent = list.get(item.parentid);
+					if (L.isValue(parent)){
+						parent.childs.add(item);
+						item.parent = parent;
+					}
+				}
+			}
+			
+			var upd = function(lst, parent){
+				lst.foreach(function(item){
+					item.level = L.isValue(parent) ? parent.level+1 : 1;
+					upd(item.childs, item);
+				});
+			};
+			upd(list, null);
 		},
 		_updatePageList: function(d){
 			if (!L.isValue(d) || !L.isValue(d['pages']) || !L.isValue(d['pages']['list'])){
@@ -287,6 +357,23 @@ Component.entryPoint = function(NS){
 				'do': 'menusaveorders',
 				'savedata': sd
 			}, function(d){
+				NS.life(callback);
+			});
+		},
+		menuRemove: function(menuid, callback){
+			var __self = this, list = this.menuList, item = list.find(menuid);
+			if (L.isValue(item.parent)){
+				list = item.parent.childs;
+			}
+			
+			if (!L.isValue(item)){
+				NS.life(callback);
+				return;
+			}
+			
+			this.ajax({'do': 'menuremove', 'menuid': menuid}, function(d){
+				list.remove(menuid);
+				__self._restructureMenuList();
 				NS.life(callback);
 			});
 		},
@@ -338,6 +425,7 @@ Component.entryPoint = function(NS){
 				'do': 'pagesave',
 				'savedata': sd
 			}, function(d){
+				__self._updateMenu(d);
 				var page = __self._updatePage(d);
 				NS.life(callback, page);
 			});
@@ -348,9 +436,8 @@ Component.entryPoint = function(NS){
 				'do': 'linksave',
 				'savedata': sd
 			}, function(d){
-				var link = null;
-				//var page = __self._updatePage(d);
-				NS.life(callback, link);
+				var menu = __self._updateMenu(d);
+				NS.life(callback, menu);
 			});
 		}
 	};

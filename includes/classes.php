@@ -55,6 +55,10 @@ class SMMenuItem extends AbricosItem {
 		$this->childs = new SMMenuItemList($this);
 	}
 	
+	public function IsLink(){
+		return !empty($this->link);
+	}
+	
 	private $_calcURI = null;
 	public function URI(){
 		if (is_null($this->_calcURI)){
@@ -82,6 +86,7 @@ class SMMenuItem extends AbricosItem {
 	public function ToAJAX(){
 		$ret = parent::ToAJAX();
 		$ret->tl = $this->title;
+		$ret->pid = $this->parentid;
 		$ret->nm = $this->name;
 		$ret->lnk = $this->link;
 		$ret->ord = $this->order;
