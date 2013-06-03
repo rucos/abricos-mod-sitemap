@@ -29,6 +29,11 @@ class SitemapModule extends Ab_Module {
 	
 	private $_manager = null;
 	
+	/**
+	 * @var SitemapPage
+	 */
+	public $page = null;
+	
 	function __construct(){
 		$this->version = "0.2.5.2";
 		$this->name = "sitemap";
@@ -61,17 +66,18 @@ class SitemapModule extends Ab_Module {
 
 		if (is_null($page)){ return ''; }
 		
+		$this->page = $page;
+		
 		return 'index';
 	}
 	
-	/*
 	public function GetTemplate(){
 		$page = $this->page;
-		if (empty($page['tpl'])){ return null; }
-		$arr = explode(":", $page['tpl']);
+		if (empty($page->detail->template)){ return null; }
+		$arr = explode(":", $page->detail->template);
 		return array("owner" => $arr[0], "name" => $arr[1]);
 	}
-	/**/
+	
 }
 
 class SitemapAction {

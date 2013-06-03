@@ -271,11 +271,14 @@ class SitemapManager extends Ab_ModuleManager {
 		if (empty($pageid)){ return null; }
 		
 		$page = $this->Page($pageid);
-		$menu = $this->Menu($page->menuid);
 		
 		$ret = new stdClass();
-		$ret->menu = $menu->ToAJAX();
 		$ret->page = $page->ToAJAX();
+		
+		if ($page->menuid > 0){
+			$menu = $this->Menu($page->menuid);
+			$ret->menu = $menu->ToAJAX();
+		}
 		
 		return $ret;
 	}
@@ -283,10 +286,11 @@ class SitemapManager extends Ab_ModuleManager {
 	public function PageSave($pageid, $fsd){
 		if (!$this->IsAdminRole()){ return null; }
 		
-
 		$sd = $fsd->page;
 		$sd->nm = translateruen($sd->nm);
-		if (!empty($sd->nm) && $sd->nm != 'index'){
+		if ($sd->nm == "index" && $fsd->menu->pid == 0 && $fsd->menu->id == 0){
+			$menuid = 0;
+		}else if (!empty($sd->nm) && $sd->nm != 'index'){
 			$menuid = $fsd->menu->pid;
 		}else{
 			$menuid = $this->MenuSave($fsd->menu);

@@ -21,7 +21,7 @@
 						ell.style.display = 'none';
 						
 						new NS.PageEditorPanel(page, {
-							'onSaveCallback': function(){
+							'onSave': function(){
 				   				Brick.Page.reload();
 							}
 						});
