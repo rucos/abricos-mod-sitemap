@@ -282,11 +282,16 @@ class SitemapManager extends Ab_ModuleManager {
 	
 	public function PageSave($pageid, $fsd){
 		if (!$this->IsAdminRole()){ return null; }
-
-		$menuid = $this->MenuSave($fsd->menu);
-		if (is_null($menuid)){ return null; }
 		
+
 		$sd = $fsd->page;
+		$sd->nm = translateruen($sd->nm);
+		if (!empty($sd->nm) && $sd->nm != 'index'){
+			$menuid = $fsd->menu->pid;
+		}else{
+			$menuid = $this->MenuSave($fsd->menu);
+			if (is_null($menuid)){ return null; }
+		}
 		
 		$pageid = intval($sd->id);
 		
@@ -343,9 +348,12 @@ class SitemapManager extends Ab_ModuleManager {
 		}
 	
 		$menu = $this->Menu($menuid);
+		if (empty($menu)){ return null; }
+		
 		$childs = $menu->childs;
-		for ($i=0;$i<$childs->Count();$i++){
-			$childItem = $childs->GetByIndex($index);
+		
+		for ($i=0; $i<$childs->Count(); $i++){
+			$childItem = $childs->GetByIndex($i);
 			$this->MenuRemove($childItem->id);
 		}
 		
@@ -430,101 +438,6 @@ class SitemapManager extends Ab_ModuleManager {
 	 * TODO: старые методы - на удаление
 	 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	
-	
-	/**
-	 * SitemapMenuList
-	 *
-	 * @var SitemapMenuList
-	 */
-	private $menu = null;
-	
-	/**
-	 * SitemapMenuList
-	 *
-	 * @var SitemapMenuList
-	 */
-	private $menuFull = null;
-	
-	/**
-	 *
-	 * @var SitemapModule
-	 */
-	public $module = null;	
-	
-	private $newmenuid = 0;
-	private $createmenu = false;
-/*	
-	public function DSProcess($name, $rows){
-		$p = $rows->p;
-		$db = $this->db;
-		
-		switch ($name){
-			case 'pagemenu':
-				foreach ($rows as $r){
-					if ($r->f == 'a'){	$this->MenuAppend($r->d); }
-					if ($r->f == 'u'){	$this->MenuUpdate($r->d); }
-				}
-				break;
-			case 'menulist':
-				foreach ($rows as $r){
-					if ($r->f == 'd'){ $this->MenuRemove($r->d->id); }
-					if ($r->f == 'u'){ $this->MenuUpdate($r->d); }
-				}
-				break;
-			case 'page':
-				foreach ($rows as $r){
-					if ($r->f == 'a'){	$this->old_PageAppend($r->d); }
-					if ($r->f == 'u'){	$this->old_PageUpdate($r->d); }
-				}
-				break;
-			case 'pagelist':
-				foreach ($rows as $r){
-					if ($r->f == 'd'){ $this->old_PageRemove($r->d->id); }
-				}
-				break;				
-			case 'link':
-				foreach ($rows as $r){
-					if ($r->f == 'a'){	$this->LinkAppend($r->d); }
-					if ($r->f == 'u'){	$this->LinkUpdate($r->d); }
-				}
-				break;
-		}
-	}
-/*	
-	public function DSGetData($name, $tsrs){
-		$p = $tsrs->p;
-		switch ($name){
-			case 'pagemenu': return $this->Menu($p->id);
-			case 'menulist': return $this->MenuListDbData();
-			case 'pagelist': return $this->old_PageList();
-			case 'link': return $this->Link($p->id);
-			case 'page': return $this->old_Page($p->id);
-			case 'templates': return $this->TemplateList();
-			case 'bricks': return $this->BrickList();
-		}
-		
-		return null;
-	}
-/*	
-	public function MenuAppend($d){
-		if (!$this->IsAdminRole()){ return null; }
-		// создание страницы в два этапа: 1-создание меню, 2-создание страницы в этом меню
-		$this->newmenuid = SitemapQuery::MenuCreate($this->db, $d);
-		$this->createmenu = true;
-		return $this->newmenuid;
-	}
-	
-	public function MenuUpdate($d){
-		if (!$this->IsAdminRole()){ return null; }
-		SitemapQuery::MenuUpdate($this->db, $d);
-	}
-	
-	public function Menu($pageid){
-		if (!$this->IsAdminRole()){ return null; }
-		return SitemapQuery::MenuByPageId($this->db, $pageid);		
-	}
-/**/
-		
 	public function BrickList(){
 		if (!$this->IsAdminRole()){ return null; }
 		
@@ -555,94 +468,6 @@ class SitemapManager extends Ab_ModuleManager {
 			}
 		}
 		return $brickdb;
-	}
-	
-	/**
-	 * Получить менеджер управления меню
-	 * 
-	 * @param boolean $full
-	 * @param array $mods список модулей участвующих в формировании меню
-	 * 
-	 * @return SitemapMenuList
-	 */
-	public function GetMenu($full = false, $mods = array()){
-		$menu = null;
-		if (!is_null($this->menuFull)){
-			$menu = $this->menuFull;
-		}
-		if ($full){
-			if (is_null($this->menuFull)){
-				$this->menuFull = new SitemapMenuList(true);
-			}
-			$menu = $this->menuFull;
-		}else if (is_null($menu)){
-			if (is_null($this->menu)){
-				$this->menu = new SitemapMenuList(false);
-			}
-			$menu = $this->menu;
-		}
-		foreach ($mods as $modname){
-			$module = Abricos::GetModule($modname);
-			if (!is_null($module)){
-				$module->BuildMenu($menu, $full);
-			}
-		}
-		return $menu;
-	}
-	
-	public function Getold_Page(Ab_URI $adress){
-		$pagename = $adress->contentName;
-		$page = null;
-		$db = $this->db;
-		if ($adress->level == 0){
-			$rows = SitemapQuery::PageByName($db, 0, $pagename);
-			while (($row = $db->fetch_array($rows))){
-				$page = $row;
-				break;
-			}
-		}else {
-			$rows = SitemapQuery::MenuListByUrl($db, $adress->dir);
-			$arr = array();
-			while (($row = $db->fetch_array($rows))){
-				$arr[$row['id']] = $row;
-			}
-			$pid = 0;
-			for ($i=0;$i<$adress->level;$i++){
-				$find = false;
-				$fmenu = null;
-				foreach($arr as $menu){
-					if ($menu['nm'] == $adress->dir[$i] && $menu['pid'] == $pid){
-						$find = true;
-						$fmenu = $menu;
-						$pid = $menu['id'];
-						break;
-					}
-				}
-			}
-			if ($pid > 0){
-				$rows = SitemapQuery::PageByName($db, $pid, $pagename);
-				while (($row = $db->fetch_array($rows))){
-					$page = $row;
-					$page['menu'] = &$fmenu; 
-					break;
-				}
-			}
-		}	
-		return $page;	
-	}
-	
-	/**
-	 * Подсчет кол-ва вложенных в меню элементов
-	 *
-	 * @param SitemapMenuItem $menu
-	 */
-	public static function ChildMenuItemCount(SitemapMenuItem $menu){
-		$count = 0;
-		foreach ($menu->child as $child){
-			$count++;
-			$count += SitemapManager::ChildMenuItemCount($child);
-		}
-		return $count;
 	}
 	
 	/**

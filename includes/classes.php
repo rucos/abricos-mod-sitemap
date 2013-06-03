@@ -21,6 +21,8 @@ class SMMenuItem extends AbricosItem {
 	 */
 	public $title;
 	
+	public $descript;
+	
 	/**
 	 * Имя (часть URI)
 	 * @var string
@@ -48,6 +50,8 @@ class SMMenuItem extends AbricosItem {
 
 		$this->title = strval($d['tl']);
 		$this->name = strval($d['nm']);
+		$this->descript = strval($d['dsc']);
+		
 		$this->parentid = intval($d['pid']);
 		$this->link = strval($d['lnk']);
 		$this->order = intval($d['ord']);
@@ -87,6 +91,7 @@ class SMMenuItem extends AbricosItem {
 		$ret = parent::ToAJAX();
 		$ret->tl = $this->title;
 		$ret->pid = $this->parentid;
+		$ret->dsc = $this->descript;
 		$ret->nm = $this->name;
 		$ret->lnk = $this->link;
 		$ret->ord = $this->order;

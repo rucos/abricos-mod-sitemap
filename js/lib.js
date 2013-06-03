@@ -1,7 +1,5 @@
 /*
-@version $Id: lib.js 1452 2012-03-30 09:34:16Z roosit $
 @package Abricos
-@copyright Copyright (C) 2008 Abricos All rights reserved.
 @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
 */
 
@@ -52,14 +50,14 @@ Component.entryPoint = function(NS){
 			}
 		},
 		URL: function(){
-			var url = "/";
+			var url = "";
 			
 			var menuItem = NS.manager.menuList.find(this.menuid);
 			if (L.isValue(menuItem)){
 				url = menuItem.URL();
 			}
 			if (this.name != "index"){
-				url += "/"+this.name+".html";
+				url += this.name+".html";
 			}
 			
 			return url;
@@ -111,7 +109,8 @@ Component.entryPoint = function(NS){
 	var Menu = function(d){
 		d = L.merge({
 			'pid': 0,
-			'tl':'', // заголовок
+			'tl': '', // заголовок
+			'dsc': '',
 			'nm': '', // имя (URL)
 			'lnk': '',
 			'ord': 0,
@@ -130,6 +129,7 @@ Component.entryPoint = function(NS){
 		update: function(d){
 			this.parentid	= d['pid']|0;
 			this.title		= d['tl'];
+			this.descript	= d['dsc'];
 			this.name		= d['nm'];
 			this.isLink		= L.isString(d['lnk']) && d['lnk'].length > 0;
 			this.link		= this.isLink ? d['lnk'] : null;
@@ -280,6 +280,7 @@ Component.entryPoint = function(NS){
 			var menu = this.menuList.find(menuid);
 			
 			if (L.isNull(menu)){
+				
 				menu = new Menu(di);
 				this.menuList.add(menu);
 			}else{
@@ -329,7 +330,7 @@ Component.entryPoint = function(NS){
 					upd(item.childs, item);
 				});
 			};
-			upd(list, null);
+			upd(this.menuList, null);
 		},
 		_updatePageList: function(d){
 			if (!L.isValue(d) || !L.isValue(d['pages']) || !L.isValue(d['pages']['list'])){

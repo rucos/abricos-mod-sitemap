@@ -93,7 +93,12 @@ Component.entryPoint = function(NS){
 				mItem = NS.manager.menuList.find(page.menuid);
 			}
 			
-			if (L.isValue(mItem) && page.name == 'index'){
+			if (!L.isValue(mItem) && page.name == 'index'){ // заглавная страница
+	 			this.elHide('pgnamecont'); 
+		 		this.elSetValue('pgname', 'index');
+			}else if (page.name != 'index'){
+				
+			}else{
 				this.elShow('menucont');
 				
 				this.elSetValue({
@@ -102,9 +107,6 @@ Component.entryPoint = function(NS){
 					'mname': mItem.name,
 					'moff': mItem.off
 				});
-			}else{
-	 			this.elHide('pgnamecont'); 
-		 		this.elSetValue('pgname', 'index');
 			}
 			
 			var s = TM.replace('option', {'id': '','tl': ''});
@@ -122,7 +124,6 @@ Component.entryPoint = function(NS){
 		 		'pgdesc': detail.metaDesc,
 		 		'select.id': detail.template
 			});
-
 			
 	 		if (page.name == 'index'){
 	 			this.elHide('pgnamecont');
@@ -200,7 +201,7 @@ Component.entryPoint = function(NS){
 					'id': this.page.menuid,
 					'pid': L.isValue(this.cfg['parentMenuItem']) ? this.cfg['parentMenuItem'].id : 0,
 					'tl': this.gel('mtitle').value,
-					'mdsc': this.gel('mdesc').value,
+					'dsc': this.gel('mdesc').value,
 					'nm': this.gel('mname').value,
 					'off': this.gel('moff').value
 				}
@@ -379,6 +380,7 @@ Component.entryPoint = function(NS){
 			var __self = this;
 			var sd = {
 				'id': this.link.id,
+				'pid': this.link.parentid,
 				'tl': this.gel('mtitle').value,
 				'dsc': this.gel('mdesc').value,
 				'lnk': this.gel('mlink').value
