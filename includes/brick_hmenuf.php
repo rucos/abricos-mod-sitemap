@@ -58,6 +58,7 @@ for ($i=0; $i<$cnt; $i++){
 		$lst .= Brick::ReplaceVarByData($v['lineitem'], array(
 			"id" => $mi->id,
 			"sel" => $mi->isSelect ? "selected" : "",
+			"childflag" => $mi->childs->Count() == 0 ? "notchild" : "",
 			"tl" => $mi->title,
 			"link" => $mi->URI()
 		));

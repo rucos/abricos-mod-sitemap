@@ -110,6 +110,11 @@ Component.entryPoint = function(NS){
 			Dom.addClass(this.elVMenu, 'hide');
 		},
 		onClick: function(el){
+
+			if (Dom.hasClass(el, 'smvmtl-opcl') && Dom.hasClass(el, 'notchild')){
+				return false;
+			}
+			
 			if (Dom.hasClass(el, 'smvm-opcl')
 				|| Dom.hasClass(el, 'smvmtl-opcl')){
 				this.changeStatus(el); // TODO: чистой воды костыль!
@@ -122,7 +127,7 @@ Component.entryPoint = function(NS){
 			var id = (item.id || "").replace('smvmtl', 'smvm'),
 				child = Dom.get(id+'-c'),
 				elLi = Dom.get(id+'-li');
-			
+
 			if (L.isNull(child) || L.isNull(elLi)){ return false; }
 			
 			var rgm = Dom.getRegion(this.el),
