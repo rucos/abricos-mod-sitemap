@@ -61,6 +61,19 @@ class SitemapManager extends Ab_ModuleManager {
 		return null;
 	}
 	
+	public function ArrayToObject($o){
+		if (is_array($o)){
+			$ret = new stdClass();
+			foreach($o as $key => $value){
+				$ret->$key = $value;
+			}
+			return $ret;
+		}else if (!is_object($o)){
+			return new stdClass();
+		}
+		return $o;
+	}
+	
 	public function InitDataToAJAX(){
 		if (!$this->IsAdminRole()){ return null; }
 		$ret = new stdClass();
@@ -263,11 +276,9 @@ class SitemapManager extends Ab_ModuleManager {
 	}
 	
 	public function PageSaveToAJAX($sd){
-		if (!$this->IsAdminRole()){
-			return null;
-		}
+		if (!$this->IsAdminRole()){ return null; }
 	
-		$pageid = $this->PageSave($pageid, $sd);
+		$pageid = $this->PageSave($sd);
 		if (empty($pageid)){ return null; }
 		
 		$page = $this->Page($pageid);
@@ -283,12 +294,25 @@ class SitemapManager extends Ab_ModuleManager {
 		return $ret;
 	}
 	
-	public function PageSave($pageid, $fsd){
+	public function PageSave($fsd){
 		if (!$this->IsAdminRole()){ return null; }
 		
+		$fsd = $this->ArrayToObject($fsd);
+		$fsd->page = $this->ArrayToObject($fsd->page);
+		$fsd->menu = $this->ArrayToObject($fsd->menu);
+		
+		$fsd->menu->id = intval($fsd->menu->id);
+		
 		$sd = $fsd->page;
+		if ($fsd->menu->id == 0 && empty($sd->nm)){
+			$sd->nm = "index";
+		}
+		
 		$sd->nm = translateruen($sd->nm);
-		if ($sd->nm == "index" && $fsd->menu->pid == 0 && $fsd->menu->id == 0){
+		if ($sd->nm == "index" 
+				&& empty($fsd->menu->nm)
+				&& empty($fsd->menu->tl)
+				&& $fsd->menu->pid == 0 && $fsd->menu->id == 0){
 			$menuid = 0;
 		}else if (!empty($sd->nm) && $sd->nm != 'index'){
 			$menuid = $fsd->menu->pid;
