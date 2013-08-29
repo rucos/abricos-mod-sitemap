@@ -347,6 +347,8 @@ class SitemapManager extends Ab_ModuleManager {
 	public function MenuSave($sd){
 		if (!$this->IsAdminRole()){ return null; }
 
+		$sd = $this->ArrayToObject($sd);
+		
 		$menuid = intval($sd->id);
 		
 		$utmf  = Abricos::TextParser(true);
