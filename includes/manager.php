@@ -91,7 +91,7 @@ class SitemapManager extends Ab_ModuleManager {
 	}
 	
 	private $_cacheMenuList;
-	public function MenuList ($clearCache = false){
+	public function MenuList ($clearCache = false, $fullList = false){
 		if (!$this->IsViewRole()){ return false; }
 	
 		if ($clearCache){ $this->_cacheMenuList = null; }
@@ -103,7 +103,10 @@ class SitemapManager extends Ab_ModuleManager {
 		$list = array();
 		$rows = SitemapDBQuery::MenuList($this->db);
 		while (($d = $this->db->fetch_array($rows))){
-			array_push($list, new SMMenuItem($d));
+			$mItem = new SMMenuItem($d);
+			if (!$mItem->off || ($mItem->off && $fullList && $this->IsAdminRole())){
+				array_push($list, $mItem);
+			}
 		}
 	
 		$mList = new SMMenuItemList(null);
@@ -162,7 +165,7 @@ class SitemapManager extends Ab_ModuleManager {
 	public function MenuListToAJAX(){
 		if (!$this->IsAdminRole()){ return null; }
 		
-		$list = $this->MenuList();
+		$list = $this->MenuList(true, true);
 		if (empty($list)){ return null; }
 		
 		$ret = new stdClass();

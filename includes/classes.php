@@ -30,20 +30,32 @@ class SMMenuItem extends AbricosItem {
 	public $name;
 	
 	/**
+	 * Идентификатор родителя
 	 * @var integer
 	 */
 	public $parentid = 0;
 
 	/**
+	 * Список дочерних элементов меню
 	 * @var SMMenuItemList
 	 */
 	public $childs;
 	
+	/**
+	 * Порядок сортировки
+	 * @var integer
+	 */
 	public $order;
 	
 	public $isSelect = false;
 	
 	public $link;
+	
+	/**
+	 * Если true - отключено
+	 * @var unknown_type
+	 */
+	public $off;
 	
 	public function __construct($d){
 		parent::__construct($d);
@@ -55,6 +67,7 @@ class SMMenuItem extends AbricosItem {
 		$this->parentid = intval($d['pid']);
 		$this->link = strval($d['lnk']);
 		$this->order = intval($d['ord']);
+		$this->off = $d['off']>0;
 		
 		$this->childs = new SMMenuItemList($this);
 	}
@@ -135,7 +148,7 @@ class SMMenuItemList extends AbricosList {
 		$this->owner = $mItem;
 	}
 	
-	public function Add(SMMenuItem $item){
+	public function Add($item){
 		parent::Add($item);
 		if (empty($item->parent)){
 			$item->parent = $this->owner;
