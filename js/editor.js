@@ -104,9 +104,9 @@ Component.entryPoint = function(NS){
 				this.elSetValue({
 					'mtitle': mItem.title,
 					'mdesc': mItem.descript,
-					'mname': mItem.name,
-					'moff': mItem.off
+					'mname': mItem.name
 				});
+				this.gel('moff').checked = mItem.off>0 ? true : false;
 			}
 			
 			var s = TM.replace('option', {'id': '','tl': ''});
@@ -185,6 +185,7 @@ Component.entryPoint = function(NS){
 		save: function(){
 			var cfg = this.cfg;
 			this.nameTranslite();
+			
 			var sd = {
 				'page': {
 					'id': this.page.id,
@@ -203,7 +204,7 @@ Component.entryPoint = function(NS){
 					'tl': this.gel('mtitle').value,
 					'dsc': this.gel('mdesc').value,
 					'nm': this.gel('mname').value,
-					'off': this.gel('moff').value
+					'off': (this.gel('moff').checked ? 1 : 0)
 				}
 			};
 			var menuid = sd['menu']['id'];

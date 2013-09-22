@@ -52,7 +52,7 @@ class SMMenuItem extends AbricosItem {
 	public $link;
 	
 	/**
-	 * Если true - отключено
+	 * Если true - скрывать
 	 * @var unknown_type
 	 */
 	public $off;
@@ -111,6 +111,7 @@ class SMMenuItem extends AbricosItem {
 		$ret->nm = $this->name;
 		$ret->lnk = $this->link;
 		$ret->ord = $this->order;
+		$ret->off = $this->off ? 1 : 0;
 		
 		if ($this->childs->Count()>0){
 			$obj = $this->childs->ToAJAX();

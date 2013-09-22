@@ -91,7 +91,7 @@ class SitemapManager extends Ab_ModuleManager {
 	}
 	
 	private $_cacheMenuList;
-	public function MenuList ($clearCache = false, $fullList = false){
+	public function MenuList ($clearCache = false){
 		if (!$this->IsViewRole()){ return false; }
 	
 		if ($clearCache){ $this->_cacheMenuList = null; }
@@ -104,9 +104,7 @@ class SitemapManager extends Ab_ModuleManager {
 		$rows = SitemapDBQuery::MenuList($this->db);
 		while (($d = $this->db->fetch_array($rows))){
 			$mItem = new SMMenuItem($d);
-			if (!$mItem->off || ($mItem->off && $fullList && $this->IsAdminRole())){
-				array_push($list, $mItem);
-			}
+			array_push($list, $mItem);
 		}
 	
 		$mList = new SMMenuItemList(null);

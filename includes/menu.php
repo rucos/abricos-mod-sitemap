@@ -14,8 +14,6 @@ $brick = Brick::$builder->brick;
 $p = &$this->brick->param->param;
 $v = &$this->brick->param->var;
 
-
-
 $param = $brick->param;
 
 $isFull = $param->param['full'] == 'true';
@@ -44,6 +42,9 @@ if (!class_exists("sitemap_brick_menu_builder")){
 		}
 
 		public function BuildItem(SMMenuItem $menu){
+			
+			if ($menu->off){ return ""; }
+			
 			$p = $this->brick->param->param;
 			$v = $this->brick->param->var;
 			

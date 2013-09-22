@@ -114,6 +114,7 @@ Component.entryPoint = function(NS){
 			'nm': '', // имя (URL)
 			'lnk': '',
 			'ord': 0,
+			'off': 0,
 			'childs': []
 		}, d || {});
 		Menu.superclass.constructor.call(this, d);
@@ -134,6 +135,7 @@ Component.entryPoint = function(NS){
 			this.isLink		= L.isString(d['lnk']) && d['lnk'].length > 0;
 			this.link		= this.isLink ? d['lnk'] : null;
 			this.order		= d['ord']|0;
+			this.off		= d['off']|0;
 		},
 		getPathLine: function(){
 			var line = [this];
