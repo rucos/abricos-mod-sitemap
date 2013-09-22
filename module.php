@@ -35,7 +35,7 @@ class SitemapModule extends Ab_Module {
 	public $page = null;
 	
 	function __construct(){
-		$this->version = "0.2.5.2";
+		$this->version = "0.2.5.3";
 		$this->name = "sitemap";
 		$this->takelink = "__super";
 		$this->permission = new SitemapPermission($this);
