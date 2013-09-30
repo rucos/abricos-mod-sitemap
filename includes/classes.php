@@ -218,7 +218,7 @@ class SMMenuItemList extends AbricosList {
 		}
 		$path = trim($path);
 
-		if (empty($path)){ return ""; }
+		//if (empty($path)){ return ""; }
 		
 		if (substr($path, strlen($path)-1, 1) == "/"){
 			$path = substr($path, 0, strlen($path)-1);

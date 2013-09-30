@@ -213,7 +213,8 @@ class SitemapManager extends Ab_ModuleManager {
 			return null;
 		}
 		if (!empty($mItem)){ 
-			$menuid = $mItem->id; 
+			if($mItem->link == "/") $menuid = 0;
+			else $menuid = $mItem->id; 
 		}
 		
 		$d = SitemapDBQuery::PageByName($this->db, $menuid, Abricos::$adress->contentName);
