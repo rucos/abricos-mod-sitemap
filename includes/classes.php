@@ -53,7 +53,7 @@ class SMMenuItem extends AbricosItem {
 	
 	/**
 	 * Если true - скрывать
-	 * @var unknown_type
+	 * @var boolean
 	 */
 	public $off;
 	
@@ -68,7 +68,6 @@ class SMMenuItem extends AbricosItem {
 		$this->link = strval($d['lnk']);
 		$this->order = intval($d['ord']);
 		$this->off = $d['off']>0;
-		
 		$this->childs = new SMMenuItemList($this);
 	}
 	
@@ -206,13 +205,18 @@ class SMMenuItemList extends AbricosList {
 	}
 	
 	/**
-	 * Поиск элемента по адресу
+	 * Поиск элемента меню по адресу
+	 * 
+	 * Если $isNotEMatching=true и элемент не будет найден, то
+	 * метод вернет последний найденный элемент в цепочке
 	 * 
 	 * Пример адреса: eshop/myfolder1/subfolder2
 	 * 
+	 * @param array|string $path
+	 * @param boolean $isNotEMatching 
 	 * @return SMMenuItem
 	 */
-	public function FindByPath($path, $isNotEMathing = false){
+	public function FindByPath($path, $isNotEMatching = false){
 		if (is_array($path)){
 			$path = implode("/", $path);
 		}
@@ -220,9 +224,11 @@ class SMMenuItemList extends AbricosList {
 
 		//if (empty($path)){ return ""; }
 		
+		// удалить последний слеш
 		if (substr($path, strlen($path)-1, 1) == "/"){
 			$path = substr($path, 0, strlen($path)-1);
 		}
+		// удалить первый слеш
 		if (substr($path, 0, 1) == "/"){
 			$path = substr($path, 1);
 		}
@@ -235,8 +241,8 @@ class SMMenuItemList extends AbricosList {
 			for ($i=1;$i<count($arr);$i++){
 				array_push($narr, $arr[$i]);
 			}
-			$cItem = $item->childs->FindByPath(implode("/", $narr), $isNotEMathing);
-			if (empty($cItem) && $isNotEMathing){
+			$cItem = $item->childs->FindByPath(implode("/", $narr), $isNotEMatching);
+			if (empty($cItem) && $isNotEMatching){
 				return $item;
 			}
 			return $cItem;

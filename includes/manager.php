@@ -296,6 +296,39 @@ class SitemapManager extends Ab_ModuleManager {
 		return $ret;
 	}
 	
+	protected function PageSaveMethod($menuid, $sd){
+		if (!$this->IsAdminRole()){ return null; }
+		
+		$sd = $this->ArrayToObject($sd);
+		
+		$pageid = intval($sd->id);
+		
+		$utmf  = Abricos::TextParser(true);
+		$sd->tl = $utmf->Parser($sd->tl);
+		$sd->mid = intval($menuid);
+		
+		$sd->mks = $utmf->Parser($sd->mks);
+		$sd->mdsc = $utmf->Parser($sd->mdsc);
+		
+		if ($pageid == 0){
+			$pageid = SitemapDBQuery::PageAppend($this->db, $sd);
+		}else{
+				
+			$row = SitemapDBQuery::Page($this->db, $pageid);
+			if (empty($row)){ return null; }
+				
+			$sd->cid = $row['cid'];
+			SitemapDBQuery::PageUpdate($this->db, $sd);
+		}
+		
+		return $pageid;
+	} 
+	
+	/**
+	 * Сохранение/создание страницы
+	 * 
+	 * @param array|object $fsd
+	 */
 	public function PageSave($fsd){
 		if (!$this->IsAdminRole()){ return null; }
 		
@@ -319,37 +352,40 @@ class SitemapManager extends Ab_ModuleManager {
 		}else if (!empty($sd->nm) && $sd->nm != 'index'){
 			$menuid = $fsd->menu->pid;
 		}else{
+			$this->_menuSaveFromPageSave = true;
 			$menuid = $this->MenuSave($fsd->menu);
+			$this->_menuSaveFromPageSave = false;
 			if (is_null($menuid)){ return null; }
 		}
 		
-		$pageid = intval($sd->id);
-		
-		$utmf  = Abricos::TextParser(true);
-		$sd->tl = $utmf->Parser($sd->tl);
-		$sd->mid = intval($menuid);
-
-		$sd->mks = $utmf->Parser($sd->mks);
-		$sd->mdsc = $utmf->Parser($sd->mdsc);
-		
-		if ($pageid == 0){
-			$pageid = SitemapDBQuery::PageAppend($this->db, $sd);
-		}else{
-			
-			$row = SitemapDBQuery::Page($this->db, $pageid);
-			if (empty($row)){ return null; }
-			
-			$sd->cid = $row['cid'];
-			SitemapDBQuery::PageUpdate($this->db, $sd);
-		}
-		
-		return $pageid;
+		return $this->PageSaveMethod($menuid, $sd);
 	}
 	
+	private $_menuSaveFromPageSave = false;
+	
+	/**
+	 * Сохранить/создать элемент меню
+	 * 
+	 * В качестве параметра $sd можно передать именованный массив или объект
+	 * 
+	 * Пример создание элемента меню тип-ссылка:
+	 * MenuSave(array(
+	 * 	'nm' => 'mylink',
+	 *  'tl' => 'Проекты и задачи',
+	 *  'lnk' => '/bos/#app=botask/ws/showWorkspacePanel'
+	 * ));
+	 * 
+	 * 
+	 * @param object|array $sd
+	 * @return NULL|integer
+	 */
 	public function MenuSave($sd){
 		if (!$this->IsAdminRole()){ return null; }
-
+		
 		$sd = $this->ArrayToObject($sd);
+		if (!empty($sd->lnk)){
+			return $this->LinkSave($sd);
+		}
 		
 		$menuid = intval($sd->id);
 		
@@ -364,8 +400,15 @@ class SitemapManager extends Ab_ModuleManager {
 		$sd->nm = translateruen(empty($sd->nm) ? translateruen($sd->tl) : $sd->nm);
 		$sd->tp = 0;
 		
+		if (empty($sd->nm)){ return null; }
+		
 		if ($menuid == 0){
 			$menuid = SitemapDBQuery::MenuAppend($this->db, $sd);
+			if (!$this->_menuSaveFromPageSave){
+				$this->PageSaveMethod($menuid, array(
+					"nm" => "index"
+				));
+			}
 		} else {
 			SitemapDBQuery::MenuUpdate($this->db, $sd);
 		}
