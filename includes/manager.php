@@ -91,6 +91,11 @@ class SitemapManager extends Ab_ModuleManager {
 	}
 	
 	private $_cacheMenuList;
+	/**
+	 * Древовидный список меню
+	 * @param boolean $clearCache
+	 * @return SMMenuItemList
+	 */
 	public function MenuList ($clearCache = false){
 		if (!$this->IsViewRole()){ return false; }
 	
@@ -160,6 +165,8 @@ class SitemapManager extends Ab_ModuleManager {
 		return $mList;
 	}
 	
+	private $_cacheMenuListLine;
+	
 	public function MenuListToAJAX(){
 		if (!$this->IsAdminRole()){ return null; }
 		
@@ -171,6 +178,38 @@ class SitemapManager extends Ab_ModuleManager {
 		
 		return $ret;
 	}
+	
+	public function MenuListLineMethod(SMMenuItemList $fromList, SMMenuItemListLine $toList){
+		for ($i=0;$i<$fromList->Count();$i++){
+			$mItem = $fromList->GetByIndex($i);
+			$toList->Add($mItem);
+			$this->MenuListLineMethod($mItem->childs, $toList);
+		}
+		return $toList;
+	}
+	
+	/**
+	 * Линейный список меню
+	 * @param boolean $clearCache
+	 * @return SMMenuItemList
+	 */
+	public function MenuListLine($clearCache = false){
+		if (!$this->IsViewRole()){ return null; }
+	
+		if ($clearCache){
+			$this->_cacheMenuListLine = null;
+		}
+	
+		if (!empty($this->_cacheMenuListLine)){
+			return $this->_cacheMenuListLine;
+		}
+	
+		$mList = $this->MenuList($clearCache);
+		$mListLine = new SMMenuItemListLine();
+		
+		return $this->MenuListLineMethod($mlist, $mListLine);
+	}
+	
 	
 	public function Menu($menuid){
 		if (!$this->IsViewRole()){ return null; }

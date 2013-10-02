@@ -4,7 +4,8 @@
 */
 
 var Component = new Brick.Component();
-Component.requires = { 
+Component.requires = {
+    yahoo: ['dom', 'connection'],
 	mod:[
         {name: 'sys', files: ['item.js','number.js']},
         {name: 'widget', files: ['notice.js']},

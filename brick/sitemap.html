@@ -1,0 +1,40 @@
+<!--[*]
+
+[script]brick_sitemap.php[/script]
+
+[mod=sitemap]submenublock|fromroot=true[/mod]
+
+[v=adminscript]
+	<textarea id="sitemapadminlog" style="display: none; width: 400px; height: 100px"></textarea>
+	<script type="text/javascript">
+		Brick.ff('sitemap', 'lib', function(){
+			var list = [{v#list}];
+			
+			if (list.length==0){ return; }
+			
+			var txtLog = document.getElementById('sitemapadminlog');
+			txtLog.style.display = '';
+			
+			var getPage = function(list){
+				if (list.length == 0){ return; }
+				var uri = list[0];
+				txtLog.value += "Проверяю "+uri+" ...\n"; 
+				YAHOO.util.Connect.asyncRequest("GET", uri, {
+					success: function(o) {
+						txtLog.value += "Успешно\n";
+						
+						var nList = [];
+						for (var i=1;i<list.length;i++){
+							nList[nList.length] = list[i];
+						}
+						getPage(nList);
+					}				
+				});
+			};
+			getPage(list);
+		});
+	</script>
+[/v]
+
+[*]-->
+[mod]sitemap:submenublock[/mod]

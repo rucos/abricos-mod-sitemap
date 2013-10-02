@@ -13,10 +13,18 @@ if (!function_exists("sitemap_brick_submenublock_buildlist")){
 
 		for ($i=0; $i<$childs->Count(); $i++){
 			$mItem = $childs->GetByIndex($i);
+			if ($mItem->off){ continue; }
+			
+			$lstChilds = sitemap_brick_submenublock_buildlist($brick, $mItem->childs);
+			if (!empty($lstChilds)){
+				$lstChilds = Brick::ReplaceVarByData($v['table'], array (
+					"rows" => $lstChilds
+				));
+			}
 			$lst .= Brick::ReplaceVarByData($v['row'], array (
-					"tl" => $mItem->title,
-					"link" => $mItem->URI(),
-					"childs" => sitemap_brick_submenublock_buildlist($brick, $mItem->childs)
+				"tl" => $mItem->title,
+				"link" => $mItem->URI(),
+				"childs" => $lstChilds
 			));
 		}
 
@@ -35,14 +43,20 @@ $p = &$brick->param->param;
 
 SitemapModule::$instance->GetManager();
 $mList = SitemapManager::$instance->MenuList();
-$mItem = $mList->FindByPath($adr->dir, false);
 
-if (empty($mItem)){
-	$brick->content = "";
-	return;
+$childs = $mList;
+
+if (empty($p['fromroot'])){
+	$mItem = $mList->FindByPath($adr->dir, false);
+	
+	if (empty($mItem)){
+		$brick->content = "";
+		return;
+	}
+	$childs = $mItem->childs;
 }
 
-$lst = sitemap_brick_submenublock_buildlist($brick, $mItem->childs);
+$lst = sitemap_brick_submenublock_buildlist($brick, $childs);
 
 if (empty($lst)){
 	$brick->content = "";

@@ -135,6 +135,22 @@ class SMMenuItem extends AbricosItem {
 	}
 }
 
+class SMMenuItemListLine extends AbricosList {
+	/**
+	 * @return SMMenuItem
+	 */
+	public function Get($id){
+		return parent::Get($id);
+	}
+	
+	/**
+	 * @return SMMenuItem
+	 */
+	public function GetByIndex($i){
+		return parent::GetByIndex($i);
+	}
+}
+
 class SMMenuItemList extends AbricosList {
 	
 	/**
@@ -165,8 +181,8 @@ class SMMenuItemList extends AbricosList {
 	/**
 	 * @return SMMenuItem
 	 */
-	public function GetByIndex($index){
-		return parent::GetByIndex($index);
+	public function GetByIndex($i){
+		return parent::GetByIndex($i);
 	}
 	
 	/**
