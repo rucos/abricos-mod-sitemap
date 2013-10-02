@@ -35,13 +35,14 @@ class SitemapDBQuery {
 	public static function MenuAppend(Ab_Database $db, $d){
 		$sql = "
 			INSERT INTO ".$db->prefix."sys_menu
-			(parentmenuid, name, link, title, descript, menutype, off, language) VALUES (
+			(parentmenuid, name, link, title, descript, menutype, menuorder, off, language) VALUES (
 				".bkint($d->pid).",
 				'".bkstr($d->nm)."',
 				'".bkstr($d->lnk)."',
 				'".bkstr($d->tl)."',
 				'".bkstr($d->dsc)."',
 				".bkint($d->tp).",
+				".bkint($d->ord).",
 				".bkint($d->off).",
 				'".Abricos::$LNG."'
 			)
@@ -61,7 +62,7 @@ class SitemapDBQuery {
 				descript='".bkstr($d->dsc)."',
 				off=".bkint($d->off)."
 			WHERE menuid='".bkint($d->id)."'
-			";
+		";
 		$db->query_write($sql);
 	}
 	

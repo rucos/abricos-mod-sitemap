@@ -67,7 +67,8 @@ if ($adr->level == 1){
 $man->MenuSave(array(
 	"pid" => $parentMenuId,
 	"nm" => $p['name'],
-	"tl" => $p['title']
+	"tl" => $p['title'],
+	"ord" => intval($p['order'])
 ));
 
 $man->EnableRoles();
