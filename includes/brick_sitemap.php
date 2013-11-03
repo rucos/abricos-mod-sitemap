@@ -10,6 +10,8 @@
 if (!function_exists("sitemap_brick_sitemap_buildlist")){
 	function sitemap_brick_sitemap_buildlist($path, &$result, $uri){
 		
+		if (!is_dir($path)){ return; }
+		
 		$dir = dir($path);
 		$mList = SitemapManager::$instance->MenuList();
 		
@@ -44,7 +46,7 @@ if (!function_exists("sitemap_brick_sitemap_buildlist")){
 				sitemap_brick_sitemap_buildlist($path."/".$entry, $result, $nUri);
 			}
 		}
-		return $lst;
+		return;
 	}
 }
 
