@@ -252,7 +252,7 @@ class SitemapManager extends Ab_ModuleManager {
 			return null;
 		}
 		if (!empty($mItem)){ 
-			if($mItem->link == "/") $menuid = 0;
+			if(!empty($mItem->link)) $menuid = 0;
 			else $menuid = $mItem->id; 
 		}
 		
