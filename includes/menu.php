@@ -48,7 +48,7 @@ if (!class_exists("sitemap_brick_menu_builder")){
 			$p = $this->brick->param->param;
 			$v = $this->brick->param->var;
 			
-			if ($p['level'] > 0 && ($menu->level > $p['level']+1)){
+			if ($p['level'] > 0 && ($menu->Level() > $p['level']+1)){
 				return "";
 			}
 			
