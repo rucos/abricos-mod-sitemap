@@ -1,0 +1,40 @@
+<!--[*]
+[script]brick_menubuilder.php[/script]
+[mcss=sitemap]menu-horizontal.css[/mcss]
+
+[bkvar=menu]
+	<div class="yui3-menu-content">
+		<ul class="level-{v#lvl}">{v#rows}</ul>
+	</div>
+[/bkvar]
+
+[bkvar=item]
+	<li class="yui3-menuitem {v#sel} level-{v#lvl}">
+		<a class="{v#sel}" href="{v#link}" title="{v#tl}">{v#tl}</a>
+		{v#childs}
+	</li>
+[/bkvar]
+
+[p=full]true[/p]
+[p=mods][/p]
+[p=from][/p]
+[p=not][/p]
+[p=title][/p]
+[p=notselp][/p]
+[p=level]0[/p]
+
+[*]-->
+<div class="mod-sitemap">
+	<div id="{v#blockid}" class="yui3-menu yui3-menu-horizontal">
+		{v#result}
+	</div>
+</div>
+
+<script>
+	Brick.YUI.use('node-menunav', function(Y){
+		var menu = Y.one("#{v#blockid}");
+		menu.plug(Y.Plugin.NodeMenuNav);
+		
+		menu.get("ownerDocument").get("documentElement").removeClass("yui3-loading");
+	});
+</script>

@@ -6,10 +6,16 @@
  * @author Alexander Kuzmin <roosit@abricos.org>
  */
 
+require_once 'buildclasses.php';
+
 Abricos::GetModule('sitemap')->GetManager();
 $man = SitemapManager::$instance;
 
 $brick = Brick::$builder->brick;
+
+$builder = new SitemapMenuBrickBulder($brick);
+$brick->content = $builder->Build();
+
 
 $p = &$this->brick->param->param;
 $v = &$this->brick->param->var;
@@ -32,9 +38,6 @@ if (!class_exists("sitemap_brick_menu_builder")){
 	
 	class sitemap_brick_menu_builder {
 		
-		/**
-		 * @var Ab_CoreBrick
-		 */
 		public $brick;
 		
 		public function __construct(Ab_CoreBrick $brick){
@@ -91,7 +94,7 @@ if (!class_exists("sitemap_brick_menu_builder")){
 				"tl" => $menu->title,
 				"link" => $menu->URI(),
 				"lvl" => $menu->Level(),
-				"child" => $lst
+				"childs" => $lst
 			));			
 		}
 		
@@ -129,6 +132,6 @@ $builder = new sitemap_brick_menu_builder($brick);
 
 $v['title'] = !empty($p['title']) ? Brick::ReplaceVarByData($v['title'], array('tl'=> $p['title'])) : "";
 $v['result'] = $builder->Build();
-
+/**/
 
 ?>
