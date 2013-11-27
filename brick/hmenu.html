@@ -4,35 +4,51 @@
 
 [bkvar=menu]
 	<div class="yui3-menu-content">
-		<ul class="level-{v#lvl}">{v#rows}</ul>
+		<ul>
+			{v#rows}
+		</ul>
 	</div>
 [/bkvar]
 
 [bkvar=item]
-	<li class="yui3-menuitem {v#sel} level-{v#lvl}">
-		<a class="{v#sel}" href="{v#link}" title="{v#tl}">{v#tl}</a>
+	<li class="yui3-menuitem">
+		<a class="yui3-menuitem-content" href="{v#link}">{v#tl}</a>
+	</li>
+[/bkvar]
+
+[bkvar=itemwithsub]
+	<li>
+		<a class="yui3-menu-label" href="{v#link}">{v#tl}</a>
 		{v#childs}
 	</li>
 [/bkvar]
 
-[p=full]true[/p]
-[p=mods][/p]
-[p=from][/p]
-[p=not][/p]
-[p=title][/p]
-[p=notselp][/p]
-[p=level]0[/p]
+[bkvar=submenu]
+	<div id="{v#brickid}-{v#id}" class="yui3-menu">
+		<div class="yui3-menu-content">
+			<ul>
+				{v#rows}
+			</ul>
+		</div>
+	</div>
+[/bkvar]
 
 [*]-->
 <div class="mod-sitemap">
-	<div id="{v#blockid}" class="yui3-menu yui3-menu-horizontal">
+	<div id="{v#brickid}" class="yui3-menu yui3-menu-horizontal">
 		{v#result}
 	</div>
 </div>
 
+<style>
+	.yui3-loading .yui3-menu .yui3-menu {
+		visibility: hidden;
+	}
+</style>
+
 <script>
 	Brick.YUI.use('node-menunav', function(Y){
-		var menu = Y.one("#{v#blockid}");
+		var menu = Y.one("#{v#brickid}");
 		menu.plug(Y.Plugin.NodeMenuNav);
 		
 		menu.get("ownerDocument").get("documentElement").removeClass("yui3-loading");
