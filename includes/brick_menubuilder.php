@@ -16,6 +16,7 @@ $brick = Brick::$builder->brick;
 $builder = new SitemapMenuBrickBulder($brick);
 $brick->content = $builder->Build();
 
+/*
 
 $p = &$this->brick->param->param;
 $v = &$this->brick->param->var;

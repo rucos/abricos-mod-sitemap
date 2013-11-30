@@ -45,10 +45,6 @@ class SitemapMenuBrickBulder {
 	public $cfgFromMenu = '';
 	
 	public $tplContent = '';
-	public $tplMenu = '';
-	public $tplItem = '';
-	public $tplItemWithSub = '';
-	public $tplSubMenu = '';
 	
 	public function __construct(Ab_CoreBrick $brick){
 		
@@ -64,10 +60,36 @@ class SitemapMenuBrickBulder {
 		$v = &$brick->param->var;
 		
 		$this->tplContent = $brick->content;
-		$this->tplMenu = $v['menu'];
-		$this->tplItem = $v['item'];
-		$this->tplItemWithSub = empty($v['itemwithsub']) ? $v['item'] : $v['itemwithsub'];
-		$this->tplSubMenu = empty($v['submenu']) ? $v['menu'] : $v['submenu'];
+	}
+	
+	public function GetTplMenu($level){
+		$v = &$this->brick->param->var;
+		$nm = 'menu-level-'.$level;
+		if (!empty($v[$nm])){
+			return $v[$nm];
+		}
+		return $v['menu'];
+	}
+	
+	public function GetTplMenuItem($isNotChild, $level){
+		$v = &$this->brick->param->var;
+		
+		$nm = "item";
+		$nmLevel = $nm."-level-".$level;
+		$nmNotChild = "itemNotChild";
+		$nmNotChildLevel = $nmNotChild."-level-".$level;
+		
+		if ($isNotChild){
+			if (!empty($v[$nmNotChildLevel])){
+				return $v[$nmNotChildLevel];
+			}else if (!empty($v[$nmNotChild])){
+				return $v[$nmNotChild];
+			}
+		}
+		if (!empty($v[$nmLevel])){
+			return $v[$nmLevel];
+		}
+		return $v[$nm];
 	}
 	
 	private function ToBoolean($var){
@@ -78,37 +100,35 @@ class SitemapMenuBrickBulder {
 		return false;
 	}
 	
-	public function BuildItem(SMMenuItem $menu){
-		if ($menu->off){ return ""; }
+	public function BuildItem(SMMenuItem $item, $level){
+		if ($item->off){ return ""; }
 		
-		$lst = "";
-		$isChildSelect = false;
-		for ($i=0; $i<$menu->childs->Count(); $i++){
-			$child = $menu->childs->GetByIndex($i);
-			if ($child->isSelect){
-				$isChildSelect = true;
-			}
-			$lst .= $this->BuildItem($child);
-		}
+		$sMenuSub = $this->BuildMenu($item->childs, $level+1, $item->id);
 		
-		$tplItem = $this->tplItem;
-		
-		if (!empty($lst)){
-			$tplItem = $this->tplItemWithSub;
-			$lst = Brick::ReplaceVarByData($this->tplSubMenu, array(
-				"id" => $menu->id,
-				"rows" => $lst
-			));
-		}
-		
+		$tplItem = $this->GetTplMenuItem(empty($sMenuSub), $level);
 		
 		return Brick::ReplaceVarByData($tplItem, array(
-			"id" => $menu->id,
-			"sel" => $menu->isSelect ? "selected" : "",
-			"tl" => $menu->title,
-			"link" => $menu->URI(),
-			"lvl" => $menu->Level(),
-			"childs" => $lst
+			"id" => $item->id,
+			"sel" => $item->isSelect ? "selected" : "",
+			"tl" => $item->title,
+			"lnk" => $item->URI(),
+			"lvl" => $level,
+			"childs" => $sMenuSub
+		));
+	}
+	
+	public function BuildMenu(SMMenuItemList $list, $level, $id){
+		if ($list->Count() == 0){ return ""; }
+
+		$lst = "";
+		for ($i=0; $i<$list->Count(); $i++){
+			$lst .= $this->BuildItem($list->GetByIndex($i), $level);
+		}
+		
+		return Brick::ReplaceVarByData($this->GetTplMenu($level), array(
+			"id" => $id,
+			"lvl" => $level,
+			"rows" => $lst
 		));
 	}
 	
@@ -120,18 +140,14 @@ class SitemapMenuBrickBulder {
 			if (!empty($item)){ return ""; }
 			$list = $item->childs;
 		}
-		
-		$lst = "";
-		for ($i=0; $i<$list->Count(); $i++){
-			$lst .= $this->BuildItem($list->GetByIndex($i));
-		}
-		
-		return Brick::ReplaceVarByData($this->tplContent, array(
-			"result" => Brick::ReplaceVarByData($this->tplMenu, array(
-				"rows" => $lst
-			)),
+
+		$sMenu = $this->BuildMenu($list, 0, 0);
+		$sResult = Brick::ReplaceVarByData($this->tplContent, array(
+			"result" => $sMenu,
 			"brickid" => ($this->brick->name.$this->brickid)
 		));
+		
+		return $sResult;
 	}
 	
 }

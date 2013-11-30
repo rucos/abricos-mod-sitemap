@@ -1,16 +1,19 @@
 <!--[*]
 [script]brick_menubuilder.php[/script]
 
-[bkvar=menu]
+[css]/js/yui/gallery/gallery-accordion/assets/gallery-accordion-core.css[/css]
+[mcss=sitemap]vmenuaccord.css[/mcss]
+
+[bkvar=menu-level-0]
 	{v#rows}
 [/bkvar]
 
-[bkvar=item]
+[bkvar=item-level-0]
 	<div id="{v#brickid}-{v#id}" class="yui3-accordion-item">
 	
 		<div class="yui3-widget-hd">
 			<a class="yui3-accordion-item-icon"></a>
-			<a href="{v#link}" class="yui3-accordion-item-label">{v#tl}</a>
+			<a href="{v#lnk}" class="yui3-accordion-item-label">{v#tl}</a>
 			<div class="yui3-accordion-item-icons">
 				<a class="yui3-accordion-item-iconalwaysvisible"></a>
 				<a class="yui3-accordion-item-iconexpanded"></a>
@@ -26,30 +29,24 @@
 	</div>
 [/bkvar]
 
-[bkvar=itemwithsub]
+[bkvar=itemNotChild-level-0]
 	<div id="{v#brickid}-{v#id}" class="yui3-accordion-item">
-	
 		<div class="yui3-widget-hd">
 			<a class="yui3-accordion-item-icon"></a>
-			<a href="{v#link}" class="yui3-accordion-item-label">{v#tl}</a>
+			<a href="{v#lnk}" class="yui3-accordion-item-label">{v#tl}</a>
 			<div class="yui3-accordion-item-icons">
 				<a class="yui3-accordion-item-iconalwaysvisible"></a>
 				<a class="yui3-accordion-item-iconexpanded"></a>
 				<a class="yui3-accordion-item-iconclose yui3-accordion-item-iconclose-hidden"></a>
 			</div>
 		</div>
-		
-		<div class="yui3-widget-bd">
-			<div id="pm1" style="position: relative;">
-				{v#childs}
-			</div>
-		</div>		
 	</div>
 [/bkvar]
 
-[bkvar=submenu]
-	<div id="{v#brickid}-{v#id}">
-		<div>
+
+[bkvar=menu-level-1]
+	<div id="{v#brickid}" class="yui3-menu">
+		<div class="yui3-menu-content">
 			<ul>
 				{v#rows}
 			</ul>
@@ -57,10 +54,26 @@
 	</div>
 [/bkvar]
 
+[bkvar=item]
+	<li>
+		<a class="yui3-menu-label" href="{v#lnk}">{v#tl}</a>
+		{v#childs}
+	</li>
+[/bkvar]
+
+[bkvar=itemNotChild]
+	<li class="yui3-menuitem" menuitem-notchild>
+		<a class="yui3-menuitem-content" href="{v#lnk}">{v#tl}</a>
+	</li>
+[/bkvar]
+
+
 [*]-->
-<div class="mod-sitemap">
-	<div id="{v#brickid}" class="yui3-accordion">
-		{v#result}
+<div id="{v#brickid}" class="mod-sitemap">
+	<div class="vmenuaccord">
+		<div id="{v#brickid}-el" class="yui3-accordion">
+			{v#result}
+		</div>
 	</div>
 </div>
 
@@ -73,11 +86,10 @@
 <script>
 	Brick.YUI.use('gallery-accordion', function(Y){
 		var accord = new Y.Accordion({
-			srcNode: '#{v#brickid}',
+			srcNode: '#{v#brickid}-el',
 			useAnimation: true,
 			collapseOthersOnExpand: true
 		});
 		accord.render();
-		// menu.get("ownerDocument").get("documentElement").removeClass("yui3-loading");
 	});
 </script>

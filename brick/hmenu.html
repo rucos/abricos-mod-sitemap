@@ -2,29 +2,16 @@
 [script]brick_menubuilder.php[/script]
 [mcss=sitemap]menu-horizontal.css[/mcss]
 
-[bkvar=menu]
-	<div class="yui3-menu-content">
+[bkvar=menu-level-0]
+	<div class="yui3-menu-content menu-level-{v#lvl}">
 		<ul>
 			{v#rows}
 		</ul>
 	</div>
 [/bkvar]
 
-[bkvar=item]
-	<li class="yui3-menuitem">
-		<a class="yui3-menuitem-content" href="{v#link}">{v#tl}</a>
-	</li>
-[/bkvar]
-
-[bkvar=itemwithsub]
-	<li>
-		<a class="yui3-menu-label" href="{v#link}">{v#tl}</a>
-		{v#childs}
-	</li>
-[/bkvar]
-
-[bkvar=submenu]
-	<div id="{v#brickid}-{v#id}" class="yui3-menu">
+[bkvar=menu]
+	<div id="{v#brickid}-{v#id}" class="yui3-menu menu-level-{v#lvl}">
 		<div class="yui3-menu-content">
 			<ul>
 				{v#rows}
@@ -32,6 +19,20 @@
 		</div>
 	</div>
 [/bkvar]
+
+[bkvar=item]
+	<li class="menuitem-level-{v#lvl} menuitem-withchild">
+		<a class="yui3-menu-label" href="{v#lnk}">{v#tl}</a>
+		{v#childs}
+	</li>
+[/bkvar]
+
+[bkvar=itemNotChild]
+	<li class="yui3-menuitem menuitem-level-{v#lvl} menuitem-notchild">
+		<a class="yui3-menuitem-content" href="{v#lnk}">{v#tl}</a>
+	</li>
+[/bkvar]
+
 
 [*]-->
 <div class="mod-sitemap">

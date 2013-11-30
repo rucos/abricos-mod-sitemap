@@ -1,0 +1,104 @@
+.mod-sitemap .vmenuaccord .yui3-accordion {
+    border: 1px solid #93B2CC;
+}
+
+.mod-sitemap .vmenuaccord .yui3-accordion-item .yui3-widget-hd {
+    background-image: url( /js/yui/gallery/gallery-accordion/assets/skins/sam/accordion_sprite.png );
+    background-position: 0px 0px;
+    border: 1px solid #93B2CC;
+    height: 25px;
+}
+
+.mod-sitemap .vmenuaccord .yui3-accordion-item-icon,
+.mod-sitemap .vmenuaccord .yui3-accordion-item-iconexpanded,
+.mod-sitemap .vmenuaccord .yui3-accordion-item-iconalwaysvisible,
+.mod-sitemap .vmenuaccord .yui3-accordion-item-iconclose {
+    background-repeat: no-repeat;
+}
+    
+.mod-sitemap .vmenuaccord .yui3-accordion-item-icon {
+    background-image: url( /js/yui/gallery/gallery-accordion/assets/skins/sam/accordion_sprite.png );
+    background-position: center -25px;
+    _background-position: center -27px;
+}
+
+.mod-sitemap .vmenuaccord .yui3-accordion-item-label{
+    color: #444444;
+}
+
+.mod-sitemap .vmenuaccord .yui3-accordion-item-label {
+    text-decoration: none;
+    background: transparent;
+    overflow: hidden;
+    color: #444444;
+    font-weight: bold;
+}
+
+.mod-sitemap .vmenuaccord .yui3-accordion-item-label:hover{
+    text-decoration: underline;
+}
+
+.mod-sitemap .vmenuaccord .yui3-accordion-item-iconalwaysvisible,
+.mod-sitemap .vmenuaccord .yui3-accordion-item-iconalwaysvisible-off {
+    background-image: url( /js/yui/gallery/gallery-accordion/assets/skins/sam/accordion_sprite.png );
+    background-position: 0px -85px;
+    _background-position: 0px -87px;
+}
+
+.mod-sitemap .vmenuaccord .yui3-accordion-item-iconalwaysvisible-on {
+    background-image: url( /js/yui/gallery/gallery-accordion/assets/skins/sam/accordion_sprite.png );
+    background-position: 0px -55px;
+    _background-position: 0px -57px;
+}
+
+.mod-sitemap .vmenuaccord .yui3-accordion-item-iconexpanded,
+.mod-sitemap .vmenuaccord .yui3-accordion-item-iconexpanded-off {
+    background-image: url( /js/yui/gallery/gallery-accordion/assets/skins/sam/accordion_sprite.png );
+    background-position: 0px -175px;
+    _background-position: 0px -177px;
+}
+
+.mod-sitemap .vmenuaccord .yui3-accordion-item-iconexpanded-off:hover{
+    background-image: url( /js/yui/gallery/gallery-accordion/assets/skins/sam/accordion_sprite.png );
+    background-position: 0px -205px;
+}
+
+.mod-sitemap .vmenuaccord .yui3-accordion-item-iconexpanded-on {
+    background-image: url( /js/yui/gallery/gallery-accordion/assets/skins/sam/accordion_sprite.png );
+    background-position: 0px -115px;
+    _background-position: 0px -117px;
+}
+
+
+.mod-sitemap .vmenuaccord .yui3-accordion-item-iconexpanded-on:hover {
+    background-image: url( /js/yui/gallery/gallery-accordion/assets/skins/sam/accordion_sprite.png );
+    background-position: 0px -145px;
+}
+
+
+.mod-sitemap .vmenuaccord .yui3-accordion-item-iconexpanded-expanding {
+    background-image: url( /js/yui/gallery/gallery-accordion/assets/skins/sam/wait_expand.gif );
+    background-position: 0px center;
+}
+
+
+.mod-sitemap .vmenuaccord .yui3-accordion-item-iconexpanded-collapsing {
+    background-image: url( /js/yui/gallery/gallery-accordion/assets/skins/sam/wait_collapse.gif );
+    background-position: 0px center;
+}
+
+.mod-sitemap .vmenuaccord .yui3-accordion-item-iconclose {
+    background-image: url( /js/yui/gallery/gallery-accordion/assets/skins/sam/accordion_sprite.png );
+    background-position: 0px -235px;
+    _background-position: 0px -237px;
+}
+
+
+.mod-sitemap .vmenuaccord .yui3-accordion-proxyel-visible {
+    border-color : blue;
+    color : white;
+    font-weight : bold;
+    background-color : red;
+    opacity : 0.7;
+    filter: alpha(opacity = 70);
+} 
