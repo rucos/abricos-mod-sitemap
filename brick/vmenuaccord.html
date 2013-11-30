@@ -2,7 +2,7 @@
 [script]brick_menubuilder.php[/script]
 
 [css]/js/yui/gallery/gallery-accordion/assets/gallery-accordion-core.css[/css]
-[mcss=sitemap]vmenuaccord.css[/mcss]
+[mcss=sitemap]vmenuaccord-core.css,vmenuaccord.css[/mcss]
 
 [bkvar=menu-level-0]
 	{v#rows}
@@ -12,17 +12,11 @@
 	<div id="{v#brickid}-{v#id}" class="yui3-accordion-item">
 	
 		<div class="yui3-widget-hd">
-			<a class="yui3-accordion-item-icon"></a>
 			<a href="{v#lnk}" class="yui3-accordion-item-label">{v#tl}</a>
-			<div class="yui3-accordion-item-icons">
-				<a class="yui3-accordion-item-iconalwaysvisible"></a>
-				<a class="yui3-accordion-item-iconexpanded"></a>
-				<a class="yui3-accordion-item-iconclose yui3-accordion-item-iconclose-hidden"></a>
-			</div>
 		</div>
 		
-		<div class="yui3-widget-bd">
-			<div id="pm1" style="position: relative;">
+		<div class="yui3-widget-bd" style="height: 0">
+			<div style="position: relative;">
 				{v#childs}
 			</div>
 		</div>		
@@ -32,13 +26,7 @@
 [bkvar=itemNotChild-level-0]
 	<div id="{v#brickid}-{v#id}" class="yui3-accordion-item">
 		<div class="yui3-widget-hd">
-			<a class="yui3-accordion-item-icon"></a>
-			<a href="{v#lnk}" class="yui3-accordion-item-label">{v#tl}</a>
-			<div class="yui3-accordion-item-icons">
-				<a class="yui3-accordion-item-iconalwaysvisible"></a>
-				<a class="yui3-accordion-item-iconexpanded"></a>
-				<a class="yui3-accordion-item-iconclose yui3-accordion-item-iconclose-hidden"></a>
-			</div>
+			<a href="{v#lnk}" class="yui3-accordion-item-label islink">{v#tl}</a>
 		</div>
 	</div>
 [/bkvar]
@@ -89,6 +77,12 @@
 			srcNode: '#{v#brickid}-el',
 			useAnimation: true,
 			collapseOthersOnExpand: true
+		});
+		accord.on('itemChosen', function(attrs){
+			var nodeLabel = attrs.item.get('nodeLabel');
+			if (nodeLabel.hasClass('islink')){
+				Y.config.win.location = nodeLabel.getAttribute('href');
+			}
 		});
 		accord.render();
 	});
