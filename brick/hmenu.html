@@ -1,6 +1,9 @@
 <!--[*]
 [script]brick_menubuilder.php[/script]
-[mcss=sitemap]menu-horizontal.css[/mcss]
+
+
+[css]/js/yui/build/node-menunav/assets/node-menunav-core.css[/css]
+[mcss=sitemap]hmenu.css[/mcss]
 
 [bkvar=menu-level-0]
 	<div class="yui3-menu-content menu-level-{v#lvl}">
@@ -35,21 +38,17 @@
 
 
 [*]-->
-<div class="mod-sitemap">
-	<div id="{v#brickid}" class="yui3-menu yui3-menu-horizontal">
-		{v#result}
+<div class="mod-sitemap" id="{v#brickid}">
+	<div class="hmenu">
+		<div id="{v#brickid}-el" class="yui3-menu yui3-menu-horizontal">
+			{v#result}
+		</div>
 	</div>
 </div>
 
-<style>
-	.yui3-loading .yui3-menu .yui3-menu {
-		visibility: hidden;
-	}
-</style>
-
 <script>
 	Brick.YUI.use('node-menunav', function(Y){
-		var menu = Y.one("#{v#brickid}");
+		var menu = Y.one("#{v#brickid}-el");
 		menu.plug(Y.Plugin.NodeMenuNav);
 		
 		menu.get("ownerDocument").get("documentElement").removeClass("yui3-loading");
