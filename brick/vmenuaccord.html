@@ -1,7 +1,9 @@
 <!--[*]
 [script]brick_menubuilder.php[/script]
 
+[css]/js/yui/build/node-menunav/assets/node-menunav-core.css[/css]
 [css]/js/yui/gallery/gallery-accordion/assets/gallery-accordion-core.css[/css]
+
 [mcss=sitemap]vmenuaccord-core.css,vmenuaccord.css[/mcss]
 
 [bkvar=menu-level-0]
@@ -31,9 +33,18 @@
 	</div>
 [/bkvar]
 
-
 [bkvar=menu-level-1]
-	<div id="{v#brickid}" class="yui3-menu">
+	<div id="{v#brickid}-m{v#id}" class="yui3-menu menu-level-{v#lvl}">
+		<div class="yui3-menu-content">
+			<ul>
+				{v#rows}
+			</ul>
+		</div>
+	</div>
+[/bkvar]
+
+[bkvar=menu]
+	<div id="{v#brickid}-ms{v#id}" class="yui3-menu menu-level-{v#lvl}">
 		<div class="yui3-menu-content">
 			<ul>
 				{v#rows}
@@ -43,18 +54,17 @@
 [/bkvar]
 
 [bkvar=item]
-	<li>
+	<li class="menuitem-level-{v#lvl} menuitem-withchild">
 		<a class="yui3-menu-label" href="{v#lnk}">{v#tl}</a>
 		{v#childs}
 	</li>
 [/bkvar]
 
 [bkvar=itemNotChild]
-	<li class="yui3-menuitem" menuitem-notchild>
+	<li class="yui3-menuitem menuitem-level-{v#lvl} menuitem-notchild">
 		<a class="yui3-menuitem-content" href="{v#lnk}">{v#tl}</a>
 	</li>
 [/bkvar]
-
 
 [*]-->
 <div id="{v#brickid}" class="mod-sitemap">
@@ -65,14 +75,8 @@
 	</div>
 </div>
 
-<style>
-	.yui3-loading .yui3-menu .yui3-menu {
-		visibility: hidden;
-	}
-</style>
-
 <script>
-	Brick.YUI.use('gallery-accordion', function(Y){
+	Brick.YUI.use('gallery-accordion', 'node-menunav', function(Y){
 		var accord = new Y.Accordion({
 			srcNode: '#{v#brickid}-el',
 			useAnimation: true,
@@ -85,5 +89,10 @@
 			}
 		});
 		accord.render();
+		
+		Y.one('#{v#brickid}-el').all('.menu-level-1').each(function(menu){
+			menu.plug(Y.Plugin.NodeMenuNav);
+		});
+		Y.one('#{v#brickid}-el').get("ownerDocument").get("documentElement").removeClass("yui3-loading");
 	});
 </script>

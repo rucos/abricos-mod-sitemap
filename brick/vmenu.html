@@ -1,15 +1,55 @@
 <!--[*]
-[mcss=sitemap]sitemap.css[/mcss]
-[script]menu.php[/script]
+[script]brick_menubuilder.php[/script]
 
-[bkvar=result][/bkvar]
-[bkvar=menu]<ul class="lvl{v#lvl}">{v#rows}</ul>[/bkvar]
-[bkvar=item]<li class="{v#sel} {v#last}"><a class="{v#sel} {v#last}" href="{v#link}" title="{v#tl}">{v#tl}</a>{v#child}</li>[/bkvar]
+[css]/js/yui/build/node-menunav/assets/node-menunav-core.css[/css]
+[mcss=sitemap]vmenu.css[/mcss]
 
-[p=full][/p]
-[p=mods][/p]
-[p=not][/p]
-[p=notselp][/p]
+[bkvar=menu-level-0]
+	<div class="yui3-menu-content menu-level-{v#lvl}">
+		<ul>
+			{v#rows}
+		</ul>
+	</div>
+[/bkvar]
+
+[bkvar=menu]
+	<div id="{v#brickid}-{v#id}" class="yui3-menu menu-level-{v#lvl}">
+		<div class="yui3-menu-content">
+			<ul>
+				{v#rows}
+			</ul>
+		</div>
+	</div>
+[/bkvar]
+
+[bkvar=item]
+	<li class="menuitem-level-{v#lvl} menuitem-withchild">
+		<a class="yui3-menu-label" href="{v#lnk}">{v#tl}</a>
+		{v#childs}
+	</li>
+[/bkvar]
+
+[bkvar=itemNotChild]
+	<li class="yui3-menuitem menuitem-level-{v#lvl} menuitem-notchild">
+		<a class="yui3-menuitem-content" href="{v#lnk}">{v#tl}</a>
+	</li>
+[/bkvar]
+
 
 [*]-->
-<div class="vmenu box">[bkvar]result[/bkvar]</div>
+<div id="{v#brickid}" class="mod-sitemap">
+	<div class="vmenu">
+		<div id="{v#brickid}-el" class="yui3-menu">
+			{v#result}
+		</div>
+	</div>
+</div>
+
+<script>
+	Brick.YUI.use('node-menunav', function(Y){
+		var menu = Y.one("#{v#brickid}-el");
+		menu.plug(Y.Plugin.NodeMenuNav);
+		
+		menu.get("ownerDocument").get("documentElement").removeClass("yui3-loading");
+	});
+</script>

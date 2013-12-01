@@ -186,7 +186,7 @@
 	width: 15px;
 	overflow: hidden;
 	text-indent: -1000px;
-    background: url(horizontal-menu-submenu-indicator.png) 3px center no-repeat;	
+    background: url(/js/yui/build/node-menunav/assets/skins/sam/horizontal-menu-submenu-indicator.png) 3px center no-repeat;	
 	
 }
 
@@ -238,6 +238,6 @@
 .mod-sitemap .hmenu .yui3-splitbuttonnav .yui3-menu-label-menuvisible .yui3-menu-toggle {
 
     border-color: #7D98B8;
-    background: url(horizontal-menu-submenu-toggle.png) left center no-repeat;
+    background: url(/js/yui/build/node-menunav/assets/skins/sam/horizontal-menu-submenu-toggle.png) left center no-repeat;
 
 }
