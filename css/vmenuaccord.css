@@ -7,6 +7,10 @@
     border: 1px solid #93B2CC;
     padding-left: 10px;
 }
+.mod-sitemap .vmenuaccord .yui3-menu-content, 
+.mod-sitemap .vmenuaccord .yui3-menu .yui3-menu .yui3-menu-content {
+    border: 1px solid #93B2CC;
+}
 .mod-sitemap .vmenuaccord .yui3-accordion-item-label {
     text-decoration: none;
     background: transparent;

@@ -7,3 +7,8 @@
 .mod-sitemap .vmenuaccord .yui3-accordion-item .yui3-widget-hd {
     height: 25px;
 }
+
+.mod-sitemap .vmenuaccord .yui3-menu-content, 
+.mod-sitemap .vmenuaccord .yui3-menu .yui3-menu .yui3-menu-content {
+	border-top: none;
+}

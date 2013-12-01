@@ -4,7 +4,7 @@
 [css]/js/yui/build/node-menunav/assets/node-menunav-core.css[/css]
 [css]/js/yui/gallery/gallery-accordion/assets/gallery-accordion-core.css[/css]
 
-[mcss=sitemap]vmenuaccord-core.css,vmenuaccord.css[/mcss]
+[mcss=sitemap]vmenu.css,vmenuaccord-core.css,vmenuaccord.css[/mcss]
 
 [bkvar=menu-level-0]
 	{v#rows}
@@ -21,7 +21,7 @@
 			<div style="position: relative;">
 				{v#childs}
 			</div>
-		</div>		
+		</div>
 	</div>
 [/bkvar]
 
@@ -53,14 +53,14 @@
 	</div>
 [/bkvar]
 
-[bkvar=item]
+[bkvar=item-old]
 	<li class="menuitem-level-{v#lvl} menuitem-withchild">
 		<a class="yui3-menu-label" href="{v#lnk}">{v#tl}</a>
 		{v#childs}
 	</li>
 [/bkvar]
 
-[bkvar=itemNotChild]
+[bkvar=item]
 	<li class="yui3-menuitem menuitem-level-{v#lvl} menuitem-notchild">
 		<a class="yui3-menuitem-content" href="{v#lnk}">{v#tl}</a>
 	</li>
@@ -68,7 +68,7 @@
 
 [*]-->
 <div id="{v#brickid}" class="mod-sitemap">
-	<div class="vmenuaccord">
+	<div class="vmenu vmenuaccord">
 		<div id="{v#brickid}-el" class="yui3-accordion">
 			{v#result}
 		</div>
