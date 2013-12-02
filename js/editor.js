@@ -41,6 +41,7 @@ Component.entryPoint = function(NS){
 			this.page = page;
 			this.cfg = cfg;
 			this.editor = null;
+			this._mods = "";
 		},
 		destroy: function(){
 			if (L.isValue(this.editor)){
@@ -128,14 +129,17 @@ Component.entryPoint = function(NS){
 	 		if (page.name == 'index'){
 	 			this.elHide('pgnamecont');
 	 		}
+	 		
+	 		this._mods = detail.mods;
 
 	 		this.renderMods();
 		},
 		renderMods: function(){
-			var TM = this._TM, page = this.page, lst = "";
+			var TM = this._TM, mods = this._mods, lst = "";
 	 		this.modsid = {};
-	 		if (L.isString(page.mods) && page.mods.length > 0){
-				var o = YAHOO.lang.JSON.parse(page.mods), i = 0;
+
+	 		if (L.isString(mods) && mods.length > 0){
+				var o = YAHOO.lang.JSON.parse(mods), i = 0;
 
 				for (var own in o){
 					for (var bk in o[own]){
@@ -148,10 +152,8 @@ Component.entryPoint = function(NS){
 						i++;
 					}
 				}
-				this.elSetHTML('modlist', lst);	 		
-	 		}else{
-				this.elSetHTML('modlist', lst);	 		
 	 		}
+			this.elSetHTML('modlist', lst);	 		
 		},
 		onClick: function(el, tp){
 			switch(el.id){
@@ -240,9 +242,6 @@ Component.entryPoint = function(NS){
 			o[di['mName']][di['bName']] = '';
 			this._mods = J.stringify(o);
 			this.renderMods();
-		},
-		renderMods: function(){
-			
 		},
 		insertModule: function(id){
 			var o = this.modsid[id];
