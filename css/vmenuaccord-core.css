@@ -12,3 +12,6 @@
 .mod-sitemap .vmenuaccord .yui3-menu .yui3-menu .yui3-menu-content {
 	border-top: none;
 }
+.mod-sitemap .vmenuaccord .yui3-menuitem-content {
+	white-space: normal !important;
+}
