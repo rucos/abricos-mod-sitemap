@@ -1,22 +1,37 @@
 <!--[*]
-[mcss=sitemap]submenublock.css[/mcss]
-[script]brick_submenublock.php[/script]
+[script]brick_menubuilder.php[/script]
 
-[v=table]
-	<ul>{v#rows}</ul>
-[/v]
-[v=row]
-	<li>
-		<a href="{v#link}" title="{v#tl}">{v#tl}</a>
+[p=isSubMenu]true[/p]
+
+[bkvar=menu]
+	<div id="{v#brickid}-{v#id}" class="menu-level-{v#lvl}">
+		<div class="menu-content">
+			<ul>
+				{v#rows}
+			</ul>
+		</div>
+	</div>
+[/bkvar]
+
+[bkvar=item]
+	<li class="menuitem-level-{v#lvl} menuitem-withchild">
+		<a class="menu-label" href="{v#lnk}">{v#tl}</a>
 		{v#childs}
 	</li>
-[/v]
+[/bkvar]
 
-[p=fromroot][/p]
+[bkvar=itemNotChild]
+	<li class="menuitem menuitem-level-{v#lvl} menuitem-notchild">
+		<a class="menuitem-content" href="{v#lnk}">{v#tl}</a>
+	</li>
+[/bkvar]
+
 
 [*]-->
-<div class="mod-sitemap-submenublock">
-	<ul>
-		{v#result}
-	</ul>
+<div id="{v#brickid}" class="mod-sitemap">
+	<div class="submenublock">
+		<div id="{v#brickid}-el">
+			{v#result}
+		</div>
+	</div>
 </div>

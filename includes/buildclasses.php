@@ -44,22 +44,23 @@ class SitemapMenuBrickBulder {
 	 */
 	public $cfgFromMenu = '';
 	
-	public $tplContent = '';
+	/**
+	 * True - блок подменю исходя из текущего адреса страницы
+	 * @var boolean
+	 */
+	public $cfgIsSubMenu = false;
 	
 	public function __construct(Ab_CoreBrick $brick){
 		
 		$this->brickid = SitemapMenuBrickBulder::$_counter++;
 		
 		$this->brick = $brick;
+
 		$p = &$brick->param->param;
-		
 		
 		$this->cfgClearIfEmpty = $this->ToBoolean($p['clearIfEmpty']);
 		$this->cfgFromMenu = $p['fromMenu'];
-		
-		$v = &$brick->param->var;
-		
-		$this->tplContent = $brick->content;
+		$this->cfgIsSubMenu = $this->ToBoolean($p['isSubMenu']);
 	}
 	
 	public function GetTplMenu($level){
@@ -135,14 +136,20 @@ class SitemapMenuBrickBulder {
 	public function Build(){
 		$list = SitemapManager::$instance->MenuList();
 		
-		if (!empty($this->cfgFromMenu)){
+		if ($this->cfgIsSubMenu){
+			$adr = Abricos::$adress;
+			$item = $list->FindByPath($adr->dir, false);
+			
+			if (empty($item)){ return ""; }
+			$list = $item->childs;
+		}else if (!empty($this->cfgFromMenu)){
 			$item = $list->FindByPath($this->cfgFromMenu);
 			if (!empty($item)){ return ""; }
 			$list = $item->childs;
 		}
 
 		$sMenu = $this->BuildMenu($list, 0, 0);
-		$sResult = Brick::ReplaceVarByData($this->tplContent, array(
+		$sResult = Brick::ReplaceVarByData($this->brick->content, array(
 			"result" => $sMenu,
 			"brickid" => ($this->brick->name.$this->brickid)
 		));
