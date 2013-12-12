@@ -27,26 +27,24 @@
 [/bkvar]
 
 [*]-->
-<div id="{v#brickid}" class="pure-menu pure-menu-open pure-menu-horizontal">
-	<div class="hmenu">
-		{v#result}
-	</div>
+<div id="{v#brickid}" class="hmenu pure-menu pure-menu-open pure-menu-horizontal">
+	{v#result}
 </div>
 
 <script>
 	YUI({
 	    classNamePrefix: 'pure'
 	}).use('gallery-sm-menu', function (Y) {
-	    var horizontalMenu = new Y.Menu({
+
+		var horizontalMenu = new Y.Menu({
 	        container         : '#{v#brickid}',
 	        sourceNode        : '#{v#brickid}-el',
+	        orientation       : 'horizontal',	        
 	        hideOnOutsideClick: false,
 	        hideOnClick       : false
 	    });
 	
 	    horizontalMenu.render();
 	    horizontalMenu.show();
-
-		menu.get("ownerDocument").get("documentElement").removeClass("yui3-loading");
 	});
 </script>
