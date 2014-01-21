@@ -1,8 +1,9 @@
 # abricos-mod-sitemap
 
-Abricos Sitemap Module
+Sitemap module for Abricos Platform
 
 
 ## License
-Copyright (c) 2014 Alexander Kuzmin
-Licensed under the GPLv2 license.
+Copyright (c) 2008 Alexander Kuzmin
+
+Licensed under the GPLv2 license
