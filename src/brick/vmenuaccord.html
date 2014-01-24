@@ -2,97 +2,96 @@
 [script]brick_menubuilder.php[/script]
 
 [css]/vendor/alloyui/node-menunav/assets/node-menunav-core.css[/css]
-[css]/js/yui/gallery/gallery-accordion/assets/gallery-accordion-core.css[/css]
+[css]/vendor/alloyui/aui-toggler-base/assets/aui-toggler-base-core.css[/css]
 
 [mcss=sitemap]vmenu.css,vmenuaccord-core.css,vmenuaccord.css[/mcss]
 
 [bkvar=menu-level-0]
-	{v#rows}
+    {v#rows}
 [/bkvar]
 
 [bkvar=item-level-0]
-	<div id="{v#brickid}-{v#id}" class="yui3-accordion-item">
-	
-		<div class="yui3-widget-hd">
-			<a href="{v#lnk}" class="yui3-accordion-item-label">{v#tl}</a>
-		</div>
-		
-		<div class="yui3-widget-bd" style="height: 0">
-			<div style="position: relative;">
-				{v#childs}
-			</div>
-		</div>
-	</div>
+    <div id="{v#brickid}-{v#id}" class="vmenuaccord-item">
+        <div class="vmenuaccord-header toggler-header-collapsed">
+            <a href="{v#lnk}">{v#tl}</a>
+        </div>
+        <div class="vmenuaccord-content toggler-content-collapsed">
+            {v#childs}
+        </div>
+    </div>
 [/bkvar]
 
 [bkvar=itemNotChild-level-0]
-	<div id="{v#brickid}-{v#id}" class="yui3-accordion-item">
-		<div class="yui3-widget-hd">
-			<a href="{v#lnk}" class="yui3-accordion-item-label islink">{v#tl}</a>
-		</div>
-	</div>
+    <div id="{v#brickid}-{v#id}" class="vmenuaccord-item vmenuaccord-item-notchild">
+        <div class="vmenuaccord-header">
+            <a href="{v#lnk}" class="">{v#tl}</a>
+        </div>
+        <div class="vmenuaccord-content toggler-content-collapsed"></div>
+    </div>
 [/bkvar]
 
 [bkvar=menu-level-1]
-	<div id="{v#brickid}-m{v#id}" class="yui3-menu menu-level-{v#lvl}">
-		<div class="yui3-menu-content">
-			<ul>
-				{v#rows}
-			</ul>
-		</div>
-	</div>
+    <div id="{v#brickid}-m{v#id}" class="menu-level-{v#lvl}">
+        {v#rows}
+    </div>
 [/bkvar]
 
 [bkvar=menu]
-	<div id="{v#brickid}-ms{v#id}" class="yui3-menu menu-level-{v#lvl}">
-		<div class="yui3-menu-content">
-			<ul>
-				{v#rows}
-			</ul>
-		</div>
-	</div>
-[/bkvar]
-
-[bkvar=item-old]
-	<li class="menuitem-level-{v#lvl} menuitem-withchild">
-		<a class="yui3-menu-label" href="{v#lnk}">{v#tl}</a>
-		{v#childs}
-	</li>
+    <div id="{v#brickid}-ms{v#id}" class="menu-level-{v#lvl}">
+        {v#rows}
+    </div>
 [/bkvar]
 
 [bkvar=item]
-	<li class="yui3-menuitem menuitem-level-{v#lvl} menuitem-notchild">
-		<a class="yui3-menuitem-content" href="{v#lnk}">{v#tl}</a>
-	</li>
+    <div class="menuitem-level-{v#lvl} menuitem-notchild">
+        <a href="{v#lnk}">{v#tl}</a>
+    </div>
 [/bkvar]
 
 [*]-->
 <div id="{v#brickid}" class="mod-sitemap">
-	<div class="vmenu vmenuaccord">
-		<div id="{v#brickid}-el" class="yui3-accordion">
-			{v#result}
-		</div>
-	</div>
+    <div class="vmenu vmenuaccord">
+        <div id="{v#brickid}-el">
+            {v#result}
+        </div>
+    </div>
 </div>
 
 <script>
-	Brick.YUI.use('gallery-accordion', 'node-menunav', function(Y){
-		var accord = new Y.Accordion({
-			srcNode: '#{v#brickid}-el',
-			useAnimation: true,
-			collapseOthersOnExpand: true
-		});
-		accord.on('itemChosen', function(attrs){
-			var nodeLabel = attrs.item.get('nodeLabel');
-			if (nodeLabel.hasClass('islink')){
-				Y.config.win.location = nodeLabel.getAttribute('href');
-			}
-		});
-		accord.render();
-		
-		Y.one('#{v#brickid}-el').all('.menu-level-1').each(function(menu){
-			menu.plug(Y.Plugin.NodeMenuNav);
-		});
-		Y.one('#{v#brickid}-el').get("ownerDocument").get("documentElement").removeClass("yui3-loading");
-	});
+    YUI().use('aui-toggler', 'node-menunav', function(Y) {
+
+        new Y.TogglerDelegate({
+            animated: true,
+            closeAllOnExpand: true,
+            container: '#{v#brickid}-el',
+            expanded: false,
+            header: '.vmenuaccord-header',
+            content: '.vmenuaccord-content',
+            transition: {
+                duration: 0.2,
+                easing: 'cubic-bezier(0, 0.1, 0, 1)'
+            }
+        });
+
+/*
+        var accord = new Y.Accordion({
+            srcNode: '#{v#brickid}-el',
+            useAnimation: true,
+            collapseOthersOnExpand: true
+        });
+        accord.on('itemChosen', function(attrs) {
+            var nodeLabel = attrs.item.get('nodeLabel');
+            if (nodeLabel.hasClass('islink')) {
+                Y.config.win.location = nodeLabel.getAttribute('href');
+            }
+        });
+        accord.render();
+
+        
+        Y.one('#{v#brickid}-el').all('.menu-level-1').each(function(menu) {
+            menu.plug(Y.Plugin.NodeMenuNav);
+        });
+        Y.one('#{v#brickid}-el').get("ownerDocument").get("documentElement").removeClass("yui3-loading");
+        /**/
+    });
 </script>

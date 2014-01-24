@@ -5,51 +5,51 @@
 [mcss=sitemap]vmenu.css[/mcss]
 
 [bkvar=menu-level-0]
-	<div class="yui3-menu-content menu-level-{v#lvl}">
-		<ul>
-			{v#rows}
-		</ul>
-	</div>
+        <div class="yui3-menu-content menu-level-{v#lvl}">
+                <ul>
+                        {v#rows}
+                </ul>
+        </div>
 [/bkvar]
 
 [bkvar=menu]
-	<div id="{v#brickid}-{v#id}" class="yui3-menu menu-level-{v#lvl}">
-		<div class="yui3-menu-content">
-			<ul>
-				{v#rows}
-			</ul>
-		</div>
-	</div>
+        <div id="{v#brickid}-{v#id}" class="yui3-menu menu-level-{v#lvl}">
+                <div class="yui3-menu-content">
+                        <ul>
+                                {v#rows}
+                        </ul>
+                </div>
+        </div>
 [/bkvar]
 
 [bkvar=item]
-	<li class="menuitem-level-{v#lvl} menuitem-withchild">
-		<a class="yui3-menu-label" href="{v#lnk}">{v#tl}</a>
-		{v#childs}
-	</li>
+        <li class="menuitem-level-{v#lvl} menuitem-withchild">
+                <a class="yui3-menu-label" href="{v#lnk}">{v#tl}</a>
+                {v#childs}
+        </li>
 [/bkvar]
 
 [bkvar=itemNotChild]
-	<li class="yui3-menuitem menuitem-level-{v#lvl} menuitem-notchild">
-		<a class="yui3-menuitem-content" href="{v#lnk}">{v#tl}</a>
-	</li>
+        <li class="yui3-menuitem menuitem-level-{v#lvl} menuitem-notchild">
+                <a class="yui3-menuitem-content" href="{v#lnk}">{v#tl}</a>
+        </li>
 [/bkvar]
 
 
 [*]-->
 <div id="{v#brickid}" class="mod-sitemap">
-	<div class="vmenu">
-		<div id="{v#brickid}-el" class="yui3-menu">
-			{v#result}
-		</div>
-	</div>
+    <div class="vmenu">
+        <div id="{v#brickid}-el" class="yui3-menu">
+            {v#result}
+        </div>
+    </div>
 </div>
 
 <script>
-	Brick.YUI.use('node-menunav', function(Y){
-		var menu = Y.one("#{v#brickid}-el");
-		menu.plug(Y.Plugin.NodeMenuNav);
-		
-		menu.get("ownerDocument").get("documentElement").removeClass("yui3-loading");
-	});
+    YUI().use('node-menunav', function(Y) {
+        var menu = Y.one("#{v#brickid}-el");
+        menu.plug(Y.Plugin.NodeMenuNav);
+
+        menu.get("ownerDocument").get("documentElement").removeClass("yui3-loading");
+    });
 </script>
