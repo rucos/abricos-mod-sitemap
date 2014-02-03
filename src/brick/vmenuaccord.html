@@ -13,7 +13,7 @@
 [bkvar=item-level-0]
     <div id="{v#brickid}-{v#id}" class="vmenuaccord-item">
         <div class="vmenuaccord-header toggler-header-collapsed">
-            <a href="{v#lnk}">{v#tl}</a>
+            <a href="{v#lnk}" class="itemlink">{v#tl}</a>
         </div>
         <div class="vmenuaccord-content toggler-content-collapsed">
             {v#childs}
@@ -50,7 +50,7 @@
 
 [*]-->
 <div id="{v#brickid}" class="mod-sitemap">
-    <div class="vmenu vmenuaccord">
+    <div class="vmenuaccord">
         <div id="{v#brickid}-el">
             {v#result}
         </div>
@@ -60,7 +60,7 @@
 <script>
     YUI().use('aui-toggler', 'node-menunav', function(Y) {
 
-        new Y.TogglerDelegate({
+        var tg = new Y.TogglerDelegate({
             animated: true,
             closeAllOnExpand: true,
             container: '#{v#brickid}-el',
@@ -73,25 +73,23 @@
             }
         });
 
-/*
-        var accord = new Y.Accordion({
-            srcNode: '#{v#brickid}-el',
-            useAnimation: true,
-            collapseOthersOnExpand: true
-        });
-        accord.on('itemChosen', function(attrs) {
-            var nodeLabel = attrs.item.get('nodeLabel');
-            if (nodeLabel.hasClass('islink')) {
-                Y.config.win.location = nodeLabel.getAttribute('href');
-            }
-        });
-        accord.render();
+        Y.Array.each(tg.items, function(item) {
+            (function(item) {
+                var hd = item.get('header');
+                hd.on('click', function(e) {
 
-        
-        Y.one('#{v#brickid}-el').all('.menu-level-1').each(function(menu) {
-            menu.plug(Y.Plugin.NodeMenuNav);
+                    var elA = hd.all('.itemlink');
+
+                    if (elA && item.get('expanded')) {
+                        var href = elA.getAttribute('href');
+                        console.log(href);
+                        if (href) {
+                            e.preventDefault();
+                            // Y.config.win.location = href;
+                        }
+                    }
+                });
+            })(item);
         });
-        Y.one('#{v#brickid}-el').get("ownerDocument").get("documentElement").removeClass("yui3-loading");
-        /**/
     });
 </script>
