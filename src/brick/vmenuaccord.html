@@ -76,7 +76,7 @@
         var go = function(node) {
             var href = node.one('.{v#brickid}-itemlink').getAttribute('href');
             if (Y.Lang.isValue(href)) {
-                Y.config.win.location = href[0];
+                Y.config.win.location = href;
             }
         };
 
