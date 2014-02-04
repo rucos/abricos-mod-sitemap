@@ -11,9 +11,9 @@
 [/bkvar]
 
 [bkvar=item-level-0]
-    <div id="{v#brickid}-{v#id}" class="vmenuaccord-item">
+    <div id="{v#brickid}-{v#id}" class="{v#brickid}-item vmenuaccord-item">
         <div class="vmenuaccord-header toggler-header-collapsed">
-            <a href="{v#lnk}" class="itemlink">{v#tl}</a>
+            <a href="{v#lnk}" class="{v#brickid}-itemlink">{v#tl}</a>
         </div>
         <div class="vmenuaccord-content toggler-content-collapsed">
             {v#childs}
@@ -22,9 +22,9 @@
 [/bkvar]
 
 [bkvar=itemNotChild-level-0]
-    <div id="{v#brickid}-{v#id}" class="vmenuaccord-item vmenuaccord-item-notchild">
+    <div id="{v#brickid}-{v#id}" class="{v#brickid}-item vmenuaccord-item vmenuaccord-item-notchild">
         <div class="vmenuaccord-header">
-            <a href="{v#lnk}" class="">{v#tl}</a>
+            <a href="{v#lnk}" class="{v#brickid}-itemlink">{v#tl}</a>
         </div>
         <div class="vmenuaccord-content toggler-content-collapsed"></div>
     </div>
@@ -73,21 +73,21 @@
             }
         });
 
-        Y.Array.each(tg.items, function(item) {
+        var go = function(node) {
+            var href = node.one('.{v#brickid}-itemlink').getAttribute('href');
+            if (Y.Lang.isValue(href)) {
+                Y.config.win.location = href[0];
+            }
+        };
+
+        Y.all('.{v#brickid}-item').each(function(item) {
+            if (!item.hasClass('vmenuaccord-item-notchild')) {
+                return;
+            }
             (function(item) {
-                var hd = item.get('header');
-                hd.on('click', function(e) {
-
-                    var elA = hd.all('.itemlink');
-
-                    if (elA && item.get('expanded')) {
-                        var href = elA.getAttribute('href');
-                        console.log(href);
-                        if (href) {
-                            e.preventDefault();
-                            // Y.config.win.location = href;
-                        }
-                    }
+                item.on('click', function(e) {
+                    go(item);
+                    e.preventDefault();
                 });
             })(item);
         });
