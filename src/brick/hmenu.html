@@ -1,50 +1,41 @@
 <!--[*]
 [script]brick_menubuilder.php[/script]
 
-[mcss=sitemap]hmenu.css[/mcss]
+[mcss=sitemap]sitemap.css[/mcss]
 
 [bkvar=menu-level-0]
-	<ul id="{v#brickid}-el">
+	<ul id="{v#brickid}-el" class="nav navbar-nav">
 		{v#rows}
 	</ul>
 [/bkvar]
 
-[bkvar=menu]
-	<ul class="menu-level-{v#lvl}">
-		{v#rows}
-	</ul>
-[/bkvar]
-
-[bkvar=item]
-	<li class="menuitem-level-{v#lvl} menuitem-withchild"><a href="{v#lnk}">{v#tl}</a>
+[bkvar=item-level-0]
+	<li class="menuitem-level-{v#lvl} menuitem-withchild dropdown">
+	    <a href="{v#lnk}" class="dropdown-toggle" data-toggle="dropdown">{v#tl} <b class="caret"></b></a>
 		{v#childs}
 	</li>
 [/bkvar]
 
 [bkvar=itemNotChild]
-	<li class="menuitem-level-{v#lvl} menuitem-notchild"><a href="{v#lnk}">{v#tl}</a>
+	<li class="menuitem-level-{v#lvl} menuitem-notchild">
+	    <a href="{v#lnk}">{v#tl}</a>
+	</li>
+[/bkvar]
+
+[bkvar=menu]
+	<ul class="dropdown-menu menu-level-{v#lvl}">
+		{v#rows}
+	</ul>
+[/bkvar]
+
+[bkvar=item]
+	<li class="menuitem-level-{v#lvl} menuitem-withchild dropdown-submenu">
+	    <a href="{v#lnk}" class="dropdown-toggle" data-toggle="dropdown">{v#tl}</a>
+		{v#childs}
 	</li>
 [/bkvar]
 
 [*]-->
-<div id="{v#brickid}" class="hmenu pure-menu pure-menu-open pure-menu-horizontal">
-	{v#result}
+<div id="{v#brickid}">
+    {v#result}
 </div>
-
-<script>
-	YUI({
-	    classNamePrefix: 'pure'
-	}).use('gallery-sm-menu', function (Y) {
-
-		var horizontalMenu = new Y.Menu({
-	        container         : '#{v#brickid}',
-	        sourceNode        : '#{v#brickid}-el',
-	        orientation       : 'horizontal',	        
-	        hideOnOutsideClick: false,
-	        hideOnClick       : false
-	    });
-	
-	    horizontalMenu.render();
-	    horizontalMenu.show();
-	});
-</script>

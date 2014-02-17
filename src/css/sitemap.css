@@ -1,214 +1,47 @@
-/* * * Вертикальное меню - стандартное * * */
-.vmenu,
-.vmenuf { 
-    font-family: Tahoma,Verdana,Arial,sans-serif;
+.dropdown-submenu {
     position: relative;
-    font-size: 95%;
 }
-.vmenu li {
-    list-style-type: none;
+
+.dropdown-submenu > .dropdown-menu {
+    top: 0;
+    left: 100%;
+    margin-top: -6px;
+    margin-left: -1px;
+    -webkit-border-radius: 0 6px 6px 6px;
+    -moz-border-radius: 0 6px 6px 6px;
+    border-radius: 0 6px 6px 6px;
 }
-.vmenu a {
-    border-bottom: 1px solid #EEF1F2;
+
+.dropdown-submenu:hover > .dropdown-menu {
     display: block;
-    padding: 5px 0 5px 10px;
-}
-.vmenu a.last {
-    border-bottom: none;
-}
-.vmenu ul.lvl1 li a {
-    padding-left: 24pt;
-    background: url(../images/menublock-arrow.gif) 10pt center no-repeat;
-}
-.vmenu ul.lvl2 li a {
-    padding-left: 48pt;
-    background: url(../images/menublock-arrow.gif) 34pt center no-repeat;
-}
-.vmenu ul.lvl3 li a {
-    padding-left: 72pt;
-    background: url(../images/menublock-arrow.gif) 58pt center no-repeat;
-}
-.vmenu ul.lvl4 li a {
-    padding-left: 96pt;
-    background: url(../images/menublock-arrow.gif) 82pt center no-repeat;
-}
-.vmenu ul.lvl5 li a {
-    padding-left: 120pt;
-    background: url(../images/menublock-arrow.gif) 106pt center no-repeat;
-}
-.vmenu a.selected,
-.vmenuf a.selected {
-    font-weight:bold;
-}
-.vmenu a,
-.vmenuf a {
-    color: #6A7398;
-    font-weight: normal;
-    text-decoration: none;
-}
-.vmenu a:hover, 
-.vmenuf a:hover {
-    color: #f00;
-    text-decoration: none;
-}
-.vmenu a:active,
-.vmenuf a:active {
-    color: #004488;
-    text-decoration: none;
 }
 
-/* * * Вертикальное меню - полное * * */
-.vmenuf li ul { 
-    margin-left: 15px; 
-} 
-.vmenuf ul li { 
-    margin-top: 2px;
-    padding: 1px 0 4px 15px;
-    background: url(../images/menu-closed.gif) no-repeat scroll left 4px transparent;
-}
-.vmenuf li.open { 
-    background:url("../images/menu-open.gif") no-repeat scroll left 6px transparent;
-}
-.vmenuf li.nochild { 
-    background:url("../images/menu-nochild.gif") no-repeat scroll left 6px transparent;
-}
-.vmenuf li a.smvm-opcl {
-    display:block;
-    float:left;
-    height:18px;
-    left:20px;
-    margin-left:-18px;
-    top:auto;
-    width:18px;
-}
-html .vmenuf ul li a.smvm-opcl {
-    display: inline; /* убиваем баг с двойными полями в IE6 */
-}
-
-/* * * Горизонтальное меню - полное * * */
-.hmenuf {
-    position: relative;
-}
-.hmenuf .hmenufline table {
-    width: 100%;
-}
-.hmenuf .hmenufline td {
-    vertical-align: middle;
-    text-align: center;
-    height: 32px;
-    padding: 0 10px;
-}
-
-.hmenuf .hmenufline .morebutton {
-    width: 65px;
-    text-align: right;
-}
-
-.hmenuf .ttmenu {
-    position: absolute;
-    background-color: #FCFEFD;
-    border: 1px solid #D7D9D8;
-    z-index: 1000;
-}
-.hmenuf .ttmenu .wrap {
-    position: relative;
-    padding: 10px 0 15px 5px;
-}
-
-.hmenuf .menucol {
-    border-right: 1px dotted #000000;
-    display: inline-block;
-    padding-right: 10px;
-    vertical-align: top;
-    width: 23%;
-}
-.hmenuf .lastcol {
-    border-right: none;
-}
-.hmenuf .menucol li {
-    padding-left: 10px;
-    line-height: 1em;
-    height: 30px;
-}
-.hmenuf .menucol .level-3 {
-    padding-left: 20px;
-}
-.hmenuf .menucol .level-4 {
-    padding-left: 40px;
-}
-
-.hmenuf .ttmenu .closebtn {
-    position: absolute; top: 7px; right: 7px;
-}
-.hmenuf .ttmenu .closebtn a {
-    background: url("../images/close.png") no-repeat scroll 50% 50% transparent;
+.dropdown-submenu > a:after {
     display: block;
-    height: 13px;
-    width: 13px;
+    content: " ";
+    float: right;
+    width: 0;
+    height: 0;
+    border-color: transparent;
+    border-style: solid;
+    border-width: 5px 0 5px 5px;
+    border-left-color: #cccccc;
+    margin-top: 5px;
+    margin-right: -10px;
 }
 
-/** 
- * Хлебные крошки 
- */
-.breadcrumb {
-    color: #999;
-    font-size: 80%;
-    clear: both;
+.dropdown-submenu:hover > a:after {
+    border-left-color: #ffffff;
 }
 
-/** 
- * Paginator 
- */
-ul.paginator {
-    clear:both;
-    font-family:arial;
-    font-size:0.92em;
-    font-size-adjust:none;
-    font-stretch:normal;
-    font-style:normal;
-    font-variant:normal;
-    font-weight:normal;
-    line-height:100%;
-    list-style-image:none;
-    list-style-position:outside;
-    list-style-type:none;
-    margin:1em 0 0.2em;
-    padding:1em 1em 2em 0;
-}
-ul.paginator li {
-    float:left;
-    list-style-type:none;
-    margin-right:0.1em;
-}
-ul.paginator a.prev, 
-ul.paginator a.next, 
-ul.paginator a.last, 
-ul.paginator a.first {
-    border:0 none;
-    color:#666666;
-    font-size:1.2em;
-}
-ul.paginator a {
-    background:#FFFFFF none repeat scroll 0 0;
-    border:1px solid #CCCCCC;
-    color:#666666;
-}
-ul.paginator em {
-    background:#666666 none repeat scroll 0 0;
-    border:1px solid #BEB1B1;
-    color:#FFFFFF	;
-    font-style:normal;
-    font-weight:bold;
+.dropdown-submenu.pull-left {
+    float: none;
 }
 
-ul.paginator a, 
-ul.paginator em {
-    display:block;
-    margin-right:0.1em;
-    padding:0.5em;
-    text-decoration:none;
-}
-
-ul.paginator .inactive	{
-    color: #ccc;
+.dropdown-submenu.pull-left > .dropdown-menu {
+    left: -100%;
+    margin-left: 10px;
+    -webkit-border-radius: 6px 0 6px 6px;
+    -moz-border-radius: 6px 0 6px 6px;
+    border-radius: 6px 0 6px 6px;
 }
