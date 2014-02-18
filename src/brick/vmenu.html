@@ -1,55 +1,52 @@
 <!--[*]
 [script]brick_menubuilder.php[/script]
 
-[css]/vendor/alloyui/node-menunav/assets/node-menunav-core.css[/css]
-[mcss=sitemap]vmenu.css[/mcss]
+[mcss=sitemap]menu.css[/mcss]
 
 [bkvar=menu-level-0]
-        <div class="yui3-menu-content menu-level-{v#lvl}">
-                <ul>
-                        {v#rows}
-                </ul>
-        </div>
+	<div class="list-group">
+		{v#rows}
+	</div>
 [/bkvar]
 
-[bkvar=menu]
-        <div id="{v#brickid}-{v#id}" class="yui3-menu menu-level-{v#lvl}">
-                <div class="yui3-menu-content">
-                        <ul>
-                                {v#rows}
-                        </ul>
-                </div>
-        </div>
+[bkvar=item-level-0]
+    <div class="list-group-item">
+        <a href="{v#lnk}">
+            <span>{v#tl}</span>
+        </a>
+        {v#childs}
+    </div>
 [/bkvar]
 
-[bkvar=item]
-        <li class="menuitem-level-{v#lvl} menuitem-withchild">
-                <a class="yui3-menu-label" href="{v#lnk}">{v#tl}</a>
-                {v#childs}
-        </li>
+[bkvar=itemNotChild-level-0]
+    <a href="{v#lnk}" class="list-group-item">
+        {v#tl}
+    </a>
 [/bkvar]
 
 [bkvar=itemNotChild]
-        <li class="yui3-menuitem menuitem-level-{v#lvl} menuitem-notchild">
-                <a class="yui3-menuitem-content" href="{v#lnk}">{v#tl}</a>
-        </li>
+	<li>
+	    <a href="{v#lnk}">{v#tl}</a>
+	</li>
 [/bkvar]
 
+[bkvar=menu]
+	<ul class="dropdown-menu">
+		{v#rows}
+	</ul>
+[/bkvar]
+
+[bkvar=item]
+	<li class="dropdown-submenu menuitem-level-{v#lvl} menuitem-withchild">
+	    <a href="{v#lnk}">{v#tl}</a>
+		{v#childs}
+	</li>
+[/bkvar]
 
 [*]-->
 <div id="{v#brickid}" class="mod-sitemap">
     <div class="vmenu">
-        <div id="{v#brickid}-el" class="yui3-menu">
-            {v#result}
-        </div>
+        {v#result}
     </div>
 </div>
 
-<script>
-    YUI().use('node-menunav', function(Y) {
-        var menu = Y.one("#{v#brickid}-el");
-        menu.plug(Y.Plugin.NodeMenuNav);
-
-        menu.get("ownerDocument").get("documentElement").removeClass("yui3-loading");
-    });
-</script>
