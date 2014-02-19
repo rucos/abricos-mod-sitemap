@@ -10,37 +10,31 @@
 [/bkvar]
 
 [bkvar=item-level-0]
-    <div class="list-group-item">
-        <a href="{v#lnk}">
-            <span>{v#tl}</span>
-        </a>
-        {v#childs}
-    </div>
+    <a href="{v#lnk}" class="list-group-item" data-submenu="{v#brickid}-{v#id}">
+        <span>{v#tl}</span>
+    </a>
+    {v#childs}
 [/bkvar]
 
 [bkvar=itemNotChild-level-0]
-    <a href="{v#lnk}" class="list-group-item">
-        {v#tl}
-    </a>
-[/bkvar]
-
-[bkvar=itemNotChild]
-	<li>
-	    <a href="{v#lnk}">{v#tl}</a>
-	</li>
+    <a href="{v#lnk}" class="list-group-item">{v#tl}</a>
 [/bkvar]
 
 [bkvar=menu]
-	<ul class="dropdown-menu">
+	<ul class="dropdown-menu {v#brickid}-{v#id}">
 		{v#rows}
 	</ul>
 [/bkvar]
 
 [bkvar=item]
-	<li class="dropdown-submenu menuitem-level-{v#lvl} menuitem-withchild">
+	<li class="dropdown-submenu">
 	    <a href="{v#lnk}">{v#tl}</a>
 		{v#childs}
 	</li>
+[/bkvar]
+
+[bkvar=itemNotChild]
+	<li><a href="{v#lnk}">{v#tl}</a></li>
 [/bkvar]
 
 [*]-->
@@ -50,3 +44,30 @@
     </div>
 </div>
 
+<script type="text/javascript">
+    YUI().use('node', function (Y) {
+        Y.delegate('click', function (e) {
+
+            var elMenu = Y.one('#{v#brickid}');
+
+            elMenu.all('.submenu-visible').removeClass('submenu-visible');
+
+            var el = e.target.ancestor('.list-group-item', true);
+            if (!el) {
+                return;
+            }
+
+            var data = el.getData("submenu");
+            if (!data) {
+                return;
+            }
+
+            var y = el.getY() - elMenu.getY();
+            var elSubMenu = elMenu.one('.' + data);
+            elSubMenu.setStyle('top', y);
+            elSubMenu.addClass('submenu-visible');
+
+            e.preventDefault();
+        }, document, 'body');
+    });
+</script>

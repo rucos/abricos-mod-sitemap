@@ -49,12 +49,10 @@
 /**
  * Vertical menu
  */
-
-.mod-sitemap .vmenu .list-group-item:hover > .dropdown-menu {
-    display: block;
+.mod-sitemap .vmenu {
+    position: relative;
 }
-
-.mod-sitemap .vmenu .list-group-item  > span:after {
+.mod-sitemap .vmenu .list-group-item > span:after {
     display: block;
     content: " ";
     float: right;
@@ -67,7 +65,9 @@
     margin-top: 5px;
     margin-right: -10px;
 }
-
+.mod-sitemap .vmenu .submenu-visible {
+    display: block;
+}
 .mod-sitemap .vmenu .dropdown-menu {
     top: 0;
     left: 100%;
