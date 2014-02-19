@@ -153,7 +153,7 @@ class SitemapMenuBrickBulder {
             $list = $item->childs;
         } else if (!empty($this->cfgFromMenu)) {
             $item = $list->FindByPath($this->cfgFromMenu);
-            if (!empty($item)) {
+            if (empty($item)) {
                 return "";
             }
             $list = $item->childs;
