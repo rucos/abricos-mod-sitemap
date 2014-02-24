@@ -1,32 +1,39 @@
 <!--[*]
 [script]brick_menubuilder.php[/script]
 
-[css]/vendor/alloyui/node-menunav/assets/node-menunav-core.css[/css]
-[css]/vendor/alloyui/aui-toggler-base/assets/aui-toggler-base-core.css[/css]
-
-[mcss=sitemap]vmenu.css,vmenuaccord-core.css,vmenuaccord.css[/mcss]
+[mcss=sitemap]menu.css[/mcss]
 
 [bkvar=menu-level-0]
     {v#rows}
 [/bkvar]
 
 [bkvar=item-level-0]
-    <div id="{v#brickid}-{v#id}" class="{v#brickid}-item vmenuaccord-item">
-        <div class="vmenuaccord-header toggler-header-collapsed">
-            <a href="{v#lnk}" class="{v#brickid}-itemlink">{v#tl}</a>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a class="accordion-toggle" data-toggle="collapse"
+                   data-parent="#{v#brickid}el" href="#{v#brickid}-{v#id}-tg">
+                    {v#tl}
+                </a>
+            </h4>
         </div>
-        <div class="vmenuaccord-content toggler-content-collapsed">
-            {v#childs}
+        <div id="{v#brickid}-{v#id}-tg" class="panel-collapse collapse">
+            <div class="panel-body">
+                {v#childs}
+            </div>
         </div>
     </div>
 [/bkvar]
 
 [bkvar=itemNotChild-level-0]
-    <div id="{v#brickid}-{v#id}" class="{v#brickid}-item vmenuaccord-item vmenuaccord-item-notchild">
-        <div class="vmenuaccord-header">
-            <a href="{v#lnk}" class="{v#brickid}-itemlink">{v#tl}</a>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a href="{v#lnk}">
+                    {v#tl}
+                </a>
+            </h4>
         </div>
-        <div class="vmenuaccord-content toggler-content-collapsed"></div>
     </div>
 [/bkvar]
 
@@ -50,46 +57,7 @@
 
 [*]-->
 <div id="{v#brickid}" class="mod-sitemap">
-    <div class="vmenuaccord">
-        <div id="{v#brickid}-el">
-            {v#result}
-        </div>
+    <div id="{v#brickid}el" class="panel-group sitemap-accordion">
+        {v#result}
     </div>
 </div>
-
-<script>
-    YUI().use('aui-toggler', 'node-menunav', function(Y) {
-
-        var tg = new Y.TogglerDelegate({
-            animated: true,
-            closeAllOnExpand: true,
-            container: '#{v#brickid}-el',
-            expanded: false,
-            header: '.vmenuaccord-header',
-            content: '.vmenuaccord-content',
-            transition: {
-                duration: 0.2,
-                easing: 'cubic-bezier(0, 0.1, 0, 1)'
-            }
-        });
-
-        var go = function(node) {
-            var href = node.one('.{v#brickid}-itemlink').getAttribute('href');
-            if (Y.Lang.isValue(href)) {
-                Y.config.win.location = href;
-            }
-        };
-
-        Y.all('.{v#brickid}-item').each(function(item) {
-            if (!item.hasClass('vmenuaccord-item-notchild')) {
-                return;
-            }
-            (function(item) {
-                item.on('click', function(e) {
-                    go(item);
-                    e.preventDefault();
-                });
-            })(item);
-        });
-    });
-</script>
