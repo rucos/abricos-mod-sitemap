@@ -11,8 +11,8 @@
  */
 
 $brick = Brick::$builder->brick;
-$v = &$brick->param->var;
-$p = &$brick->param->param;
+$v = & $brick->param->var;
+$p = & $brick->param->param;
 
 $adr = Abricos::$adress;
 
@@ -21,9 +21,9 @@ $mList = SitemapManager::$instance->MenuList();
 $mItem = $mList->FindByPath($adr->dir, true);
 
 $arr = array();
-while(!empty($mItem)){
-	array_push($arr, $mItem->title);
-	$mItem = $mItem->parent;
+while (!empty($mItem)) {
+    array_push($arr, $mItem->title);
+    $mItem = $mItem->parent;
 }
 
 array_push($arr, Brick::$builder->phrase->Get('sys', 'site_name'));

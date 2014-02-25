@@ -52,16 +52,26 @@ class SitemapManager extends Ab_ModuleManager {
 
     public function AJAX($d) {
         switch ($d->do) {
-            case 'initdata': return $this->InitDataToAJAX();
-            case 'menulist': return $this->MenuListToAJAX();
-            case 'menusaveorders': return $this->MenuSaveOrders($d->savedata);
-            case 'pagelist': return $this->PageListToAJAX();
-            case 'page': return $this->PageToAJAX($d->pageid);
-            case 'pagesave': return $this->PageSaveToAJAX($d->savedata);
-            case 'linksave': return $this->LinkSaveToAJAX($d->savedata);
-            case 'menuremove': return $this->MenuRemove($d->menuid);
-            case 'bricks': return $this->BrickList();
-            case 'templatelist': return $this->TemplateListToAJAX();
+            case 'initdata':
+                return $this->InitDataToAJAX();
+            case 'menulist':
+                return $this->MenuListToAJAX();
+            case 'menusaveorders':
+                return $this->MenuSaveOrders($d->savedata);
+            case 'pagelist':
+                return $this->PageListToAJAX();
+            case 'page':
+                return $this->PageToAJAX($d->pageid);
+            case 'pagesave':
+                return $this->PageSaveToAJAX($d->savedata);
+            case 'linksave':
+                return $this->LinkSaveToAJAX($d->savedata);
+            case 'menuremove':
+                return $this->MenuRemove($d->menuid);
+            case 'bricks':
+                return $this->BrickList();
+            case 'templatelist':
+                return $this->TemplateListToAJAX();
         }
         return null;
     }
@@ -101,6 +111,7 @@ class SitemapManager extends Ab_ModuleManager {
 
     /**
      * Древовидный список меню
+     *
      * @param boolean $clearCache
      * @return SMMenuItemList
      */
@@ -203,6 +214,7 @@ class SitemapManager extends Ab_ModuleManager {
 
     /**
      * Линейный список меню
+     *
      * @param boolean $clearCache
      * @return SMMenuItemList
      */
@@ -412,7 +424,7 @@ class SitemapManager extends Ab_ModuleManager {
 
     /**
      * Сохранение/создание страницы
-     * 
+     *
      * @param array|object $fsd
      */
     public function PageSave($fsd) {
@@ -452,17 +464,17 @@ class SitemapManager extends Ab_ModuleManager {
 
     /**
      * Сохранить/создать элемент меню
-     * 
+     *
      * В качестве параметра $sd можно передать именованный массив или объект
-     * 
+     *
      * Пример создание элемента меню тип-ссылка:
      * MenuSave(array(
-     * 	'nm' => 'mylink',
+     *    'nm' => 'mylink',
      *  'tl' => 'Проекты и задачи',
      *  'lnk' => '/bos/#app=botask/ws/showWorkspacePanel'
      * ));
-     * 
-     * 
+     *
+     *
      * @param object|array $sd
      * @return NULL|integer
      */
@@ -590,15 +602,15 @@ class SitemapManager extends Ab_ModuleManager {
         }
 
         $rows = array();
-        $dir = dir(CWD . "/tt");
+        $dir = dir(CWD."/tt");
         while (false !== ($entry = $dir->read())) {
             if ($entry == "." || $entry == ".." || empty($entry)) {
                 continue;
             }
-            $files = globa(CWD . "/tt/" . $entry . "/*.html");
+            $files = globa(CWD."/tt/".$entry."/*.html");
             foreach ($files as $file) {
                 $bname = basename($file);
-                array_push($rows, $entry . ":" . substr($bname, 0, strlen($bname) - 5));
+                array_push($rows, $entry.":".substr($bname, 0, strlen($bname) - 5));
             }
         }
         return $rows;
@@ -632,7 +644,7 @@ class SitemapManager extends Ab_ModuleManager {
         $mods = Abricos::$instance->modules->GetModules();
         foreach ($mods as $module) {
             $files = array();
-            $files1 = globa(CWD . "/modules/" . $module->name . "/brick/*.html");
+            $files1 = globa(CWD."/modules/".$module->name."/brick/*.html");
 
             if (!empty($files1)) {
                 foreach ($files1 as $file) {
@@ -641,7 +653,7 @@ class SitemapManager extends Ab_ModuleManager {
             }
             foreach ($files as $file) {
                 $bname = basename($file, ".html");
-                $key = $module->name . "." . $bname;
+                $key = $module->name.".".$bname;
 
                 array_push($brickdb, array(
                     "id" => $id++,
@@ -656,7 +668,7 @@ class SitemapManager extends Ab_ModuleManager {
     /**
      * Построение кирпича на основе полных данных структуры сайта
      *
-     * @param CMSSysBrick $brick - кирпич 
+     * @param CMSSysBrick $brick - кирпич
      */
     public function BrickBuildFullMenu(Ab_CoreBrick $brick) {
         $mm = $this->GetMenu(true);
@@ -671,8 +683,8 @@ class SitemapManager extends Ab_ModuleManager {
     private function BrickBuildFullMenuGenerate(SitemapMenuItem $menu, $param) {
         $prefix = ($menu->isSelected && $menu->id != 0) ? "sel" : "";
 
-        $t = Brick::ReplaceVarByData($param->var['item' . $prefix], array(
-                    "tl" => $menu->title, "link" => $menu->link
+        $t = Brick::ReplaceVarByData($param->var['item'.$prefix], array(
+            "tl" => $menu->title, "link" => $menu->link
         ));
 
         $lst = "";
@@ -693,7 +705,8 @@ class SitemapManager extends Ab_ModuleManager {
 }
 
 /**
- * Конструктор меню 
+ * Конструктор меню
+ *
  * @package Abricos
  * @subpackage Sitemap
  */
@@ -799,9 +812,9 @@ class SitemapMenuList {
 }
 
 /**
- * Элемент меню 
- * 
- * @package Abricos 
+ * Элемент меню
+ *
+ * @package Abricos
  * @subpackage Sitemap
  */
 class SitemapMenuItem {
@@ -835,7 +848,7 @@ class SitemapMenuItem {
         if (is_null($parent)) {
             $link = $link;
         } else {
-            $link = empty($link) ? $parent->link . $name . "/" : $link;
+            $link = empty($link) ? $parent->link.$name."/" : $link;
         }
 
         $this->id = $id;
@@ -850,11 +863,11 @@ class SitemapMenuItem {
 }
 
 class CMSSitemapMenu extends SitemapMenuList {
-    
+
 }
 
 class CMSSitemapMenuItem extends SitemapMenuItem {
-    
+
 }
 
 ?>

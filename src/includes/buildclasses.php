@@ -18,6 +18,7 @@ class SitemapMenuBrickBulder {
 
     /**
      * Пустой кирпич, если нет элементов меню
+     *
      * @var boolean
      */
     public $cfgClearIfEmpty = false;
@@ -26,12 +27,14 @@ class SitemapMenuBrickBulder {
      * Ограничение вложенности
      *
      * 0 - без ограничений
+     *
      * @var integer
      */
     public $cfgLimitLevel = 0;
 
     /**
      * Вывод меню с определенного уровня
+     *
      * @var integer
      */
     public $cfgFromLevel = 0;
@@ -40,12 +43,14 @@ class SitemapMenuBrickBulder {
      * Вывод подменю определенного меню.
      * Необходимо указывать путь меню.
      * Например: eshop/electro
+     *
      * @var string
      */
     public $cfgFromMenu = '';
 
     /**
      * True - блок подменю исходя из текущего адреса страницы
+     *
      * @var boolean
      */
     public $cfgIsSubMenu = false;
@@ -65,7 +70,7 @@ class SitemapMenuBrickBulder {
 
     public function GetTplMenu($level) {
         $v = & $this->brick->param->var;
-        $nm = 'menu-level-' . $level;
+        $nm = 'menu-level-'.$level;
         if (!empty($v[$nm])) {
             return $v[$nm];
         }
@@ -76,9 +81,9 @@ class SitemapMenuBrickBulder {
         $v = & $this->brick->param->var;
 
         $nm = "item";
-        $nmLevel = $nm . "-level-" . $level;
+        $nmLevel = $nm."-level-".$level;
         $nmNotChild = "itemNotChild";
-        $nmNotChildLevel = $nmNotChild . "-level-" . $level;
+        $nmNotChildLevel = $nmNotChild."-level-".$level;
 
         if ($isNotChild) {
             if (!empty($v[$nmNotChildLevel])) {
@@ -162,7 +167,7 @@ class SitemapMenuBrickBulder {
         $sMenu = $this->BuildMenu($list, 0, 0);
         $sResult = Brick::ReplaceVarByData($this->brick->content, array(
             "result" => $sMenu,
-            "brickid" => ($this->brick->name . $this->brickid)
+            "brickid" => ($this->brick->name.$this->brickid)
         ));
 
         return $sResult;

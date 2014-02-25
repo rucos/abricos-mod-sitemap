@@ -1,14 +1,14 @@
 <?php
+
 /**
  * @package Abricos
  * @subpackage Sitemap
  * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
  * @author Alexander Kuzmin <roosit@abricos.org>
  */
-
 class SitemapDBQuery {
-	
-	const FIELDS_MENU = "
+
+    const FIELDS_MENU = "
 		menuid as id,
 		parentmenuid as pid,
 		menutype as tp,
@@ -20,20 +20,20 @@ class SitemapDBQuery {
 		level as lvl,
 		off
 	";
-	
-	public static function MenuList(Ab_Database $db){
-		$sql = "
+
+    public static function MenuList(Ab_Database $db) {
+        $sql = "
 			SELECT
 			".SitemapDBQuery::FIELDS_MENU."
 			FROM ".$db->prefix."sys_menu
 			WHERE deldate=0 AND language='".Abricos::$LNG."'
 			ORDER BY parentmenuid, menuorder
 		";
-		return $db->query_read($sql);
-	}
-	
-	public static function MenuAppend(Ab_Database $db, $d){
-		$sql = "
+        return $db->query_read($sql);
+    }
+
+    public static function MenuAppend(Ab_Database $db, $d) {
+        $sql = "
 			INSERT INTO ".$db->prefix."sys_menu
 			(parentmenuid, name, link, title, descript, menutype, menuorder, off, language) VALUES (
 				".bkint($d->pid).",
@@ -47,12 +47,12 @@ class SitemapDBQuery {
 				'".Abricos::$LNG."'
 			)
 		";
-		$db->query_write($sql);
-		return $db->insert_id();
-	}
-	
-	public static function MenuUpdate(Ab_Database $db, $d){
-		$sql = "
+        $db->query_write($sql);
+        return $db->insert_id();
+    }
+
+    public static function MenuUpdate(Ab_Database $db, $d) {
+        $sql = "
 			UPDATE ".$db->prefix."sys_menu
 			SET
 				parentmenuid=".bkint($d->pid).",
@@ -63,39 +63,39 @@ class SitemapDBQuery {
 				off=".bkint($d->off)."
 			WHERE menuid='".bkint($d->id)."'
 		";
-		$db->query_write($sql);
-	}
-	
-	public static function MenuRemove(Ab_Database $db, $menuid){
-		// remove pages
-		$sql = "
+        $db->query_write($sql);
+    }
+
+    public static function MenuRemove(Ab_Database $db, $menuid) {
+        // remove pages
+        $sql = "
 			UPDATE ".$db->prefix."sys_page
 			SET deldate='".TIMENOW."'
 			WHERE menuid=".bkint($menuid)."
 		";
-		$db->query_write($sql);
-		
-		$db->query_write("
+        $db->query_write($sql);
+
+        $db->query_write("
 			UPDATE ".$db->prefix."sys_menu
 			SET deldate='".TIMENOW."'
 			WHERE menuid=".bkint($menuid)."
 		");
-		$db->query_write($sql);
-	}
-		
-	public static function MenuOrderUpdate(Ab_Database $db, $menuid, $order){
-		$sql = "
+        $db->query_write($sql);
+    }
+
+    public static function MenuOrderUpdate(Ab_Database $db, $menuid, $order) {
+        $sql = "
 			UPDATE ".$db->prefix."sys_menu
 			SET menuorder=".bkint($order)."
 			WHERE menuid=".bkint($menuid)."
 			LIMIT 1
 		";
-		$db->query_write($sql);
-	}
-	
-	
-	public static function PageList(Ab_Database $db){
-		$sql = "
+        $db->query_write($sql);
+    }
+
+
+    public static function PageList(Ab_Database $db) {
+        $sql = "
 			SELECT
 				a.pageid as id,
 				a.menuid as mid,
@@ -106,10 +106,10 @@ class SitemapDBQuery {
 			LEFT JOIN ".$db->prefix."content c ON a.contentid=c.contentid
 			WHERE a.language='".Abricos::$LNG."' AND a.deldate=0
 		";
-		return $db->query_read($sql);
-	}
-	
-	const FIELDS_PAGE = "
+        return $db->query_read($sql);
+    }
+
+    const FIELDS_PAGE = "
 		a.pageid as id,
 		a.menuid as mid,
 		a.pagename as nm,
@@ -122,9 +122,9 @@ class SitemapDBQuery {
 		a.contentid as cid,
 		c.body as bd
 	";
-	
-	public static function PageByName(Ab_Database $db, $menuid, $pagename){
-		$sql = "
+
+    public static function PageByName(Ab_Database $db, $menuid, $pagename) {
+        $sql = "
 			SELECT
 				".SitemapDBQuery::FIELDS_PAGE."
 			FROM ".$db->prefix."sys_page a
@@ -132,11 +132,11 @@ class SitemapDBQuery {
 			WHERE a.menuid=".bkint($menuid)." AND a.pagename='".bkstr($pagename)."' AND a.language='".Abricos::$LNG."'
 			LIMIT 1
 		";
-		return $db->query_first($sql);
-	}	
-	
-	public static function Page(Ab_Database $db, $pageid){
-		$sql = "
+        return $db->query_first($sql);
+    }
+
+    public static function Page(Ab_Database $db, $pageid) {
+        $sql = "
 			SELECT
 				".SitemapDBQuery::FIELDS_PAGE."
 			FROM ".$db->prefix."sys_page a
@@ -144,12 +144,12 @@ class SitemapDBQuery {
 			WHERE a.pageid=".bkint($pageid)." AND a.language='".Abricos::$LNG."'
 			LIMIT 1
 		";
-		return $db->query_first($sql);
-	}
-	
-	public static function PageAppend(Ab_Database $db, $d){
-		$contentid = Ab_CoreQuery::CreateContent($db, $d->bd, 'sitemap');
-		$sql = "
+        return $db->query_first($sql);
+    }
+
+    public static function PageAppend(Ab_Database $db, $d) {
+        $contentid = Ab_CoreQuery::CreateContent($db, $d->bd, 'sitemap');
+        $sql = "
 			INSERT INTO ".$db->prefix."sys_page
 			(pagename, menuid, contentid, language, title, 
 			 metakeys, metadesc, template, mods, editormode, dateline) VALUES (
@@ -166,13 +166,13 @@ class SitemapDBQuery {
 				".TIMENOW."
 			)
 		";
-		$db->query_write($sql);
-		return $db->insert_id();
-	}
-	
-	public static function PageUpdate(Ab_Database $db, $d){
-		Ab_CoreQuery::ContentUpdate($db, $d->cid, $d->bd);
-		$sql = "
+        $db->query_write($sql);
+        return $db->insert_id();
+    }
+
+    public static function PageUpdate(Ab_Database $db, $d) {
+        Ab_CoreQuery::ContentUpdate($db, $d->cid, $d->bd);
+        $sql = "
 			UPDATE ".$db->prefix."sys_page
 			SET
 				pagename='".bkstr($d->nm)."',
@@ -186,33 +186,33 @@ class SitemapDBQuery {
 			WHERE pageid='".bkint($d->id)."'
 			LIMIT 1
 		";
-		$db->query_write($sql);
-	}
-	
-	
+        $db->query_write($sql);
+    }
+
+
 }
 
 /**
  * (Устарели) Статичные функции запросов к базе данных
- * 
- * @package Abricos 
+ *
+ * @package Abricos
  * @subpackage Sitemap
  */
 class SitemapQuery {
 
-	/**
-	 * Тип меню страница/раздел
-	 *
-	 */
-	const MENUTYPE_PAGE = 0;
-	/**
-	 * Тип меню ссылка
-	 *
-	 */
-	const MENUTYPE_LINK = 1;
-	
-	
-	const FIELDS_MENU = "
+    /**
+     * Тип меню страница/раздел
+     *
+     */
+    const MENUTYPE_PAGE = 0;
+    /**
+     * Тип меню ссылка
+     *
+     */
+    const MENUTYPE_LINK = 1;
+
+
+    const FIELDS_MENU = "
 		menuid as id,
 		parentmenuid as pid,
 		menutype as tp,
@@ -224,10 +224,10 @@ class SitemapQuery {
 		level as lvl,
 		off
 	";
-	
 
-	public static function MenuByPageId(Ab_Database $db, $pageid){
-		$sql = "
+
+    public static function MenuByPageId(Ab_Database $db, $pageid) {
+        $sql = "
 			SELECT
 				b.menuid as id,
 				b.parentmenuid as pid,
@@ -243,10 +243,10 @@ class SitemapQuery {
 			LEFT JOIN ".$db->prefix."sys_menu b ON b.menuid=a.menuid
 			WHERE a.pageid=".bkint($pageid)."
 		";
-		return $db->query_read($sql);
-	}
-	
-	const FIELDS_PAGE = "
+        return $db->query_read($sql);
+    }
+
+    const FIELDS_PAGE = "
 		a.pageid as id,
 		a.menuid as mid,
 		a.pagename as nm,
@@ -259,9 +259,9 @@ class SitemapQuery {
 		a.contentid as cid,
 		c.body as bd
 	";
-	
-	public static function PageByName(Ab_Database $db, $menuid, $pagename, $returnTypeRow = false){
-		$sql = "
+
+    public static function PageByName(Ab_Database $db, $menuid, $pagename, $returnTypeRow = false) {
+        $sql = "
 			SELECT
 				".SitemapQuery::FIELDS_PAGE." 
 			FROM ".$db->prefix."sys_page a
@@ -269,15 +269,15 @@ class SitemapQuery {
 			WHERE a.menuid=".bkint($menuid)." AND a.pagename='".bkstr($pagename)."' AND a.language='".Abricos::$LNG."'
 			LIMIT 1
 		";
-		if ($returnTypeRow){
-			return $db->query_first($sql);
-		}else{
-			return $db->query_read($sql);
-		}
-	}
-	
-	public static function PageById(Ab_Database $db, $pageid, $retArray = false){
-		$sql = "
+        if ($returnTypeRow) {
+            return $db->query_first($sql);
+        } else {
+            return $db->query_read($sql);
+        }
+    }
+
+    public static function PageById(Ab_Database $db, $pageid, $retArray = false) {
+        $sql = "
 			SELECT
 				".SitemapQuery::FIELDS_PAGE." 
 			FROM ".$db->prefix."sys_page a
@@ -286,16 +286,21 @@ class SitemapQuery {
 			LIMIT 1
 		";
 
-		return $retArray ? $db->query_first($sql) : $db->query_read($sql);
-	}
-	
-	public static function PageList(Ab_Database $db){
-		$rootPage = SitemapQuery::PageByName($db, 0, 'index', true);
-		if (empty($rootPage)){
-			$d = new stdClass(); $d->nm = 'index'; $d->mid = 0; $d->tl = ''; $d->mks = ''; $d->mdsc = '';
-			SitemapQuery::PageCreate($db, $d);
-		}
-		$sql = "
+        return $retArray ? $db->query_first($sql) : $db->query_read($sql);
+    }
+
+    public static function PageList(Ab_Database $db) {
+        $rootPage = SitemapQuery::PageByName($db, 0, 'index', true);
+        if (empty($rootPage)) {
+            $d = new stdClass();
+            $d->nm = 'index';
+            $d->mid = 0;
+            $d->tl = '';
+            $d->mks = '';
+            $d->mdsc = '';
+            SitemapQuery::PageCreate($db, $d);
+        }
+        $sql = "
 			SELECT 
 				pageid as id,
 				menuid as mid,
@@ -304,67 +309,66 @@ class SitemapQuery {
 			FROM ".$db->prefix."sys_page
 			WHERE deldate=0 AND language='".Abricos::$LNG."'
 		";
-		return $db->query_read($sql);
-	}
-	
-	
-	public static function MenuById(Ab_Database $db, $menuid){
-		$sql = "
+        return $db->query_read($sql);
+    }
+
+
+    public static function MenuById(Ab_Database $db, $menuid) {
+        $sql = "
 			SELECT
 				".SitemapQuery::FIELDS_MENU." 
 			FROM ".$db->prefix."sys_menu
 			WHERE menuid=".bkint($menuid)."
 			LIMIT 1
 		";
-		return $db->query_read($sql);
-	}
-	
-	
-	public static function MenuListByUrl(Ab_Database $db, $dir){
-		$names = array();
-		foreach ($dir as $name){
-			array_push($names, "name='".bkstr($name)."'");
-		}
-		$sql = "
+        return $db->query_read($sql);
+    }
+
+
+    public static function MenuListByUrl(Ab_Database $db, $dir) {
+        $names = array();
+        foreach ($dir as $name) {
+            array_push($names, "name='".bkstr($name)."'");
+        }
+        $sql = "
 			SELECT
 				".SitemapQuery::FIELDS_MENU." 
 			FROM ".$db->prefix."sys_menu
 			WHERE deldate=0 AND (".implode(" OR ", $names).") AND language='".Abricos::$LNG."'
 			ORDER BY parentmenuid
 		";
-		return $db->query_read($sql);
-	}
-	
-	public static function MenuList(Ab_Database $db, $withOff = false){
-		$sql = "
+        return $db->query_read($sql);
+    }
+
+    public static function MenuList(Ab_Database $db, $withOff = false) {
+        $sql = "
 			SELECT
 				".SitemapQuery::FIELDS_MENU." 
 			FROM ".$db->prefix."sys_menu
 			WHERE deldate=0 ".($withOff ? "" : " AND off=0")." AND language='".Abricos::$LNG."'
 			ORDER BY menuorder
 		";
-		return $db->query_read($sql);
-	}
-	
-	public static function PageRemove(Ab_Database $db, $pageid){
-		$sql = "
+        return $db->query_read($sql);
+    }
+
+    public static function PageRemove(Ab_Database $db, $pageid) {
+        $sql = "
 			SELECT pageid, contentid
 			FROM ".$db->prefix."sys_page
 			WHERE pageid='".bkint($pageid)."'
 		";
-		$row = $db->query_first($sql);
-		$db->query_write("
+        $row = $db->query_first($sql);
+        $db->query_write("
 			UPDATE ".$db->prefix."content
 			SET deldate='".TIMENOW."'
 			WHERE contentid='".bkint($row['contentid'])."'
 		");
-		$db->query_write("
+        $db->query_write("
 			UPDATE ".$db->prefix."sys_page
 			SET deldate='".TIMENOW."'
 			WHERE pageid='".bkint($pageid)."'
 		");
-	}
-
+    }
 }
 
 ?>
