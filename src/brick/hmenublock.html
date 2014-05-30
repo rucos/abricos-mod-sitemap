@@ -1,0 +1,64 @@
+<!--[*]
+[script]brick_menubuilder.php[/script]
+
+[mcss=sitemap]menu.css,hmenublock.css[/mcss]
+
+[bkvar=menu-level-0]
+	<ul id="{v#brickid}-el" class="nav navbar-nav">
+		{v#rows}
+	</ul>
+[/bkvar]
+[bkvar=item-level-0]
+	<li class="menuitem-level-{v#lvl} menuitem-withchild dropdown">
+	    <a href="{v#lnk}" class="dropdown-toggle" data-hover="dropdown">{v#tl} <b class="caret"></b></a>
+	    {v#childs}
+	</li>
+[/bkvar]
+[bkvar=itemNotChild-level-0]
+	<li class="menuitem-level-{v#lvl} menuitem-notchild">
+	    <a href="{v#lnk}">{v#tl}</a>
+	</li>
+[/bkvar]
+
+
+[bkvar=menu-level-1]
+	<div class="dropdown-menu menu-level-{v#lvl}">
+	    <div class="row">
+		    {v#rows}
+		</div>
+	</div>
+[/bkvar]
+[bkvar=item-level-1]
+	<div class="menuitem-level-{v#lvl} menuitem-withchild col-md-4 col-sm-6">
+	    <a href="{v#lnk}" class="dropdown-toggle" data-toggle="dropdown">{v#tl}1</a>
+		{v#childs}
+	</div>
+[/bkvar]
+[bkvar=itemNotChild-level-1]
+	<div class="menuitem-level-{v#lvl} menuitem-notchild col-md-4 col-sm-6">
+	    <a href="{v#lnk}">{v#tl}</a>
+	</div>
+[/bkvar]
+
+
+[bkvar=menu]
+	<div class="menu-over menu-level-{v#lvl}">
+		{v#rows}
+	</div>
+[/bkvar]
+[bkvar=item]
+	<div class="menuitem-over menuitem-level-{v#lvl} menuitem-withchild">
+	    <a href="{v#lnk}" class="dropdown-toggle" data-toggle="dropdown">{v#tl}-{v#lvl}</a>
+		{v#childs}
+	</div>
+[/bkvar]
+[bkvar=itemNotChild]
+	<div class="menuitem-over menuitem-level-{v#lvl} menuitem-notchild">
+	    <a href="{v#lnk}">{v#tl}-{v#lvl}</a>
+	</div>
+[/bkvar]
+
+[*]-->
+<div id="{v#brickid}" class="mod-sitemap-hmenublock">
+    {v#result}
+</div>
