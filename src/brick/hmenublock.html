@@ -9,8 +9,8 @@
 	</ul>
 [/bkvar]
 [bkvar=item-level-0]
-	<li class="menuitem-level-{v#lvl} menuitem-withchild dropdown">
-	    <a href="{v#lnk}" class="dropdown-toggle" data-hover="dropdown">{v#tl} <b class="caret"></b></a>
+	<li class="dropdown menuitem-level-{v#lvl} menuitem-withchild">
+	    <a href="{v#lnk}" class="dropdown-toggle" data-hover="dropdown" data-toggle="dropdown">{v#tl} <b class="caret"></b></a>
 	    {v#childs}
 	</li>
 [/bkvar]
@@ -30,7 +30,7 @@
 [/bkvar]
 [bkvar=item-level-1]
 	<div class="menuitem-level-{v#lvl} menuitem-withchild col-md-4 col-sm-6">
-	    <a href="{v#lnk}" class="dropdown-toggle" data-toggle="dropdown">{v#tl}</a>
+	    <a href="{v#lnk}">{v#tl}</a>
 		{v#childs}
 	</div>
 [/bkvar]
@@ -48,7 +48,7 @@
 [/bkvar]
 [bkvar=item]
 	<div class="menuitem-over menuitem-level-{v#lvl} menuitem-withchild">
-	    <a href="{v#lnk}" class="dropdown-toggle" data-toggle="dropdown">{v#tl}</a>
+	    <a href="{v#lnk}">{v#tl}</a>
 		{v#childs}
 	</div>
 [/bkvar]
@@ -60,6 +60,8 @@
 
 [p=lineLimit][/p]
 [p=lineLimitPhrase]Еще...[/p]
+
+[js]/vendor/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js[/js]
 
 [*]-->
 <div id="{v#brickid}" class="mod-sitemap-hmenublock">
