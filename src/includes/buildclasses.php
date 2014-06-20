@@ -55,6 +55,23 @@ class SitemapMenuBrickBulder {
      */
     public $cfgIsSubMenu = false;
 
+    /**
+     * Ограничение по кол-ву элементов главного меню. Если больше, то
+     * остаток будет вложен в меню "Еще...".
+     *
+     * 0 - без ограничений
+     *
+     * @var int
+     */
+    public $cfgLineLimit = 0;
+
+    /**
+     * Фраза меню "Еще..."
+     *
+     * @var string
+     */
+    public $cfgLineLimitPhrase = 'Еще...';
+
     public function __construct(Ab_CoreBrick $brick) {
 
         $this->brickid = SitemapMenuBrickBulder::$_counter++;
@@ -66,6 +83,9 @@ class SitemapMenuBrickBulder {
         $this->cfgClearIfEmpty = $this->ToBoolean($p['clearIfEmpty']);
         $this->cfgFromMenu = $p['fromMenu'];
         $this->cfgIsSubMenu = $this->ToBoolean($p['isSubMenu']);
+
+        $this->cfgLineLimit = $p['lineLimit'];
+        $this->cfgLineLimitPhrase = $p['lineLimitPhrase'];
     }
 
     public function GetTplMenu($level) {
@@ -128,14 +148,40 @@ class SitemapMenuBrickBulder {
         ));
     }
 
-    public function BuildMenu(SMMenuItemList $list, $level, $id) {
+    public function BuildMoreItem(SMMenuItemList $list) {
+        $sMenuSub = $this->BuildMenu($list, 1, 0, $this->cfgLineLimit);
+
+        $tplItem = $this->GetTplMenuItem(empty($sMenuSub), 0);
+
+        return Brick::ReplaceVarByData($tplItem, array(
+            "id" => 0,
+            "sel" => "",
+            "tl" => $this->cfgLineLimitPhrase,
+            "lnk" => "/",
+            "lvl" => 0,
+            "childs" => $sMenuSub
+        ));
+    }
+
+    public function BuildMenu(SMMenuItemList $list, $level, $id, $fromIndex = 0, $toIndex = 0) {
         if ($list->Count() == 0) {
             return "";
         }
 
         $lst = "";
         for ($i = 0; $i < $list->Count(); $i++) {
-            $lst .= $this->BuildItem($list->GetByIndex($i), $level);
+
+            if (($fromIndex > 0 && $i < $fromIndex) ||
+                ($toIndex > 0 && $i > $toIndex)) {
+                continue;
+            }
+
+            if ($level === 0 && $this->cfgLineLimit > 0 && $this->cfgLineLimit == $i) {
+                $lst .= $this->BuildMoreItem($list);
+                break;
+            } else {
+                $lst .= $this->BuildItem($list->GetByIndex($i), $level);
+            }
         }
 
         return Brick::ReplaceVarByData($this->GetTplMenu($level), array(
