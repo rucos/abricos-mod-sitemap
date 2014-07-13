@@ -72,6 +72,8 @@ class SitemapMenuBrickBulder {
      */
     public $cfgLineLimitPhrase = 'Еще...';
 
+    public $cfgNoWrap = false;
+
     public function __construct(Ab_CoreBrick $brick) {
 
         $this->brickid = SitemapMenuBrickBulder::$_counter++;
@@ -86,6 +88,7 @@ class SitemapMenuBrickBulder {
 
         $this->cfgLineLimit = $p['lineLimit'];
         $this->cfgLineLimitPhrase = $p['lineLimitPhrase'];
+        $this->cfgNoWrap = $this->ToBoolean($p['noWrap']);
     }
 
     public function GetTplMenu($level) {
@@ -172,7 +175,8 @@ class SitemapMenuBrickBulder {
         for ($i = 0; $i < $list->Count(); $i++) {
 
             if (($fromIndex > 0 && $i < $fromIndex) ||
-                ($toIndex > 0 && $i > $toIndex)) {
+                ($toIndex > 0 && $i > $toIndex)
+            ) {
                 continue;
             }
 
@@ -211,10 +215,17 @@ class SitemapMenuBrickBulder {
         }
 
         $sMenu = $this->BuildMenu($list, 0, 0);
-        $sResult = Brick::ReplaceVarByData($this->brick->content, array(
-            "result" => $sMenu,
-            "brickid" => ($this->brick->name.$this->brickid)
-        ));
+
+        if ($this->cfgNoWrap) {
+            $sResult = Brick::ReplaceVarByData($sMenu, array(
+                "brickid" => ($this->brick->name.$this->brickid)
+            ));
+        } else {
+            $sResult = Brick::ReplaceVarByData($this->brick->param->var['wrap'], array(
+                "result" => $sMenu,
+                "brickid" => ($this->brick->name.$this->brickid)
+            ));
+        }
 
         return $sResult;
     }

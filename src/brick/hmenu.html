@@ -3,6 +3,10 @@
 
 [mcss=sitemap]menu.css[/mcss]
 
+[js]/vendor/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js[/js]
+
+[p=noWrap][/p]
+
 [bkvar=menu-level-0]
 	<ul id="{v#brickid}-el" class="nav navbar-nav">
 		{v#rows}
@@ -35,9 +39,10 @@
 	</li>
 [/bkvar]
 
-[js]/vendor/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js[/js]
+[bkvar=wrap]
+    <div id="{v#brickid}" class="mod-sitemap-hmenu">
+        {v#result}
+    </div>
+[/bkvar]
 
 [*]-->
-<div id="{v#brickid}">
-    {v#result}
-</div>
