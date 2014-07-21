@@ -3,6 +3,8 @@
 
 [mcss=sitemap]menu.css[/mcss]
 
+[p=noWrap][/p]
+
 [bkvar=menu-level-0]
     {v#rows}
 [/bkvar]
@@ -55,9 +57,12 @@
     </div>
 [/bkvar]
 
-[*]-->
-<div id="{v#brickid}" class="mod-sitemap">
-    <div id="{v#brickid}el" class="panel-group sitemap-accordion">
-        {v#result}
+[bkvar=wrap]
+    <div id="{v#brickid}" class="mod-sitemap">
+        <div id="{v#brickid}el" class="panel-group sitemap-accordion">
+            {v#result}
+        </div>
     </div>
-</div>
+[/bkvar]
+
+[*]-->
