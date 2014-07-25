@@ -15,14 +15,14 @@
 
 [bkvar=item-level-0]
 	<li class="menuitem-level-{v#lvl} menuitem-withchild dropdown">
-	    <a href="{v#lnk}" class="dropdown-toggle" data-hover="dropdown">{v#tl} <b class="caret"></b></a>
+	    <a href="{v#lnk}" class="dropdown-toggle" data-hover="dropdown" itemprop="url"><span itemprop="name">{v#tl}</span> <b class="caret"></b></a>
 		{v#childs}
 	</li>
 [/bkvar]
 
 [bkvar=itemNotChild]
 	<li class="menuitem-level-{v#lvl} menuitem-notchild">
-	    <a href="{v#lnk}">{v#tl}</a>
+	    <a href="{v#lnk}" itemprop="url" itemprop="url"><span itemprop="name">{v#tl}</span></a>
 	</li>
 [/bkvar]
 
@@ -34,13 +34,13 @@
 
 [bkvar=item]
 	<li class="menuitem-level-{v#lvl} menuitem-withchild dropdown-submenu">
-	    <a href="{v#lnk}" class="dropdown-toggle" data-toggle="dropdown">{v#tl}</a>
+	    <a href="{v#lnk}" class="dropdown-toggle" data-toggle="dropdown" itemprop="url"><span itemprop="name">{v#tl}</span></a>
 		{v#childs}
 	</li>
 [/bkvar]
 
 [bkvar=wrap]
-    <div id="{v#brickid}" class="mod-sitemap-hmenu">
+    <div id="{v#brickid}" class="mod-sitemap-hmenu" itemscope itemtype="http://schema.org/SiteNavigationElement">
         {v#result}
     </div>
 [/bkvar]
