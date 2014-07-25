@@ -10,28 +10,40 @@ $brick = Brick::$builder->brick;
 $v = & $brick->param->var;
 $p = & $brick->param->param;
 
+if (Abricos::$adress->level === 0) {
+    $brick->content = "";
+    return;
+}
+
 SitemapModule::$instance->GetManager();
 $mList = SitemapManager::$instance->MenuList();
 $mItem = $mList->FindByPath(Abricos::$adress->dir, true);
 
+$mItemCheck = $mItem;
+
+$lineCount = 0;
+while (!empty($mItemCheck)) {
+    $lineCount++;
+    $mItemCheck = $mItemCheck->parent;
+}
+
 $arr = array();
 $first = true;
 while (!empty($mItem)) {
-    array_push($arr, Brick::ReplaceVarByData($v[$first ? "itemsel" : "item"], array(
-        "tl" => $mItem->title,
-        "link" => $mItem->URI()
-    )));
+
+    $tplItem = "item";
+    if ($first && Abricos::$adress->level === $lineCount) {
+        $tplItem = "itemsel";
+    }
+
+
+    array_push($arr, Brick::ReplaceVarByData($v[$tplItem], array("tl" => $mItem->title, "link" => $mItem->URI())));
     $first = false;
     $mItem = $mItem->parent;
 }
 
-array_push($arr, Brick::ReplaceVarByData(Abricos::$adress->level == 0 ? $v['itemsel'] : $v['item'], array(
-    "tl" => $p['home'],
-    "link" => "/"
-)));
+array_push($arr, Brick::ReplaceVarByData(Abricos::$adress->level == 0 ? $v['itemsel'] : $v['item'], array("tl" => $p['home'], "link" => "/")));
 
-$brick->content = Brick::ReplaceVarByData($brick->content, array(
-    "result" => implode($v['del'], array_reverse($arr))
-));
+$brick->content = Brick::ReplaceVarByData($brick->content, array("result" => implode($v['del'], array_reverse($arr))));
 
 ?>
