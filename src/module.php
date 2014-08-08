@@ -82,6 +82,9 @@ class SitemapModule extends Ab_Module {
         return array("owner" => $arr[0], "name" => $arr[1]);
     }
 
+    public function Bos_IsMenu(){
+        return true;
+    }
 }
 
 class SitemapAction {

@@ -1,108 +1,132 @@
-<!--{managerpanel}--><div class='hd'>{#mod.sitemap.manager.managerpanel.1}</div>
+<!--{managerpanel}-->
+<div class='hd'>{#mod.sitemap.manager.managerpanel.1}</div>
 <div class='bd'>
-	<div id="{i#container}"></div>
-	<div style="text-align: right">
-		<input id="{i#bclose}" type="button" value="{#mod.sitemap.manager.managerpanel.2}" />
-	</div>
+    <div id="{i#container}"></div>
+    <div style="text-align: right">
+        <input id="{i#bclose}" type="button" value="{#mod.sitemap.manager.managerpanel.2}"/>
+    </div>
 </div>
 
 <!--{managerwidget}-->
 <div id="{i#id}" class="aw-sitemap">
+    <div class="manager">
+        <div class="loading" data-wait="show">
+            <img src="/images/loading.gif"/> Идет загрузка данных <br/> Пожалуйста, подождите...
+        </div>
 
-	<div id="{i#loading}" class="loading">
-		<img src="/images/loading.gif" /> Идет загрузка данных <br /> Пожалуйста, подождите...
-	</div>
-
-	<div id="{i#view}" class="" style="display: none">
-		<div class="bk_sitemap-def"> 
-			<div class="bk_sitemap-page">{#mod.sitemap.def.page}</div>
-			<div class="bk_sitemap-status"><!-- {#mod.sitemap.def.status} --></div>
-			<div class="bk_sitemap-modify">{#mod.sitemap.def.modify}</div>
-		</div>
-		<ul class="bk_sitemap-root">
-			<li class="bk_sitemap-level-0"> 
-				<div class="bk_sitemap-page bk_sitemap-left-root">
+        <div id="{i#view}" style="display: none" data-wait="hide">
+            <div class="bk_sitemap-def">
+                <div class="bk_sitemap-page">{#mod.sitemap.def.page}</div>
+                <div class="bk_sitemap-status"><!-- {#mod.sitemap.def.status} --></div>
+                <div class="bk_sitemap-modify">{#mod.sitemap.def.modify}</div>
+            </div>
+            <ul class="bk_sitemap-root">
+                <li class="bk_sitemap-level-0">
+                    <div class="bk_sitemap-page bk_sitemap-left-root">
 					<span class="w1">
 						<a title="/" href="/" target="_blank"><span class="bk_sitemap-title">{#mod.sitemap.panel.title}&nbsp;</span></a>
 					</span>
-				</div>
-				<div class="bk_sitemap-status bk_sitemap-published-status"><!-- {#mod.sitemap.status.published} --></div>
-				<div class="bk_sitemap-modify">
-					<img src="/images/empty.gif" alt="" />
-					<img src="/images/empty.gif" alt="" />
-					<img id="{i#rootedit}" class="img_link" alt="{#mod.sitemap.modify.edit}" title="{#mod.sitemap.modify.edit}" src="/modules/sitemap/images/edit.gif"/>
-					<img id="{i#rootadd}" class="img_link" alt="{#mod.sitemap.modify.add}" title="{#mod.sitemap.modify.add}" src="/modules/sitemap/images/plus.png"/>
-					<img src="/images/empty.gif" alt="" />
-				</div>
-			</li>
-		</ul>
-		<ul id="{i#items}" class="bk_sitemap"></ul>
-	</div>
+                    </div>
+                    <div class="bk_sitemap-status bk_sitemap-published-status">
+                        <!-- {#mod.sitemap.status.published} --></div>
+                    <div class="bk_sitemap-modify">
+                        <img src="/images/empty.gif" alt=""/>
+                        <img src="/images/empty.gif" alt=""/>
+                        <img id="{i#rootedit}" class="img_link" alt="{#mod.sitemap.modify.edit}"
+                             title="{#mod.sitemap.modify.edit}" src="/modules/sitemap/images/edit.gif"/>
+                        <img id="{i#rootadd}" class="img_link" alt="{#mod.sitemap.modify.add}"
+                             title="{#mod.sitemap.modify.add}" src="/modules/sitemap/images/plus.png"/>
+                        <img src="/images/empty.gif" alt=""/>
+                    </div>
+                </li>
+            </ul>
+            <ul id="{i#items}" class="bk_sitemap"></ul>
+        </div>
+    </div>
 </div>
 
-<!--{maplist}--><ul id="{i#id}-{v#id}" class="relative">{v#list}</ul>
-<!--{mapitem}--><li class="bk_sitemap-level-{v#level} {v#childstatus}"> 
-	<div class="bk_sitemap-page">
+<!--{maplist}-->
+<ul id="{i#id}-{v#id}" class="relative">{v#list}</ul>
+<!--{mapitem}-->
+<li class="bk_sitemap-level-{v#level} {v#childstatus}">
+    <div class="bk_sitemap-page">
 		<span class="w1">
-   		<img id="{i#expand}-{v#id}" src="{#mod.sitemap.img.expand}" class="bk_sitemap-expander img_link" title="" alt=""/>
+   		<img id="{i#expand}-{v#id}" src="{#mod.sitemap.img.expand}" class="bk_sitemap-expander img_link" title=""
+             alt=""/>
 			{v#imgtype}
 			<a title="" href="{v#url}" target="_blank"><span class="bk_sitemap-title">{v#title}</span></a>
 		</span>
-	</div>
-	<div class="bk_sitemap-status bk_sitemap-hidden-status"><!-- {#mod.sitemap.status.hidden} --></div>
-  <div class="bk_sitemap-modify">{v#buttons}</div>
-  {v#child}
+    </div>
+    <div class="bk_sitemap-status bk_sitemap-hidden-status"><!-- {#mod.sitemap.status.hidden} --></div>
+    <div class="bk_sitemap-modify">{v#buttons}</div>
+    {v#child}
 </li>
-<!--{mapitempage}--><li class="bk_sitemap-level-{v#level} no-children"> 
-	<div class="bk_sitemap-page">
+<!--{mapitempage}-->
+<li class="bk_sitemap-level-{v#level} no-children">
+    <div class="bk_sitemap-page">
 		<span class="w1">
-			<img src="/images/empty.gif" alt="{#mod.sitemap.icons.page}" title="{#mod.sitemap.icons.page}" class="bk_sitemap-icon" />
+			<img src="/images/empty.gif" alt="{#mod.sitemap.icons.page}" title="{#mod.sitemap.icons.page}"
+                 class="bk_sitemap-icon"/>
 			<a title="" href="{v#url}" target="_blank"><span class="bk_sitemap-title">{v#title}</span></a>
 		</span>
-	</div>
-	<div class="bk_sitemap-status bk_sitemap-hidden-status"><!-- {#mod.sitemap.status.hidden} --></div>
-  <div class="bk_sitemap-modify">{v#buttons}</div>
+    </div>
+    <div class="bk_sitemap-status bk_sitemap-hidden-status"><!-- {#mod.sitemap.status.hidden} --></div>
+    <div class="bk_sitemap-modify">{v#buttons}</div>
 </li>
-<!--{imgtypemenu}--><img src="/modules/sitemap/images/paper_bag.png" alt="{#mod.sitemap.icons.menu}" title="{#mod.sitemap.icons.menu}" class="bk_sitemap-icon"/>
-<!--{imgtypelink}--><img src="/modules/sitemap/images/chain.png" alt="{#mod.sitemap.icons.link}" title="{#mod.sitemap.icons.link}" class="bk_sitemap-icon"/>
-<!--{imgtypepage}--><img src="/modules/sitemap/images/document.png" alt="{#mod.sitemap.icons.page}" title="{#mod.sitemap.icons.page}" class="bk_sitemap-icon"/>
-<!--{biempty}--><img src="/images/empty.gif" alt="" />
-<!--{biup}--><img id="{i#id}-{v#id}" class="img_link" alt="{#mod.sitemap.modify.up}" title="{#mod.sitemap.modify.up}" src="/modules/sitemap/images/arrow_up.png"/>
-<!--{bidown}--><img id="{i#id}-{v#id}" class="img_link" alt="{#mod.sitemap.modify.down}" title="{#mod.sitemap.modify.down}" src="/modules/sitemap/images/arrow_down.png"/>
-<!--{biedit}--><img id="{i#id}-{v#id}" class="img_link" alt="{#mod.sitemap.modify.edit}" title="{#mod.sitemap.modify.edit}" src="/modules/sitemap/images/edit.gif" />
-<!--{bieditp}--><img id="{i#id}-{v#id}" class="img_link" alt="{#mod.sitemap.modify.edit}" title="{#mod.sitemap.modify.edit}" src="/modules/sitemap/images/edit.gif"/>
-<!--{biadd}--><img id="{i#id}-{v#id}" class="img_link" alt="{#mod.sitemap.modify.add}" title="{#mod.sitemap.modify.add}" src="/modules/sitemap/images/plus.png"/>
-<!--{birem}--><img id="{i#id}-{v#id}" class="img_link" class="remove" alt="{#mod.sitemap.modify.delete}" title="{#mod.sitemap.modify.delete}" src="/modules/sitemap/images/icon-remove.gif"/>
-<!--{biremp}--><img id="{i#id}-{v#id}" class="img_link" class="remove" alt="{#mod.sitemap.modify.delete}" title="{#mod.sitemap.modify.delete}" src="/modules/sitemap/images/icon-remove.gif"/>
-<!--{mnuadd}--><div class='hd'>{#mod.sitemap.mnuadd.hd}</div>
+<!--{imgtypemenu}--><img src="/modules/sitemap/images/paper_bag.png" alt="{#mod.sitemap.icons.menu}"
+                         title="{#mod.sitemap.icons.menu}" class="bk_sitemap-icon"/>
+<!--{imgtypelink}--><img src="/modules/sitemap/images/chain.png" alt="{#mod.sitemap.icons.link}"
+                         title="{#mod.sitemap.icons.link}" class="bk_sitemap-icon"/>
+<!--{imgtypepage}--><img src="/modules/sitemap/images/document.png" alt="{#mod.sitemap.icons.page}"
+                         title="{#mod.sitemap.icons.page}" class="bk_sitemap-icon"/>
+<!--{biempty}--><img src="/images/empty.gif" alt=""/>
+<!--{biup}--><img id="{i#id}-{v#id}" class="img_link" alt="{#mod.sitemap.modify.up}" title="{#mod.sitemap.modify.up}"
+                  src="/modules/sitemap/images/arrow_up.png"/>
+<!--{bidown}--><img id="{i#id}-{v#id}" class="img_link" alt="{#mod.sitemap.modify.down}"
+                    title="{#mod.sitemap.modify.down}" src="/modules/sitemap/images/arrow_down.png"/>
+<!--{biedit}--><img id="{i#id}-{v#id}" class="img_link" alt="{#mod.sitemap.modify.edit}"
+                    title="{#mod.sitemap.modify.edit}" src="/modules/sitemap/images/edit.gif"/>
+<!--{bieditp}--><img id="{i#id}-{v#id}" class="img_link" alt="{#mod.sitemap.modify.edit}"
+                     title="{#mod.sitemap.modify.edit}" src="/modules/sitemap/images/edit.gif"/>
+<!--{biadd}--><img id="{i#id}-{v#id}" class="img_link" alt="{#mod.sitemap.modify.add}" title="{#mod.sitemap.modify.add}"
+                   src="/modules/sitemap/images/plus.png"/>
+<!--{birem}--><img id="{i#id}-{v#id}" class="img_link" class="remove" alt="{#mod.sitemap.modify.delete}"
+                   title="{#mod.sitemap.modify.delete}" src="/modules/sitemap/images/icon-remove.gif"/>
+<!--{biremp}--><img id="{i#id}-{v#id}" class="img_link" class="remove" alt="{#mod.sitemap.modify.delete}"
+                    title="{#mod.sitemap.modify.delete}" src="/modules/sitemap/images/icon-remove.gif"/>
+<!--{mnuadd}-->
+<div class='hd'>{#mod.sitemap.mnuadd.hd}</div>
 <div class='bd' style="font-size: 130%">
-	<p>{#mod.sitemap.mnuadd.question}</p>
-	<label for="{i#type0}"><input id="{i#type0}" name="item_type" value="0" type="radio" checked />{#mod.sitemap.mnuadd.section}</label><br />
-	<label for="{i#type1}"><input id="{i#type1}" name="item_type" value="1" type="radio" />{#mod.sitemap.mnuadd.link}</label><br />
-	<label for="{i#type2}"><input id="{i#type2}" name="item_type" value="2" type="radio" />{#mod.sitemap.mnuadd.page}</label><br />
-	
-	<br />
-	<input id="{i#badd}" type="button" value="{#mod.sitemap.mnuadd.badd}" />
-	&nbsp;&nbsp;&nbsp;
-	<input id="{i#bcancel}" type="button" value="{#mod.sitemap.mnuadd.bcancel}" />
+    <p>{#mod.sitemap.mnuadd.question}</p>
+    <label for="{i#type0}"><input id="{i#type0}" name="item_type" value="0" type="radio" checked/>{#mod.sitemap.mnuadd.section}</label><br/>
+    <label for="{i#type1}"><input id="{i#type1}" name="item_type" value="1"
+                                  type="radio"/>{#mod.sitemap.mnuadd.link}</label><br/>
+    <label for="{i#type2}"><input id="{i#type2}" name="item_type" value="2"
+                                  type="radio"/>{#mod.sitemap.mnuadd.page}</label><br/>
+
+    <br/>
+    <input id="{i#badd}" type="button" value="{#mod.sitemap.mnuadd.badd}"/>
+    &nbsp;&nbsp;&nbsp;
+    <input id="{i#bcancel}" type="button" value="{#mod.sitemap.mnuadd.bcancel}"/>
 </div>
 
 
 <!--{removepanel}-->
 <div class='hd'>Удаление элемента меню</div>
 <div class='bd aw-sitemap'>
-	<div id="{i#dialogremove}" class="field">
-		<p>
-			Вы действительно хотите удалить раздел элемент со всем его содержимым?
-		</p>
-		<div class="buttons right">
+    <div id="{i#dialogremove}" class="field">
+        <p>
+            Вы действительно хотите удалить раздел элемент со всем его содержимым?
+        </p>
+
+        <div class="buttons right">
 			<span id="{i#btns}">
-				<input id="{i#bremove}" value="Удалить" type="button" />
-				<input id="{i#bcancel}" value="Отмена" type="button" />
+				<input id="{i#bremove}" value="Удалить" type="button"/>
+				<input id="{i#bcancel}" value="Отмена" type="button"/>
 			</span>
 			<span id="{i#bloading}" style="display: none">
-				<img src="/images/loading.gif" /> Удаление...
+				<img src="/images/loading.gif"/> Удаление...
 			</span>
-		</div>
-	</div>
+        </div>
+    </div>
 </div>

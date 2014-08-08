@@ -627,7 +627,24 @@ class SitemapManager extends Ab_ModuleManager {
         return $ret;
     }
 
-    /*     * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+    public function Bos_MenuData() {
+        if (!$this->IsAdminRole()) {
+            return null;
+        }
+        $lng = $this->module->lang;
+        return array(
+            array(
+                "name" => "sitemap",
+                "title" => $lng['bosmenu']['sitemap'],
+                "icon" => "/modules/sitemap/js/images/cp_icon.gif",
+                "url" => "sitemap/wspace/ws",
+                "parent" => "controlPanel"
+            )
+        );
+    }
+
+
+    /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
      * TODO: старые методы - на удаление
      * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

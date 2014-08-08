@@ -1,5 +1,8 @@
 <?php
 return array(
+    "bosmenu" => array(
+        "sitemap" => "Структура сайта"
+    ),
     'brick' => array(
         'breadcrumb' => array(
             '1' => 'Главная'
@@ -16,7 +19,6 @@ return array(
             '5' => 'назад',
             '6' => 'вперед'
         )
-
     ),
     'content' => array(
         'sitemap' => array(
