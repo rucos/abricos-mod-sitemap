@@ -1,50 +1,53 @@
-.aw-sitemap {
-  .manager {
+.aw-sitemap .manager {
 
-    .bk_sitemap-def {
-      margin-top: 1px;
-      position: relative;
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    background: #fff;
+  }
 
-      .bk_sitemap-status {
-        position: absolute;
-        top: 0;
-        right: 125px;
-        width: 110px
-      }
+  .relative {
+    position: relative;
+  }
 
-      .bk_sitemap-modify {
-        position: absolute;
-        top: 0;
-        right: 5px;
-        width: 120px;
-      }
+  .handle {
+    cursor: move;
+    margin: 0 4px;
+    vertical-align: bottom;
+  }
 
-      div {
-        padding: 2px 4px;
-        font-size: 90%;
-        font-weight: normal;
-        background-color: #f5f5f5;
-      }
+  .bk_sitemap-def {
+    margin-top: 1px;
+    position: relative;
+
+    div {
+      padding: 2px 4px;
+      font-size: 90%;
+      font-weight: normal;
+      background-color: #f5f5f5;
     }
 
+    .bk_sitemap-status {
+      position: absolute;
+      top: 0;
+      right: 125px;
+      width: 110px
+    }
+
+    .bk_sitemap-modify {
+      position: absolute;
+      top: 0;
+      right: 5px;
+      width: 120px;
+    }
   }
 }
 
-#bk_sitemap {
-  font-family: Verdana;
-  font-size: 95%;
-  text-align: left;
-}
-
-.relative {
+.bk_sitemap {
+  border-bottom: 1px solid #ddd;
+  font-size: 90%;
   position: relative;
-}
-
-.handle {
-  cursor: move;
-  margin: 0 4px;
-  vertical-align: bottom;
-  /*display:none;*/
 }
 
 .bk_sitemap-root .bk_sitemap-level-0 .bk_sitemap-page,
@@ -134,18 +137,13 @@
   vertical-align: middle;
   height: 11px;
   width: 11px;
-  padding: 0 6px;
+  margin: 0 6px;
 }
 
 .bk_sitemap-root {
   font-size: 90%;
 }
 
-.bk_sitemap {
-  border-bottom: 1px solid #ddd;
-  font-size: 90%;
-  position: relative;
-}
 
 .bk_sitemap-root li,
 .bk_sitemap li {
@@ -170,17 +168,8 @@ li.bk_sitemap-level-5 .no-children {
   background: #f5f5f5;
 }
 
-.bk_sitemap ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  background: #fff;
-}
-
-.bk_sitemap .bk_sitemap-page, .bk_sitemap-root .bk_sitemap-page {
-}
-
-.bk_sitemap .bk_sitemap-status, .bk_sitemap-root .bk_sitemap-status {
+.bk_sitemap .bk_sitemap-status,
+.bk_sitemap-root .bk_sitemap-status {
   position: absolute;
   top: 5px;
   right: 129px;
@@ -188,18 +177,21 @@ li.bk_sitemap-level-5 .no-children {
   font-size: 10px
 }
 
-.bk_sitemap .bk_sitemap-modify, .bk_sitemap-root .bk_sitemap-modify {
+.bk_sitemap .bk_sitemap-modify,
+.bk_sitemap-root .bk_sitemap-modify {
   position: absolute;
   top: 3px;
   right: 9px;
   width: 120px
 }
 
-.bk_sitemap .bk_sitemap-modify img, .bk_sitemap-root .bk_sitemap-modify img {
+.bk_sitemap .bk_sitemap-modify img,
+.bk_sitemap-root .bk_sitemap-modify img {
   vertical-align: middle;
 }
 
-.bk_sitemap .bk_sitemap-modify img, .bk_sitemap-root .bk_sitemap-modify img {
+.bk_sitemap .bk_sitemap-modify img,
+.bk_sitemap-root .bk_sitemap-modify img {
   margin-right: 6px;
 }
 

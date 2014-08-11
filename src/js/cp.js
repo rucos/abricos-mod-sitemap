@@ -10,15 +10,4 @@ Component.requires = {
 	mod:[ {name: 'user', files: ['cpanel.js']} ]
 };
 Component.entryPoint = function(){
-	
-	if (Brick.Permission.check('sitemap', '50') != 1){ return; }
-	
-	var cp = Brick.mod.user.cp;
-	
-	var menuItem = new cp.MenuItem(this.moduleName);
-	menuItem.icon = '/modules/sitemap/js/images/cp_icon.gif';
-	menuItem.entryComponent = 'manager';
-	menuItem.entryPoint = 'Brick.mod.sitemap.API.showManagerWidget';
-	
-	cp.MenuManager.add(menuItem);
 };

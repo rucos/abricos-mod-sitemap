@@ -10,16 +10,14 @@ var Component = new Brick.Component();
 Component.requires = {
     mod: [
         {name: 'sitemap', files: ['api.js', 'editor.js']},
-        {name: 'sys', files: ['data.js', 'form.js']}
+        {name: 'sys', files: ['panel.js', 'data.js', 'form.js']}
     ]
 };
 Component.entryPoint = function(NS){
 
     var Dom = YAHOO.util.Dom,
-        E = YAHOO.util.Event,
         L = YAHOO.lang,
-        buildTemplate = this.buildTemplate,
-        BW = Brick.mod.widget.Widget;
+        buildTemplate = this.buildTemplate;
 
     var Y = Brick.YUI,
 
@@ -29,32 +27,6 @@ Component.entryPoint = function(NS){
         COMPONENT = this,
 
         SYS = Brick.mod.sys;
-
-
-    /*
-    var ManagerPanel = function(){
-        ManagerPanel.superclass.constructor.call(this, {
-            'width': '780px', fixedcenter: true
-        });
-    };
-    YAHOO.extend(ManagerPanel, Brick.widget.Panel, {
-        initTemplate: function(){
-            return buildTemplate(this, 'managerpanel').replace('managerpanel');
-        },
-        onLoad: function(){
-            this.managerWidget = new NS.ManagerWidget(this._TM.getEl('managerpanel.container'));
-        },
-        onClick: function(el){
-            if (el.id == this._TId['managerpanel']['bclose']){
-                this.close();
-                return true;
-            }
-            return false;
-        }
-    });
-
-    NS.ManagerPanel = ManagerPanel;
-    /**/
 
     NS.ManagerWidget = Y.Base.create('managerWidget', NS.AppWidget, [
     ], {
@@ -71,6 +43,7 @@ Component.entryPoint = function(NS){
         renderList: function(list){
             list = list || NS.manager.menuList;
             var __self = this, TId = this.template.idMap;
+            var lng = this.language;
 
             list.foreach(function(item){
                 var container = Dom.get(TId['maplist']['id'] + '-' + item.id);
@@ -79,17 +52,23 @@ Component.entryPoint = function(NS){
                     img.style.display = item.childs.count() > 0 ? '' : 'none';
                 }
 
-                img.src = Brick.util.Language.getc('mod.sitemap.img.' + (item.expand ? 'collapse' : 'expand'));
+                img.src = lng.get('img.' + (item.expand ? 'collapse' : 'expand'));
                 Dom.setStyle(container, 'display', item.expand ? '' : 'none');
                 __self.renderList(item.childs);
             });
         },
         onClick: function(e){
-            var TId = this._TId, __self = this, pcfg = {
+            var TId = this.template.idMap, __self = this;
+
+            var el = e.target.getDOMNode();
+
+            var pcfg = {
                 'onSave': function(){
-                    __self.render();
+                    __self.renderManager();
                 }
             };
+
+            var tp = this.template.idMap['managerwidget'];
 
             switch (el.id) {
                 case tp['rootedit']:
@@ -97,7 +76,11 @@ Component.entryPoint = function(NS){
                     new NS.PageEditorPanel(page, pcfg);
                     return true;
                 case tp['rootadd']:
-                    new NS.MenuItemCreatePanel(0, pcfg);
+                    new NS.MenuItemCreatePanel({
+                        onSave: function(){
+                            __self.renderManager();
+                        }
+                    });
                     return true;
             }
 
@@ -115,7 +98,12 @@ Component.entryPoint = function(NS){
                     this.itemMove(numid, 'down');
                     return true;
                 case (TId['biadd']['id'] + '-'):
-                    new NS.MenuItemCreatePanel(numid, pcfg);
+                    new NS.MenuItemCreatePanel({
+                        menuId: numid,
+                        onSave: function(){
+                            __self.renderManager();
+                        }
+                    });
                     return true;
                 case (TId['bieditp']['id'] + '-'):
                     // API.showPageEditorPanel(numid);
@@ -188,7 +176,7 @@ Component.entryPoint = function(NS){
         menuRemove: function(menuid){
             var __self = this, item = NS.manager.menuList.find(menuid);
             new NS.MenuItemRemovePanel(item, function(){
-                __self.render();
+                __self.renderManager();
             });
         },
         itemChangeExpand: function(menuid){
@@ -232,7 +220,7 @@ Component.entryPoint = function(NS){
                 };
             });
             NS.manager.menuSaveOrders(sd);
-            this.render();
+            this.renderManager();
         }
     }, {
         ATTRS: {
@@ -245,40 +233,59 @@ Component.entryPoint = function(NS){
         }
     });
 
-    /*
-    var ManagerWidget = function(container, cfg){
-        cfg = L.merge({}, cfg || {});
-
-        ManagerWidget.superclass.constructor.call(this, container, {
-            'buildTemplate': buildTemplate,
-            'tnames': ''
-        }, cfg);
-    };
-    YAHOO.extend(ManagerWidget, BW, {
-        init: function(cfg){
-            this.cfg = cfg;
-            this._isLoadManager = false;
+    NS.MenuItemCreatePanel = Y.Base.create('termsOfUseDialog', SYS.Dialog, [
+    ], {
+        onClick: function(e){
+            switch(e.dataClick){
+                case "cancel":
+                    this.hide();
+                    return true;
+                case "create":
+                    this.createMenuItem();
+                    return true;
+            }
         },
-        onLoad: function(){
+
+        createMenuItem: function(){
             var __self = this;
-            NS.initManager(function(man){
-                __self._onLoadManager();
-            });
-        },
-        _onLoadManager: function(){
-            this.elHide('loading');
-            this.elShow('view');
-            this._isLoadManager = true;
-            this.render();
-        },
+            var onSave = function(){
+                NS.life(__self.get('onSave'));
+            };
+            var pMenu = NS.manager.menuList.find(this.menuid),
+                tm = this.template;
 
+
+            if (tm.gel('mnuadd.type0').checked){
+                new NS.PageEditorPanel(new NS.Page({'nm': 'index'}), {
+                    'parentMenuItem': pMenu,
+                    'onSave': onSave
+                });
+            } else if (tm.gel('mnuadd.type1').checked){
+                new NS.LinkEditorPanel(new NS.Menu({
+                    'pid': L.isValue(pMenu) ? pMenu.id : 0
+                }), {'onSave': onSave});
+            } else {
+                new NS.PageEditorPanel(new NS.Page(), {
+                    'parentMenuItem': pMenu,
+                    'onSave': onSave
+                });
+            }
+            this.hide();
+        }
+    }, {
+        ATTRS: {
+            menuId: {value: 0},
+            onSave: {value: null},
+            component: {
+                value: COMPONENT
+            },
+            templateBlockName: {
+                value: 'mnuadd'
+            }
+        }
     });
-    NS.ManagerWidget = ManagerWidget;
 
-    NS.API.showManagerWidget = function(container){
-        return new NS.ManagerWidget(container);
-    };
-    /**/
+    /*
 
     var MenuItemCreatePanel = function(menuid, cfg){
         this.ccfg = L.merge({
@@ -302,34 +309,10 @@ Component.entryPoint = function(NS){
                     return true;
             }
         },
-        create: function(){
-            var __self = this;
-            var onSave = function(){
-                NS.life(__self.ccfg['onSave']);
-            };
-            var pMenu = NS.manager.menuList.find(this.menuid);
-
-            if (this._TM.getEl('mnuadd.type0').checked){
-                new NS.PageEditorPanel(new NS.Page({'nm': 'index'}), {
-                    'parentMenuItem': pMenu,
-                    'onSave': onSave
-                });
-            } else if (this._TM.getEl('mnuadd.type1').checked){
-                new NS.LinkEditorPanel(new NS.Menu({
-                    'pid': L.isValue(pMenu) ? pMenu.id : 0
-                }), {'onSave': onSave});
-            } else {
-                new NS.PageEditorPanel(new NS.Page(), {
-                    'parentMenuItem': pMenu,
-                    'onSave': onSave
-                });
-            }
-            this.close();
-        }
     });
 
     NS.MenuItemCreatePanel = MenuItemCreatePanel;
-
+/**/
 
     var MenuItemRemovePanel = function(item, callback){
         this.item = item;
