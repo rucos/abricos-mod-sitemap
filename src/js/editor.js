@@ -10,7 +10,7 @@ var Component = new Brick.Component();
 Component.requires = {
 	yahoo: ['tabview', 'json', 'dragdrop'],
 	mod:[
-		{name: 'sys', files: ['form.js','editor.js','container.js']},
+		{name: 'sys', files: ['old-form.js','editor.js','container.js']},
 		{name: 'sitemap', files: ['lib.js']}
 	]
 };
