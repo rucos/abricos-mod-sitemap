@@ -7,7 +7,7 @@ var Component = new Brick.Component();
 Component.requires = {
     yahoo: ['dom', 'connection'],
     mod: [
-        {name: 'sys', files: ['item.js', 'number.js']},
+        {name: 'sys', files: ['application.js', 'widget.js', 'form.js', 'item.js', 'number.js']},
         {name: 'widget', files: ['notice.js']},
         {name: '{C#MODNAME}', files: ['roles.js']}
     ]
