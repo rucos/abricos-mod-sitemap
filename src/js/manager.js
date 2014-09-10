@@ -251,9 +251,10 @@ Component.entryPoint = function(NS){
             var onSave = function(){
                 NS.life(__self.get('onSave'));
             };
-            var pMenu = NS.manager.menuList.find(this.menuid),
-                tm = this.template;
 
+            var pMenuId = this.get('menuId');
+            var pMenu = NS.manager.menuList.find(pMenuId),
+                tm = this.template;
 
             if (tm.gel('mnuadd.type0').checked){
                 new NS.PageEditorPanel(new NS.Page({'nm': 'index'}), {
