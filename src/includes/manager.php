@@ -668,6 +668,17 @@ class SitemapManager extends Ab_ModuleManager {
                     array_push($files, $file);
                 }
             }
+
+
+            $files2 = globa(CWD."/tt/".Brick::$style."/override/".$module->name."/brick/*.html");
+
+            if (!empty($files2)) {
+                foreach ($files2 as $file) {
+                    array_push($files, $file);
+                }
+            }
+
+
             foreach ($files as $file) {
                 $bname = basename($file, ".html");
                 $key = $module->name.".".$bname;
