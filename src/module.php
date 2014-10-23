@@ -94,22 +94,21 @@ class SitemapAction {
     const ADMIN = 50;
 }
 
-class SitemapPermission extends CMSPermission {
+class SitemapPermission extends Ab_UserPermission {
 
-    public function SitemapPermission(SitemapModule $module) {
+    public function __construct(SitemapModule $module) {
         Abricos::GetModule('user'); // заплатка
         $defRoles = array(
-            new CMSRole(SitemapAction::VIEW, 1, User::UG_GUEST),
+            new Ab_UserRole(SitemapAction::VIEW, Ab_UserGroup::GUEST),
+            new Ab_UserRole(SitemapAction::VIEW, Ab_UserGroup::REGISTERED),
+            new Ab_UserRole(SitemapAction::VIEW, Ab_UserGroup::ADMIN),
 
-            new CMSRole(SitemapAction::VIEW, 1, User::UG_REGISTERED),
-
-            new CMSRole(SitemapAction::VIEW, 1, User::UG_ADMIN),
-            new CMSRole(SitemapAction::WRITE, 1, User::UG_ADMIN),
-            new CMSRole(SitemapAction::MODERATING, 1, User::UG_ADMIN),
-            new CMSRole(SitemapAction::ADMIN, 1, User::UG_ADMIN)
+            new Ab_UserRole(SitemapAction::WRITE, Ab_UserGroup::ADMIN),
+            new Ab_UserRole(SitemapAction::MODERATING, Ab_UserGroup::ADMIN),
+            new Ab_UserRole(SitemapAction::ADMIN, Ab_UserGroup::ADMIN)
         );
 
-        parent::CMSPermission($module, $defRoles);
+        parent::__construct($module, $defRoles);
     }
 
     public function GetRoles() {
