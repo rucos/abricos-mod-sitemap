@@ -653,12 +653,12 @@ class SitemapManager extends Ab_ModuleManager {
             return null;
         }
 
-        Abricos::$instance->modules->RegisterAllModule();
+        Abricos::$modules->RegisterAllModule();
 
         $id = 1;
         $brickdb = array();
 
-        $mods = Abricos::$instance->modules->GetModules();
+        $mods = Abricos::$modules->GetModules();
         foreach ($mods as $module) {
             $files = array();
             $files1 = globa(CWD."/modules/".$module->name."/brick/*.html");
@@ -696,7 +696,7 @@ class SitemapManager extends Ab_ModuleManager {
     /**
      * Построение кирпича на основе полных данных структуры сайта
      *
-     * @param CMSSysBrick $brick - кирпич
+     * @param Ab_CoreBrick $brick
      */
     public function BrickBuildFullMenu(Ab_CoreBrick $brick) {
         $mm = $this->GetMenu(true);
@@ -890,12 +890,5 @@ class SitemapMenuItem {
 
 }
 
-class CMSSitemapMenu extends SitemapMenuList {
-
-}
-
-class CMSSitemapMenuItem extends SitemapMenuItem {
-
-}
 
 ?>
