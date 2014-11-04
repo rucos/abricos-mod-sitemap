@@ -14,25 +14,13 @@ class SitemapManager extends Ab_ModuleManager {
      * @var SitemapManager
      */
     public static $instance = null;
-    private $_disableRoles = false;
 
     public function __construct(SitemapModule $module) {
         parent::__construct($module);
         SitemapManager::$instance = $this;
     }
 
-    public function DisableRoles() {
-        $this->_disableRoles = true;
-    }
-
-    public function EnableRoles() {
-        $this->_disableRoles = false;
-    }
-
     public function IsAdminRole() {
-        if ($this->_disableRoles) {
-            return true;
-        }
         return $this->IsRoleEnable(SitemapAction::ADMIN);
     }
 

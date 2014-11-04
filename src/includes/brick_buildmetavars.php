@@ -26,7 +26,7 @@ while (!empty($mItem)) {
     $mItem = $mItem->parent;
 }
 
-array_push($arr, Brick::$builder->phrase->Get('sys', 'site_name'));
+array_push($arr, SystemModule::$instance->GetPhrases()->Get('site_name'));
 
 Brick::$builder->SetGlobalVar('meta_title', implode(" / ", $arr));
 

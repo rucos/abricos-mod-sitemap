@@ -46,7 +46,7 @@ if (!empty($mItem)) {
 }
 
 $man = SitemapManager::$instance;
-$man->DisableRoles();
+$man->RolesDisable();
 
 $parentMenuId = 0;
 
