@@ -619,7 +619,7 @@ class SitemapManager extends Ab_ModuleManager {
         if (!$this->IsAdminRole()) {
             return null;
         }
-        $lng = $this->module->lang;
+        $lng = $this->module->GetI18n();
         return array(
             array(
                 "name" => "sitemap",
@@ -641,12 +641,10 @@ class SitemapManager extends Ab_ModuleManager {
             return null;
         }
 
-        Abricos::$modules->RegisterAllModule();
-
         $id = 1;
         $brickdb = array();
 
-        $mods = Abricos::$modules->GetModules();
+        $mods = Abricos::$modules->RegisterAllModule();
         foreach ($mods as $module) {
             $files = array();
             $files1 = globa(CWD."/modules/".$module->name."/brick/*.html");
