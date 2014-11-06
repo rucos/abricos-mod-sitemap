@@ -1,5 +1,6 @@
 <?php
 return array(
+    "title" => "Структура сайта",
     "bosmenu" => array(
         "sitemap" => "Структура сайта"
     ),
