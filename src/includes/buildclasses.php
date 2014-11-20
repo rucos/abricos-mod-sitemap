@@ -80,7 +80,14 @@ class SitemapMenuBrickBulder {
 
         $this->brick = $brick;
 
-        $p = & $brick->param->param;
+        $p = array_merge(array(
+            'clearIfEmpty' => false,
+            'fromMenu' => '',
+            'isSubMenu' => false,
+            'lineLimit' => '',
+            'lineLimitPhrase' => '',
+            'noWrap' => false
+        ), $brick->param->param);
 
         $this->cfgClearIfEmpty = $this->ToBoolean($p['clearIfEmpty']);
         $this->cfgFromMenu = $p['fromMenu'];
