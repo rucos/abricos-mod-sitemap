@@ -66,14 +66,15 @@ class SMMenuItem extends AbricosItem {
     public function __construct($d) {
         parent::__construct($d);
 
-        $this->title = strval($d['tl']);
-        $this->name = strval($d['nm']);
-        $this->descript = strval($d['dsc']);
+        $this->title = isset($d['tl']) ? strval($d['tl']) : "";
+        $this->name = isset($d['nm']) ? strval($d['nm']) : "";
+        $this->descript = isset($d['dsc']) ? strval($d['dsc']) : "";
 
-        $this->parentid = intval($d['pid']);
-        $this->link = strval($d['lnk']);
-        $this->order = intval($d['ord']);
-        $this->off = $d['off'] > 0;
+        $this->parentid = isset($d['pid']) ? intval($d['pid']) : "";
+        $this->link = isset($d['lnk']) ? strval($d['lnk']) : "";
+        $this->order = isset($d['ord']) ? intval($d['ord']) : 0;
+        $this->off = isset($d['off']) ? $d['off'] > 0 : false;
+
         $this->childs = new SMMenuItemList($this);
     }
 

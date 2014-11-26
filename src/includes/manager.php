@@ -385,14 +385,14 @@ class SitemapManager extends Ab_ModuleManager {
 
         $sd = $this->ArrayToObject($sd);
 
-        $pageid = intval($sd->id);
+        $pageid = isset($sd->id) ? intval($sd->id) : 0;
 
         $utmf = Abricos::TextParser(true);
-        $sd->tl = $utmf->Parser($sd->tl);
+        $sd->tl = isset($sd->tl) ? $utmf->Parser($sd->tl) : "";
         $sd->mid = intval($menuid);
 
-        $sd->mks = $utmf->Parser($sd->mks);
-        $sd->mdsc = $utmf->Parser($sd->mdsc);
+        $sd->mks = isset($sd->mks) ? $utmf->Parser($sd->mks) : "";
+        $sd->mdsc = isset($sd->mdsc) ? $utmf->Parser($sd->mdsc) : "";
 
         if ($pageid == 0) {
             $pageid = SitemapDBQuery::PageAppend($this->db, $sd);
@@ -472,22 +472,26 @@ class SitemapManager extends Ab_ModuleManager {
         }
 
         $sd = $this->ArrayToObject($sd);
-        if (!empty($sd->lnk)) {
+        if (isset($sd->lnk) && !empty($sd->lnk)) {
             return $this->LinkSave($sd);
+        }else{
+            $sd->lnk = "";
         }
 
-        $menuid = intval($sd->id);
+        $sd->id = isset($sd->id) ? intval($sd->id) : 0;
+
+        $menuid = $sd->id;
 
         $utmf = Abricos::TextParser(true);
-        $sd->tl = $utmf->Parser($sd->tl);
+        $sd->tl = isset($sd->tl) ? $utmf->Parser($sd->tl) : "";
         if (empty($sd->tl)) {
             return null;
         }
 
-        $sd->dsc = $utmf->Parser($sd->dsc);
-        $sd->pid = intval($sd->pid);
+        $sd->dsc = isset($sd->dsc) ? $utmf->Parser($sd->dsc) : "";
+        $sd->pid = isset($sd->pid) ? intval($sd->pid) : 0;
 
-        $sd->nm = trim($sd->nm);
+        $sd->nm = isset($sd->nm) ? trim($sd->nm) : "";
         $sd->nm = translateruen(empty($sd->nm) ? translateruen($sd->tl) : $sd->nm);
         $sd->tp = 0;
 
@@ -698,7 +702,8 @@ class SitemapManager extends Ab_ModuleManager {
         $prefix = ($menu->isSelected && $menu->id != 0) ? "sel" : "";
 
         $t = Brick::ReplaceVarByData($param->var['item'.$prefix], array(
-            "tl" => $menu->title, "link" => $menu->link
+            "tl" => $menu->title,
+            "link" => $menu->link
         ));
 
         $lst = "";
