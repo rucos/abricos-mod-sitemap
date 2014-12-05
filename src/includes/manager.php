@@ -370,23 +370,20 @@ class SitemapManager extends Ab_ModuleManager {
             return null;
         }
 
+        $utmf = Abricos::TextParser(true);
+
         $sd = array_to_object($sd);
 
         $pageid = isset($sd->id) ? intval($sd->id) : 0;
-        $sd->tl = isset($sd->tl) ? intval($sd->tl) : "";
-        $sd->mid = isset($sd->mid) ? intval($sd->mid) : 0;
-        $sd->mks = isset($sd->mks) ? intval($sd->mks) : "";
-        $sd->mdsc = isset($sd->mdsc) ? intval($sd->mdsc) : "";
-        $sd->tpl = isset($sd->tpl) ? intval($sd->tpl) : "";
-        $sd->mods = isset($sd->mods) ? intval($sd->mods) : "";
-        $sd->em = isset($sd->em) ? intval($sd->em) : 0;
-
-        $utmf = Abricos::TextParser(true);
         $sd->tl = isset($sd->tl) ? $utmf->Parser($sd->tl) : "";
-        $sd->mid = intval($menuid);
-
+        $sd->mid = isset($sd->mid) ? intval($sd->mid) : 0;
         $sd->mks = isset($sd->mks) ? $utmf->Parser($sd->mks) : "";
         $sd->mdsc = isset($sd->mdsc) ? $utmf->Parser($sd->mdsc) : "";
+        $sd->tpl = isset($sd->tpl) ? strval($sd->tpl) : "";
+        $sd->mods = isset($sd->mods) ? strval($sd->mods) : "";
+        $sd->em = isset($sd->em) ? intval($sd->em) : 0;
+
+        $sd->mid = intval($menuid);
 
         if ($pageid == 0) {
             $pageid = SitemapDBQuery::PageAppend($this->db, $sd);
