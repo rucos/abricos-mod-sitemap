@@ -64,19 +64,6 @@ class SitemapManager extends Ab_ModuleManager {
         return null;
     }
 
-    public function ArrayToObject($o) {
-        if (is_array($o)) {
-            $ret = new stdClass();
-            foreach ($o as $key => $value) {
-                $ret->$key = $value;
-            }
-            return $ret;
-        } else if (!is_object($o)) {
-            return new stdClass();
-        }
-        return $o;
-    }
-
     public function InitDataToAJAX() {
         if (!$this->IsAdminRole()) {
             return null;
@@ -222,7 +209,7 @@ class SitemapManager extends Ab_ModuleManager {
         $mList = $this->MenuList($clearCache);
         $mListLine = new SMMenuItemListLine();
 
-        return $this->MenuListLineMethod($mlist, $mListLine);
+        return $this->MenuListLineMethod($mList, $mListLine);
     }
 
     public function Menu($menuid) {
@@ -383,9 +370,16 @@ class SitemapManager extends Ab_ModuleManager {
             return null;
         }
 
-        $sd = $this->ArrayToObject($sd);
+        $sd = array_to_object($sd);
 
         $pageid = isset($sd->id) ? intval($sd->id) : 0;
+        $sd->tl = isset($sd->tl) ? intval($sd->tl) : "";
+        $sd->mid = isset($sd->mid) ? intval($sd->mid) : 0;
+        $sd->mks = isset($sd->mks) ? intval($sd->mks) : "";
+        $sd->mdsc = isset($sd->mdsc) ? intval($sd->mdsc) : "";
+        $sd->tpl = isset($sd->tpl) ? intval($sd->tpl) : "";
+        $sd->mods = isset($sd->mods) ? intval($sd->mods) : "";
+        $sd->em = isset($sd->em) ? intval($sd->em) : 0;
 
         $utmf = Abricos::TextParser(true);
         $sd->tl = isset($sd->tl) ? $utmf->Parser($sd->tl) : "";
@@ -420,11 +414,12 @@ class SitemapManager extends Ab_ModuleManager {
             return null;
         }
 
-        $fsd = $this->ArrayToObject($fsd);
-        $fsd->page = $this->ArrayToObject($fsd->page);
-        $fsd->menu = $this->ArrayToObject($fsd->menu);
 
-        $fsd->menu->id = intval($fsd->menu->id);
+        $fsd = array_to_object($fsd);
+        $fsd->page = array_to_object($fsd->page);
+        $fsd->menu = array_to_object($fsd->menu);
+
+        $fsd->menu->id = isset($fsd->menu->id) ? intval($fsd->menu->id) : 0;
 
         $sd = $fsd->page;
         if ($fsd->menu->id == 0 && empty($sd->nm)) {
@@ -471,14 +466,15 @@ class SitemapManager extends Ab_ModuleManager {
             return null;
         }
 
-        $sd = $this->ArrayToObject($sd);
+        $sd = array_to_object($sd);
         if (isset($sd->lnk) && !empty($sd->lnk)) {
             return $this->LinkSave($sd);
-        }else{
+        } else {
             $sd->lnk = "";
         }
 
         $sd->id = isset($sd->id) ? intval($sd->id) : 0;
+        $sd->off = isset($sd->off) ? intval($sd->off) : 0;
 
         $menuid = $sd->id;
 
