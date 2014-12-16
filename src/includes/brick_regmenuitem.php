@@ -75,6 +75,6 @@ $man->MenuSave(array(
     "ord" => intval($p['order'])
 ));
 
-$man->EnableRoles();
+$man->RolesEnable();
 
 ?>
