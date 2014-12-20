@@ -376,7 +376,7 @@ class SitemapManager extends Ab_ModuleManager {
 
         $pageid = isset($sd->id) ? intval($sd->id) : 0;
         $sd->tl = isset($sd->tl) ? $utmf->Parser($sd->tl) : "";
-        $sd->bd = isset($sd->bd) ? $utmf->Parser($sd->bd) : "";
+        $sd->bd = isset($sd->bd) ? $sd->bd : "";
         $sd->mid = isset($sd->mid) ? intval($sd->mid) : 0;
         $sd->mks = isset($sd->mks) ? $utmf->Parser($sd->mks) : "";
         $sd->mdsc = isset($sd->mdsc) ? $utmf->Parser($sd->mdsc) : "";
