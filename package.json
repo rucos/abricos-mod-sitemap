@@ -1,14 +1,14 @@
 {
   "name": "abricos-mod-sitemap",
   "description": "Abricos Sitemap Module",
-  "version": "0.2.6-dev",
+  "version": "0.2.7",
   "author": {
     "name": "Alexander Kuzmin",
     "email": "roosit@abricos.org",
     "web": "http://abricos.org",
     "twitter": "roositab"
   },
-  "license": "GPLv2",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/abricos/abricos-mod-sitemap.git"
@@ -20,5 +20,5 @@
   "bugs": {
     "url": "https://github.com/abricos/abricos-mod-sitemap/issues"
   },
-  "homepage": "http://abricoscms.com/mods/sitemap/"
+  "homepage": "http://abricos.org/mods/sitemap/"
 }
