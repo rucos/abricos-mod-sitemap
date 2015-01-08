@@ -622,7 +622,7 @@ class SitemapManager extends Ab_ModuleManager {
             array(
                 "name" => "sitemap",
                 "title" => $lng['bosmenu']['sitemap'],
-                "icon" => "/modules/sitemap/js/images/cp_icon.gif",
+                "icon" => "{C#ASSETS}/images/cp_icon.gif",
                 "url" => "sitemap/wspace/ws",
                 "parent" => "controlPanel"
             )
