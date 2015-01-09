@@ -39,8 +39,8 @@
         "bcancel": "Отмена"
     },
     "img": {
-        "collapse": "/modules/sitemap/images/_collapse.png",
-        "expand": "/modules/sitemap/images/_expand.png"
+        "collapse": "{C#ASSETS}/images/_collapse.png",
+        "expand": "{C#ASSETS}/images/_expand.png"
     },
     "manager": {
         "managerpanel": {

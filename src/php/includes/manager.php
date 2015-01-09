@@ -588,12 +588,12 @@ class SitemapManager extends Ab_ModuleManager {
         }
 
         $rows = array();
-        $dir = dir(CWD."/tt");
+        $dir = dir(CWD."/template");
         while (false !== ($entry = $dir->read())) {
             if ($entry == "." || $entry == ".." || empty($entry)) {
                 continue;
             }
-            $files = globa(CWD."/tt/".$entry."/*.html");
+            $files = globa(CWD."/template/".$entry."/*".Ab_CoreBrickReader::FILE_EXT);
             foreach ($files as $file) {
                 $bname = basename($file);
                 array_push($rows, $entry.":".substr($bname, 0, strlen($bname) - 5));
@@ -645,7 +645,7 @@ class SitemapManager extends Ab_ModuleManager {
         $mods = Abricos::$modules->RegisterAllModule();
         foreach ($mods as $module) {
             $files = array();
-            $files1 = globa(CWD."/modules/".$module->name."/brick/*.html");
+            $files1 = globa(CWD."/modules/".$module->name."/brick/*".Ab_CoreBrickReader::FILE_EXT);
 
             if (!empty($files1)) {
                 foreach ($files1 as $file) {
@@ -653,8 +653,7 @@ class SitemapManager extends Ab_ModuleManager {
                 }
             }
 
-
-            $files2 = globa(CWD."/tt/".Brick::$style."/override/".$module->name."/brick/*.html");
+            $files2 = globa(CWD."/template/".Brick::$style."/override/".$module->name."/brick/*".Ab_CoreBrickReader::FILE_EXT);
 
             if (!empty($files2)) {
                 foreach ($files2 as $file) {
@@ -662,9 +661,8 @@ class SitemapManager extends Ab_ModuleManager {
                 }
             }
 
-
             foreach ($files as $file) {
-                $bname = basename($file, ".html");
+                $bname = basename($file, Ab_CoreBrickReader::FILE_EXT);
                 $key = $module->name.".".$bname;
 
                 array_push($brickdb, array(
