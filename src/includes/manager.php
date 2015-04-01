@@ -15,31 +15,31 @@ class SitemapManager extends Ab_ModuleManager {
      */
     public static $instance = null;
 
-    public function __construct(SitemapModule $module) {
+    public function __construct(SitemapModule $module){
         parent::__construct($module);
         SitemapManager::$instance = $this;
     }
 
-    public function IsAdminRole() {
+    public function IsAdminRole(){
         return $this->IsRoleEnable(SitemapAction::ADMIN);
     }
 
-    public function IsWriteRole() {
-        if ($this->IsAdminRole()) {
+    public function IsWriteRole(){
+        if ($this->IsAdminRole()){
             return true;
         }
         return $this->IsRoleEnable(SitemapAction::WRITE);
     }
 
-    public function IsViewRole() {
-        if ($this->IsWriteRole()) {
+    public function IsViewRole(){
+        if ($this->IsWriteRole()){
             return true;
         }
         return $this->IsRoleEnable(SitemapAction::VIEW);
     }
 
-    public function AJAX($d) {
-        switch ($d->do) {
+    public function AJAX($d){
+        switch ($d->do){
             case 'initdata':
                 return $this->InitDataToAJAX();
             case 'menulist':
@@ -64,8 +64,8 @@ class SitemapManager extends Ab_ModuleManager {
         return null;
     }
 
-    public function InitDataToAJAX() {
-        if (!$this->IsAdminRole()) {
+    public function InitDataToAJAX(){
+        if (!$this->IsAdminRole()){
             return null;
         }
         $ret = new stdClass();
@@ -90,22 +90,22 @@ class SitemapManager extends Ab_ModuleManager {
      * @param boolean $clearCache
      * @return SMMenuItemList
      */
-    public function MenuList($clearCache = false) {
-        if (!$this->IsViewRole()) {
+    public function MenuList($clearCache = false){
+        if (!$this->IsViewRole()){
             return false;
         }
 
-        if ($clearCache) {
+        if ($clearCache){
             $this->_cacheMenuList = null;
         }
 
-        if (!empty($this->_cacheMenuList)) {
+        if (!empty($this->_cacheMenuList)){
             return $this->_cacheMenuList;
         }
 
         $list = array();
         $rows = SitemapDBQuery::MenuList($this->db);
-        while (($d = $this->db->fetch_array($rows))) {
+        while (($d = $this->db->fetch_array($rows))){
             $mItem = new SMMenuItem($d);
             array_push($list, $mItem);
         }
@@ -113,16 +113,16 @@ class SitemapManager extends Ab_ModuleManager {
         $mList = new SMMenuItemList(null);
 
         $count = count($list);
-        for ($i = 0; $i < $count; $i++) {
+        for ($i = 0; $i < $count; $i++){
             $item = $list[$i];
 
-            if ($item->parentid == 0) {
+            if ($item->parentid == 0){
                 $mList->Add($item);
             } else {
-                for ($ii = 0; $ii < $count; $ii++) {
+                for ($ii = 0; $ii < $count; $ii++){
                     $pitem = $list[$ii];
 
-                    if ($pitem->id == $item->parentid) {
+                    if ($pitem->id == $item->parentid){
                         $pitem->childs->Add($item);
                         break;
                     }
@@ -132,15 +132,15 @@ class SitemapManager extends Ab_ModuleManager {
 
         // есть ли модули участвующие в построении подменю
         $count = $mList->Count();
-        for ($i = 0; $i < $count; $i++) {
+        for ($i = 0; $i < $count; $i++){
             $item = $mList->GetByIndex($i);
             $module = Abricos::GetModule($item->name);
 
-            if (empty($module) || !method_exists($module, 'Sitemap_IsMenuBuild') || !$module->Sitemap_IsMenuBuild()) {
+            if (empty($module) || !method_exists($module, 'Sitemap_IsMenuBuild') || !$module->Sitemap_IsMenuBuild()){
                 continue;
             }
             $manager = $module->GetManager();
-            if (empty($manager) || !method_exists($manager, 'Sitemap_MenuBuild')) {
+            if (empty($manager) || !method_exists($manager, 'Sitemap_MenuBuild')){
                 continue;
             }
 
@@ -149,7 +149,7 @@ class SitemapManager extends Ab_ModuleManager {
 
         $mItem = $mList->FindByPath(Abricos::$adress->dir, true);
 
-        if (!empty($mItem)) {
+        if (!empty($mItem)){
             do {
                 $mItem->isSelect = true;
                 $mItem = $mItem->parent;
@@ -162,13 +162,13 @@ class SitemapManager extends Ab_ModuleManager {
 
     private $_cacheMenuListLine;
 
-    public function MenuListToAJAX() {
-        if (!$this->IsAdminRole()) {
+    public function MenuListToAJAX(){
+        if (!$this->IsAdminRole()){
             return null;
         }
 
         $list = $this->MenuList(true, true);
-        if (empty($list)) {
+        if (empty($list)){
             return null;
         }
 
@@ -178,8 +178,8 @@ class SitemapManager extends Ab_ModuleManager {
         return $ret;
     }
 
-    public function MenuListLineMethod(SMMenuItemList $fromList, SMMenuItemListLine $toList) {
-        for ($i = 0; $i < $fromList->Count(); $i++) {
+    public function MenuListLineMethod(SMMenuItemList $fromList, SMMenuItemListLine $toList){
+        for ($i = 0; $i < $fromList->Count(); $i++){
             $mItem = $fromList->GetByIndex($i);
             $toList->Add($mItem);
             $this->MenuListLineMethod($mItem->childs, $toList);
@@ -193,16 +193,16 @@ class SitemapManager extends Ab_ModuleManager {
      * @param boolean $clearCache
      * @return SMMenuItemList
      */
-    public function MenuListLine($clearCache = false) {
-        if (!$this->IsViewRole()) {
+    public function MenuListLine($clearCache = false){
+        if (!$this->IsViewRole()){
             return null;
         }
 
-        if ($clearCache) {
+        if ($clearCache){
             $this->_cacheMenuListLine = null;
         }
 
-        if (!empty($this->_cacheMenuListLine)) {
+        if (!empty($this->_cacheMenuListLine)){
             return $this->_cacheMenuListLine;
         }
 
@@ -212,8 +212,8 @@ class SitemapManager extends Ab_ModuleManager {
         return $this->MenuListLineMethod($mList, $mListLine);
     }
 
-    public function Menu($menuid) {
-        if (!$this->IsViewRole()) {
+    public function Menu($menuid){
+        if (!$this->IsViewRole()){
             return null;
         }
 
@@ -223,10 +223,10 @@ class SitemapManager extends Ab_ModuleManager {
         return $item;
     }
 
-    public function MenuToAJAX($menuid) {
+    public function MenuToAJAX($menuid){
         $menu = $this->Menu($menuid);
 
-        if (empty($menu)) {
+        if (empty($menu)){
             return null;
         }
 
@@ -235,33 +235,34 @@ class SitemapManager extends Ab_ModuleManager {
         return $ret;
     }
 
-    public function MenuSaveOrders($sd) {
-        if (!$this->IsAdminRole()) {
+    public function MenuSaveOrders($sd){
+        if (!$this->IsAdminRole()){
             return null;
         }
 
-        foreach ($sd as $d) {
+        foreach ($sd as $d){
             SitemapDBQuery::MenuOrderUpdate($this->db, $d->id, $d->o);
         }
     }
 
     private $_cachePageByAddress = null;
 
-    public function PageByCurrentAddress() {
-        if (!$this->IsViewRole()) {
+    public function PageByCurrentAddress(){
+        if (!$this->IsViewRole()){
             return null;
         }
 
-        if (!is_null($this->_cachePageByAddress)) {
+        if (!is_null($this->_cachePageByAddress)){
             return $this->_cachePageByAddress;
         }
 
         $menuid = 0;
         $mItem = $this->MenuList()->FindByPath(Abricos::$adress->dir, true);
-        if (empty($mItem) && Abricos::$adress->level > 0) {
+        if (empty($mItem) && Abricos::$adress->level > 0){
             return null;
         }
-        if (!empty($mItem)) {
+
+        if (!empty($mItem)){
             if (!empty($mItem->link))
                 $menuid = 0;
             else
@@ -269,7 +270,7 @@ class SitemapManager extends Ab_ModuleManager {
         }
 
         $d = SitemapDBQuery::PageByName($this->db, $menuid, Abricos::$adress->contentName);
-        if (empty($d)) {
+        if (empty($d)){
             return null;
         }
 
@@ -282,23 +283,23 @@ class SitemapManager extends Ab_ModuleManager {
     /**
      * @return SitemapPageList
      */
-    public function PageList() {
-        if (!$this->IsViewRole()) {
+    public function PageList(){
+        if (!$this->IsViewRole()){
             return null;
         }
 
         $list = new SitemapPageList();
 
         $rows = SitemapDBQuery::PageList($this->db);
-        while (($d = $this->db->fetch_array($rows))) {
+        while (($d = $this->db->fetch_array($rows))){
             $list->Add(new SitemapPage($d));
         }
         return $list;
     }
 
-    public function PageListToAJAX() {
+    public function PageListToAJAX(){
         $list = $this->PageList();
-        if (empty($list)) {
+        if (empty($list)){
             return null;
         }
 
@@ -311,13 +312,13 @@ class SitemapManager extends Ab_ModuleManager {
      * @param integer $pageid
      * @return SitemapPage
      */
-    public function Page($pageid) {
-        if (!$this->IsViewRole()) {
+    public function Page($pageid){
+        if (!$this->IsViewRole()){
             return null;
         }
 
         $d = SitemapDBQuery::Page($this->db, $pageid);
-        if (empty($d)) {
+        if (empty($d)){
             return null;
         }
 
@@ -327,13 +328,13 @@ class SitemapManager extends Ab_ModuleManager {
         return $page;
     }
 
-    public function PageToAJAX($pageid) {
-        if (!$this->IsAdminRole()) {
+    public function PageToAJAX($pageid){
+        if (!$this->IsAdminRole()){
             return null;
         }
 
         $page = $this->Page($pageid);
-        if (empty($page)) {
+        if (empty($page)){
             return null;
         }
 
@@ -342,13 +343,13 @@ class SitemapManager extends Ab_ModuleManager {
         return $ret;
     }
 
-    public function PageSaveToAJAX($sd) {
-        if (!$this->IsAdminRole()) {
+    public function PageSaveToAJAX($sd){
+        if (!$this->IsAdminRole()){
             return null;
         }
 
         $pageid = $this->PageSave($sd);
-        if (empty($pageid)) {
+        if (empty($pageid)){
             return null;
         }
 
@@ -357,7 +358,7 @@ class SitemapManager extends Ab_ModuleManager {
         $ret = new stdClass();
         $ret->page = $page->ToAJAX();
 
-        if ($page->menuid > 0) {
+        if ($page->menuid > 0){
             $menu = $this->Menu($page->menuid);
             $ret->menu = $menu->ToAJAX();
         }
@@ -365,8 +366,8 @@ class SitemapManager extends Ab_ModuleManager {
         return $ret;
     }
 
-    protected function PageSaveMethod($menuid, $sd) {
-        if (!$this->IsAdminRole()) {
+    protected function PageSaveMethod($menuid, $sd){
+        if (!$this->IsAdminRole()){
             return null;
         }
 
@@ -386,12 +387,12 @@ class SitemapManager extends Ab_ModuleManager {
 
         $sd->mid = intval($menuid);
 
-        if ($pageid == 0) {
+        if ($pageid == 0){
             $pageid = SitemapDBQuery::PageAppend($this->db, $sd);
         } else {
 
             $row = SitemapDBQuery::Page($this->db, $pageid);
-            if (empty($row)) {
+            if (empty($row)){
                 return null;
             }
 
@@ -407,8 +408,8 @@ class SitemapManager extends Ab_ModuleManager {
      *
      * @param array|object $fsd
      */
-    public function PageSave($fsd) {
-        if (!$this->IsAdminRole()) {
+    public function PageSave($fsd){
+        if (!$this->IsAdminRole()){
             return null;
         }
 
@@ -420,20 +421,20 @@ class SitemapManager extends Ab_ModuleManager {
         $fsd->menu->id = isset($fsd->menu->id) ? intval($fsd->menu->id) : 0;
 
         $sd = $fsd->page;
-        if ($fsd->menu->id == 0 && empty($sd->nm)) {
+        if ($fsd->menu->id == 0 && empty($sd->nm)){
             $sd->nm = "index";
         }
 
         $sd->nm = translateruen($sd->nm);
-        if ($sd->nm == "index" && empty($fsd->menu->nm) && empty($fsd->menu->tl) && $fsd->menu->pid == 0 && $fsd->menu->id == 0) {
+        if ($sd->nm == "index" && empty($fsd->menu->nm) && empty($fsd->menu->tl) && $fsd->menu->pid == 0 && $fsd->menu->id == 0){
             $menuid = 0;
-        } else if (!empty($sd->nm) && $sd->nm != 'index') {
+        } else if (!empty($sd->nm) && $sd->nm != 'index'){
             $menuid = $fsd->menu->pid;
         } else {
             $this->_menuSaveFromPageSave = true;
             $menuid = $this->MenuSave($fsd->menu);
             $this->_menuSaveFromPageSave = false;
-            if (is_null($menuid)) {
+            if (is_null($menuid)){
                 return null;
             }
         }
@@ -459,13 +460,13 @@ class SitemapManager extends Ab_ModuleManager {
      * @param object|array $sd
      * @return NULL|integer
      */
-    public function MenuSave($sd) {
-        if (!$this->IsAdminRole()) {
+    public function MenuSave($sd){
+        if (!$this->IsAdminRole()){
             return null;
         }
 
         $sd = array_to_object($sd);
-        if (isset($sd->lnk) && !empty($sd->lnk)) {
+        if (isset($sd->lnk) && !empty($sd->lnk)){
             return $this->LinkSave($sd);
         } else {
             $sd->lnk = "";
@@ -478,7 +479,7 @@ class SitemapManager extends Ab_ModuleManager {
 
         $utmf = Abricos::TextParser(true);
         $sd->tl = isset($sd->tl) ? $utmf->Parser($sd->tl) : "";
-        if (empty($sd->tl)) {
+        if (empty($sd->tl)){
             return null;
         }
 
@@ -489,13 +490,13 @@ class SitemapManager extends Ab_ModuleManager {
         $sd->nm = translateruen(empty($sd->nm) ? translateruen($sd->tl) : $sd->nm);
         $sd->tp = 0;
 
-        if (empty($sd->nm)) {
+        if (empty($sd->nm)){
             return null;
         }
 
-        if ($menuid == 0) {
+        if ($menuid == 0){
             $menuid = SitemapDBQuery::MenuAppend($this->db, $sd);
-            if (!$this->_menuSaveFromPageSave) {
+            if (!$this->_menuSaveFromPageSave){
                 $this->PageSaveMethod($menuid, array(
                     "nm" => "index"
                 ));
@@ -508,19 +509,19 @@ class SitemapManager extends Ab_ModuleManager {
         return $menuid;
     }
 
-    public function MenuRemove($menuid) {
-        if (!$this->IsAdminRole()) {
+    public function MenuRemove($menuid){
+        if (!$this->IsAdminRole()){
             return null;
         }
 
         $menu = $this->Menu($menuid);
-        if (empty($menu)) {
+        if (empty($menu)){
             return null;
         }
 
         $childs = $menu->childs;
 
-        for ($i = 0; $i < $childs->Count(); $i++) {
+        for ($i = 0; $i < $childs->Count(); $i++){
             $childItem = $childs->GetByIndex($i);
             $this->MenuRemove($childItem->id);
         }
@@ -532,8 +533,8 @@ class SitemapManager extends Ab_ModuleManager {
         return true;
     }
 
-    public function LinkSave($sd) {
-        if (!$this->IsAdminRole()) {
+    public function LinkSave($sd){
+        if (!$this->IsAdminRole()){
             return null;
         }
 
@@ -541,7 +542,7 @@ class SitemapManager extends Ab_ModuleManager {
 
         $utmf = Abricos::TextParser(true);
         $sd->tl = $utmf->Parser($sd->tl);
-        if (empty($sd->tl)) {
+        if (empty($sd->tl)){
             return null;
         }
 
@@ -549,12 +550,12 @@ class SitemapManager extends Ab_ModuleManager {
         $sd->pid = intval($sd->pid);
 
         $sd->lnk = trim($sd->lnk);
-        if (empty($sd->lnk)) {
+        if (empty($sd->lnk)){
             $sd->lnk = "/";
         }
         $sd->tp = 1;
 
-        if ($linkid == 0) {
+        if ($linkid == 0){
             $linkid = SitemapDBQuery::MenuAppend($this->db, $sd);
         } else {
             SitemapDBQuery::MenuUpdate($this->db, $sd);
@@ -564,13 +565,13 @@ class SitemapManager extends Ab_ModuleManager {
         return $linkid;
     }
 
-    public function LinkSaveToAJAX($sd) {
-        if (!$this->IsAdminRole()) {
+    public function LinkSaveToAJAX($sd){
+        if (!$this->IsAdminRole()){
             return null;
         }
 
         $linkid = $this->LinkSave($sd);
-        if (empty($linkid)) {
+        if (empty($linkid)){
             return null;
         }
 
@@ -582,19 +583,19 @@ class SitemapManager extends Ab_ModuleManager {
         return $ret;
     }
 
-    public function TemplateList() {
-        if (!$this->IsAdminRole()) {
+    public function TemplateList(){
+        if (!$this->IsAdminRole()){
             return null;
         }
 
         $rows = array();
         $dir = dir(CWD."/tt");
-        while (false !== ($entry = $dir->read())) {
-            if ($entry == "." || $entry == ".." || empty($entry)) {
+        while (false !== ($entry = $dir->read())){
+            if ($entry == "." || $entry == ".." || empty($entry)){
                 continue;
             }
             $files = globa(CWD."/tt/".$entry."/*.html");
-            foreach ($files as $file) {
+            foreach ($files as $file){
                 $bname = basename($file);
                 array_push($rows, $entry.":".substr($bname, 0, strlen($bname) - 5));
             }
@@ -602,9 +603,9 @@ class SitemapManager extends Ab_ModuleManager {
         return $rows;
     }
 
-    public function TemplateListToAJAX() {
+    public function TemplateListToAJAX(){
         $list = $this->TemplateList();
-        if (empty($list)) {
+        if (empty($list)){
             return null;
         }
 
@@ -613,8 +614,8 @@ class SitemapManager extends Ab_ModuleManager {
         return $ret;
     }
 
-    public function Bos_MenuData() {
-        if (!$this->IsAdminRole()) {
+    public function Bos_MenuData(){
+        if (!$this->IsAdminRole()){
             return null;
         }
         $lng = $this->module->GetI18n();
@@ -634,8 +635,8 @@ class SitemapManager extends Ab_ModuleManager {
      * TODO: старые методы - на удаление
      * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-    public function BrickList() {
-        if (!$this->IsAdminRole()) {
+    public function BrickList(){
+        if (!$this->IsAdminRole()){
             return null;
         }
 
@@ -643,12 +644,12 @@ class SitemapManager extends Ab_ModuleManager {
         $brickdb = array();
 
         $mods = Abricos::$modules->RegisterAllModule();
-        foreach ($mods as $module) {
+        foreach ($mods as $module){
             $files = array();
             $files1 = globa(CWD."/modules/".$module->name."/brick/*.html");
 
-            if (!empty($files1)) {
-                foreach ($files1 as $file) {
+            if (!empty($files1)){
+                foreach ($files1 as $file){
                     array_push($files, $file);
                 }
             }
@@ -656,14 +657,14 @@ class SitemapManager extends Ab_ModuleManager {
 
             $files2 = globa(CWD."/tt/".Brick::$style."/override/".$module->name."/brick/*.html");
 
-            if (!empty($files2)) {
-                foreach ($files2 as $file) {
+            if (!empty($files2)){
+                foreach ($files2 as $file){
                     array_push($files, $file);
                 }
             }
 
 
-            foreach ($files as $file) {
+            foreach ($files as $file){
                 $bname = basename($file, ".html");
                 $key = $module->name.".".$bname;
 
@@ -682,17 +683,17 @@ class SitemapManager extends Ab_ModuleManager {
      *
      * @param Ab_CoreBrick $brick
      */
-    public function BrickBuildFullMenu(Ab_CoreBrick $brick) {
+    public function BrickBuildFullMenu(Ab_CoreBrick $brick){
         $mm = $this->GetMenu(true);
 
-        if (empty($mm->menu->child)) {
+        if (empty($mm->menu->child)){
             $brick->content = "";
             return;
         }
         $brick->param->var['result'] = SitemapManager::BrickBuildFullMenuGenerate($mm->menu, $brick->param);
     }
 
-    private function BrickBuildFullMenuGenerate(SitemapMenuItem $menu, $param) {
+    private function BrickBuildFullMenuGenerate(SitemapMenuItem $menu, $param){
         $prefix = ($menu->isSelected && $menu->id != 0) ? "sel" : "";
 
         $t = Brick::ReplaceVarByData($param->var['item'.$prefix], array(
@@ -701,13 +702,13 @@ class SitemapManager extends Ab_ModuleManager {
         ));
 
         $lst = "";
-        foreach ($menu->child as $child) {
+        foreach ($menu->child as $child){
             $lst .= SitemapManager::BrickBuildFullMenuGenerate($child, $param);
         }
-        if (!empty($lst)) {
+        if (!empty($lst)){
             $lst = Brick::ReplaceVar($param->var["root"], "rows", $lst);
         }
-        if ($menu->id == 0) {
+        if ($menu->id == 0){
             return $lst;
         }
         $t = Brick::ReplaceVar($t, "child", $lst);
@@ -739,11 +740,11 @@ class SitemapMenuList {
      */
     public $menuLine = array();
 
-    public function __construct($full = false) {
+    public function __construct($full = false){
         $db = Abricos::$db;
         $data = array();
         $rows = SitemapQuery::MenuList($db);
-        while (($row = $db->fetch_array($rows))) {
+        while (($row = $db->fetch_array($rows))){
             $row['id'] = intval($row['id']);
             $row['pid'] = intval($row['pid']);
             $data[$row['id']] = $row;
@@ -753,72 +754,72 @@ class SitemapMenuList {
         $this->Build($this->menu, $data, 0, $full);
     }
 
-    public function Build(SitemapMenuItem $parent, $data, $level, $full) {
+    public function Build(SitemapMenuItem $parent, $data, $level, $full){
         $lastChildMenu = null;
-        foreach ($data as $row) {
-            if ($row['pid'] != $parent->id) {
+        foreach ($data as $row){
+            if ($row['pid'] != $parent->id){
                 continue;
             }
             $child = new SitemapMenuItem($parent, $row['id'], $row['pid'], $row['tp'], $row['nm'], $row['tl'], $row['lnk'], $level + 1);
             $child->source = $row['source'];
-            if ($child->type == SitemapQuery::MENUTYPE_LINK) {
-                if (Abricos::$adress->requestURI == $child->link) {
+            if ($child->type == SitemapQuery::MENUTYPE_LINK){
+                if (Abricos::$adress->requestURI == $child->link){
                     $child->isSelected = true;
                 }
             } else {
-                if (strpos(Abricos::$adress->requestURI, $child->link) === 0) {
+                if (strpos(Abricos::$adress->requestURI, $child->link) === 0){
                     $child->isSelected = true;
                 }
             }
             array_push($parent->child, $child);
-            if ($child->isSelected) {
-                if ($child->type != SitemapQuery::MENUTYPE_LINK) {
+            if ($child->isSelected){
+                if ($child->type != SitemapQuery::MENUTYPE_LINK){
                     array_push($this->menuLine, $child);
                 }
             }
-            if ($full || $child->isSelected) {
+            if ($full || $child->isSelected){
                 $this->Build($child, $data, $level + 1, $full);
             }
 
             $lastChildMenu = $child;
         }
-        if (!is_null($lastChildMenu)) {
+        if (!is_null($lastChildMenu)){
             $lastChildMenu->isLast = true;
         }
     }
 
-    private function CheckMenu($menu, $dir) {
-        foreach ($menu->child as $child) {
-            if ($child->name == $dir) {
+    private function CheckMenu($menu, $dir){
+        foreach ($menu->child as $child){
+            if ($child->name == $dir){
                 return $child;
             }
         }
         return null;
     }
 
-    public function Find($uri) {
+    public function Find($uri){
         $dirs = explode("/", $uri);
         $current = $this->menu;
-        foreach ($dirs as $dir) {
+        foreach ($dirs as $dir){
             $current = $this->CheckMenu($current, $dir);
         }
         return $current;
     }
 
-    private function PFindSource($menu, $fieldName, $value) {
-        foreach ($menu->child as $child) {
-            if ($child->source[$fieldName] == $value) {
+    private function PFindSource($menu, $fieldName, $value){
+        foreach ($menu->child as $child){
+            if ($child->source[$fieldName] == $value){
                 return $child;
             }
             $findItem = $this->PFindSource($child, $fieldName, $value);
-            if (!is_null($findItem)) {
+            if (!is_null($findItem)){
                 return $findItem;
             }
         }
         return null;
     }
 
-    public function FindSource($fieldName, $value) {
+    public function FindSource($fieldName, $value){
         return $this->PFindSource($this->menu, $fieldName, $value);
     }
 
@@ -857,8 +858,8 @@ class SitemapMenuItem {
      */
     public $isSelected = false;
 
-    public function __construct($parent, $id, $pid, $type, $name, $title, $link, $level = 0) {
-        if (is_null($parent)) {
+    public function __construct($parent, $id, $pid, $type, $name, $title, $link, $level = 0){
+        if (is_null($parent)){
             $link = $link;
         } else {
             $link = empty($link) ? $parent->link.$name."/" : $link;

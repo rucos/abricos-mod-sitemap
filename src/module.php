@@ -63,7 +63,6 @@ class SitemapModule extends Ab_Module {
         }
 
         $page = $this->GetManager()->PageByCurrentAddress();
-
         if (is_null($page)) {
             return '';
         }

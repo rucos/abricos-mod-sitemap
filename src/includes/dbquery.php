@@ -21,7 +21,7 @@ class SitemapDBQuery {
 		off
 	";
 
-    public static function MenuList(Ab_Database $db) {
+    public static function MenuList(Ab_Database $db){
         $sql = "
 			SELECT
 			".SitemapDBQuery::FIELDS_MENU."
@@ -32,7 +32,11 @@ class SitemapDBQuery {
         return $db->query_read($sql);
     }
 
-    public static function MenuAppend(Ab_Database $db, $d) {
+    public static function MenuAppend(Ab_Database $db, $d){
+        $d->nm = isset($d->nm) ? $d->nm : "";
+        $d->ord = isset($d->ord) ? $d->ord : 0;
+        $d->off = isset($d->off) ? $d->off : 0;
+
         $sql = "
 			INSERT INTO ".$db->prefix."sys_menu
 			(parentmenuid, name, link, title, descript, menutype, menuorder, off, language) VALUES (
@@ -51,7 +55,7 @@ class SitemapDBQuery {
         return $db->insert_id();
     }
 
-    public static function MenuUpdate(Ab_Database $db, $d) {
+    public static function MenuUpdate(Ab_Database $db, $d){
         $sql = "
 			UPDATE ".$db->prefix."sys_menu
 			SET
@@ -66,7 +70,7 @@ class SitemapDBQuery {
         $db->query_write($sql);
     }
 
-    public static function MenuRemove(Ab_Database $db, $menuid) {
+    public static function MenuRemove(Ab_Database $db, $menuid){
         // remove pages
         $sql = "
 			UPDATE ".$db->prefix."sys_page
@@ -83,7 +87,7 @@ class SitemapDBQuery {
         $db->query_write($sql);
     }
 
-    public static function MenuOrderUpdate(Ab_Database $db, $menuid, $order) {
+    public static function MenuOrderUpdate(Ab_Database $db, $menuid, $order){
         $sql = "
 			UPDATE ".$db->prefix."sys_menu
 			SET menuorder=".bkint($order)."
@@ -94,7 +98,7 @@ class SitemapDBQuery {
     }
 
 
-    public static function PageList(Ab_Database $db) {
+    public static function PageList(Ab_Database $db){
         $sql = "
 			SELECT
 				a.pageid as id,
@@ -123,7 +127,7 @@ class SitemapDBQuery {
 		c.body as bd
 	";
 
-    public static function PageByName(Ab_Database $db, $menuid, $pagename) {
+    public static function PageByName(Ab_Database $db, $menuid, $pagename){
         $sql = "
 			SELECT
 				".SitemapDBQuery::FIELDS_PAGE."
@@ -135,7 +139,7 @@ class SitemapDBQuery {
         return $db->query_first($sql);
     }
 
-    public static function Page(Ab_Database $db, $pageid) {
+    public static function Page(Ab_Database $db, $pageid){
         $sql = "
 			SELECT
 				".SitemapDBQuery::FIELDS_PAGE."
@@ -147,7 +151,7 @@ class SitemapDBQuery {
         return $db->query_first($sql);
     }
 
-    public static function PageAppend(Ab_Database $db, $d) {
+    public static function PageAppend(Ab_Database $db, $d){
         $contentid = Ab_CoreQuery::CreateContent($db, $d->bd, 'sitemap');
         $sql = "
 			INSERT INTO ".$db->prefix."sys_page
@@ -170,7 +174,7 @@ class SitemapDBQuery {
         return $db->insert_id();
     }
 
-    public static function PageUpdate(Ab_Database $db, $d) {
+    public static function PageUpdate(Ab_Database $db, $d){
         Ab_CoreQuery::ContentUpdate($db, $d->cid, $d->bd);
         $sql = "
 			UPDATE ".$db->prefix."sys_page
@@ -226,7 +230,7 @@ class SitemapQuery {
 	";
 
 
-    public static function MenuByPageId(Ab_Database $db, $pageid) {
+    public static function MenuByPageId(Ab_Database $db, $pageid){
         $sql = "
 			SELECT
 				b.menuid as id,
@@ -260,7 +264,7 @@ class SitemapQuery {
 		c.body as bd
 	";
 
-    public static function PageByName(Ab_Database $db, $menuid, $pagename, $returnTypeRow = false) {
+    public static function PageByName(Ab_Database $db, $menuid, $pagename, $returnTypeRow = false){
         $sql = "
 			SELECT
 				".SitemapQuery::FIELDS_PAGE." 
@@ -269,14 +273,14 @@ class SitemapQuery {
 			WHERE a.menuid=".bkint($menuid)." AND a.pagename='".bkstr($pagename)."' AND a.language='".Abricos::$LNG."'
 			LIMIT 1
 		";
-        if ($returnTypeRow) {
+        if ($returnTypeRow){
             return $db->query_first($sql);
         } else {
             return $db->query_read($sql);
         }
     }
 
-    public static function PageById(Ab_Database $db, $pageid, $retArray = false) {
+    public static function PageById(Ab_Database $db, $pageid, $retArray = false){
         $sql = "
 			SELECT
 				".SitemapQuery::FIELDS_PAGE." 
@@ -289,9 +293,9 @@ class SitemapQuery {
         return $retArray ? $db->query_first($sql) : $db->query_read($sql);
     }
 
-    public static function PageList(Ab_Database $db) {
+    public static function PageList(Ab_Database $db){
         $rootPage = SitemapQuery::PageByName($db, 0, 'index', true);
-        if (empty($rootPage)) {
+        if (empty($rootPage)){
             $d = new stdClass();
             $d->nm = 'index';
             $d->mid = 0;
@@ -313,7 +317,7 @@ class SitemapQuery {
     }
 
 
-    public static function MenuById(Ab_Database $db, $menuid) {
+    public static function MenuById(Ab_Database $db, $menuid){
         $sql = "
 			SELECT
 				".SitemapQuery::FIELDS_MENU." 
@@ -325,9 +329,9 @@ class SitemapQuery {
     }
 
 
-    public static function MenuListByUrl(Ab_Database $db, $dir) {
+    public static function MenuListByUrl(Ab_Database $db, $dir){
         $names = array();
-        foreach ($dir as $name) {
+        foreach ($dir as $name){
             array_push($names, "name='".bkstr($name)."'");
         }
         $sql = "
@@ -340,7 +344,7 @@ class SitemapQuery {
         return $db->query_read($sql);
     }
 
-    public static function MenuList(Ab_Database $db, $withOff = false) {
+    public static function MenuList(Ab_Database $db, $withOff = false){
         $sql = "
 			SELECT
 				".SitemapQuery::FIELDS_MENU." 
@@ -351,7 +355,7 @@ class SitemapQuery {
         return $db->query_read($sql);
     }
 
-    public static function PageRemove(Ab_Database $db, $pageid) {
+    public static function PageRemove(Ab_Database $db, $pageid){
         $sql = "
 			SELECT pageid, contentid
 			FROM ".$db->prefix."sys_page

@@ -19,41 +19,41 @@ if ($updateManager->isInstall() || $isPrevVersionCore) {
 
     // меню
     $db->query_write("
-		CREATE TABLE IF NOT EXISTS `".$pfx."sys_menu` (
-		  `menuid` int(10) unsigned NOT NULL auto_increment,
-		  `parentmenuid` int(10) unsigned NOT NULL default '0',
-		  `menutype` int(1) unsigned NOT NULL default '0' COMMENT 'Тип меню: 0-раздел, 1-ссылка',
-		  `name` varchar(250) NOT NULL DEFAULT '' COMMENT 'Имя',
-		  `title` varchar(250) NOT NULL DEFAULT '' COMMENT 'Название',
-		  `descript` varchar(250) NOT NULL DEFAULT '' COMMENT 'Описание',
-		  `link` varchar(250) NOT NULL DEFAULT '' COMMENT 'Ссылка',
-		  `language` char(2) NOT NULL DEFAULT 'ru',
-		  `menuorder` int(4) unsigned NOT NULL default '0' COMMENT 'Сортировка',
-		  `level` int(2) unsigned NOT NULL default '0',
-		  `off` tinyint(1) unsigned NOT NULL default '0',
-		  `dateline` int(10) unsigned NOT NULL default '0',
-		  `deldate` int(10) unsigned NOT NULL default '0',
-		  PRIMARY KEY (`menuid`)
+		CREATE TABLE IF NOT EXISTS ".$pfx."sys_menu (
+		  menuid int(10) unsigned NOT NULL auto_increment,
+		  parentmenuid int(10) unsigned NOT NULL default '0',
+		  menutype int(1) unsigned NOT NULL default '0' COMMENT 'Тип меню: 0-раздел, 1-ссылка',
+		  name varchar(250) NOT NULL DEFAULT '' COMMENT 'Имя',
+		  title varchar(250) NOT NULL DEFAULT '' COMMENT 'Название',
+		  descript varchar(250) NOT NULL DEFAULT '' COMMENT 'Описание',
+		  link varchar(250) NOT NULL DEFAULT '' COMMENT 'Ссылка',
+		  language char(2) NOT NULL DEFAULT 'ru',
+		  menuorder int(4) unsigned NOT NULL default '0' COMMENT 'Сортировка',
+		  level int(2) unsigned NOT NULL default '0',
+		  off tinyint(1) unsigned NOT NULL default '0',
+		  dateline int(10) unsigned NOT NULL default '0',
+		  deldate int(10) unsigned NOT NULL default '0',
+		  PRIMARY KEY (menuid)
 		)".$charset
     );
 
     // Страницы
     $db->query_write("
-		CREATE TABLE IF NOT EXISTS `".$pfx."sys_page` (
-		  `pageid` int(10) unsigned NOT NULL auto_increment,
-		  `menuid` int(10) unsigned NOT NULL default '0',
-		  `contentid` int(10) unsigned NOT NULL default '0',
-		  `pagename` varchar(250) NOT NULL DEFAULT '' COMMENT 'Имя',
-		  `title` varchar(250) NOT NULL DEFAULT '' COMMENT 'Описание',
-		  `language` char(2) NOT NULL DEFAULT 'ru',
-		  `template` VARCHAR(50) NOT NULL DEFAULT '',
-		  `metakeys` varchar(250) NOT NULL DEFAULT '' COMMENT 'Описание',
-		  `metadesc` varchar(250) NOT NULL DEFAULT '' COMMENT 'Описание',
-		  `mods` TEXT NOT NULL,
-		  `usecomment` tinyint(1) unsigned NOT NULL default '0',
-		  `dateline` int(10) unsigned NOT NULL default '0',
-		  `deldate` int(10) unsigned NOT NULL default '0',
-		  PRIMARY KEY (`pageid`)
+		CREATE TABLE IF NOT EXISTS ".$pfx."sys_page (
+		  pageid int(10) unsigned NOT NULL auto_increment,
+		  menuid int(10) unsigned NOT NULL default '0',
+		  contentid int(10) unsigned NOT NULL default '0',
+		  pagename varchar(250) NOT NULL DEFAULT '' COMMENT 'Имя',
+		  title varchar(250) NOT NULL DEFAULT '' COMMENT 'Описание',
+		  language char(2) NOT NULL DEFAULT 'ru',
+		  template VARCHAR(50) NOT NULL DEFAULT '',
+		  metakeys varchar(250) NOT NULL DEFAULT '' COMMENT 'Описание',
+		  metadesc varchar(250) NOT NULL DEFAULT '' COMMENT 'Описание',
+		  mods TEXT NOT NULL,
+		  usecomment tinyint(1) unsigned NOT NULL default '0',
+		  dateline int(10) unsigned NOT NULL default '0',
+		  deldate int(10) unsigned NOT NULL default '0',
+		  PRIMARY KEY (pageid)
 		)".$charset
     );
 }
@@ -167,7 +167,7 @@ To set up the site and manage the content you want at least two tabs: <br />
     }
 
     $db->query_write("
-		INSERT INTO `".$pfx."content` (`body`, `dateline`, `deldate`, `modman`) VALUES
+		INSERT INTO ".$pfx."content (body, dateline, deldate, modman) VALUES
 		('".bkstr($mainpage)."', ".TIMENOW.", 0, 'sitemap')
 	");
     $mainpageId = $db->insert_id();
@@ -179,7 +179,7 @@ To set up the site and manage the content you want at least two tabs: <br />
         $about = "<h2>About</h2><p><a href='http://abricos.org'>Abricos Platform</a> - this is a Content Management System (CMS) and Web Application Platform.</p>";
     }
     $db->query_write("
-		INSERT INTO `".$pfx."content` (`body`, `dateline`, `deldate`, `modman`) VALUES
+		INSERT INTO ".$pfx."content (body, dateline, deldate, modman) VALUES
 		('".bkstr($about)."', ".TIMENOW.", 0, 'sitemap')
 	");
     $aboutpageId = $db->insert_id();
@@ -187,25 +187,25 @@ To set up the site and manage the content you want at least two tabs: <br />
 
     if (Abricos::$LNG == 'ru') {
         $db->query_write("
-			INSERT INTO `".$pfx."sys_menu` 
-			(`parentmenuid`, `menutype`, `name`, `title`, `descript`, `link`, `language`, `menuorder`, `level`, `off`, `dateline`, `deldate`) VALUES
+			INSERT INTO ".$pfx."sys_menu 
+			(parentmenuid, menutype, name, title, descript, link, language, menuorder, level, off, dateline, deldate) VALUES
 			(0, 1, '', 'Главная', 'Главная страница сайта Abricos', '/', '".Abricos::$LNG."', 0, 0, 0, 0, 0)
 		");
         $db->query_write("
-			INSERT INTO `".$pfx."sys_menu` 
-			(`parentmenuid`, `menutype`, `name`, `title`, `descript`, `link`, `language`, `menuorder`, `level`, `off`, `dateline`, `deldate`) VALUES
+			INSERT INTO ".$pfx."sys_menu 
+			(parentmenuid, menutype, name, title, descript, link, language, menuorder, level, off, dateline, deldate) VALUES
 			(0, 0, 'about', 'О проекте', '', '', '".Abricos::$LNG."', 50, 0, 0, 0, 0)
 		");
         $aboutmenuId = $db->insert_id();
     } else {
         $db->query_write("
-			INSERT INTO `".$pfx."sys_menu`
-			(`parentmenuid`, `menutype`, `name`, `title`, `descript`, `link`, `language`, `menuorder`, `level`, `off`, `dateline`, `deldate`) VALUES
+			INSERT INTO ".$pfx."sys_menu
+			(parentmenuid, menutype, name, title, descript, link, language, menuorder, level, off, dateline, deldate) VALUES
 			(0, 1, '', 'Home', 'Home Page', '/', '".Abricos::$LNG."', 0, 0, 0, 0, 0)
 		");
         $db->query_write("
-			INSERT INTO `".$pfx."sys_menu` 
-			(`parentmenuid`, `menutype`, `name`, `title`, `descript`, `link`, `language`, `menuorder`, `level`, `off`, `dateline`, `deldate`) VALUES
+			INSERT INTO ".$pfx."sys_menu 
+			(parentmenuid, menutype, name, title, descript, link, language, menuorder, level, off, dateline, deldate) VALUES
 			(0, 0, 'about', 'About', '', '', '".Abricos::$LNG."', 50, 0, 0, 0, 0)
 		");
         $aboutmenuId = $db->insert_id();
@@ -213,7 +213,7 @@ To set up the site and manage the content you want at least two tabs: <br />
 
 
     $db->query_write("
-		INSERT INTO `".$pfx."sys_page` (`menuid`, `contentid`, `pagename`, `title`, `language`, `metakeys`, `metadesc`, `usecomment`, `dateline`, `deldate`, `mods`) VALUES
+		INSERT INTO ".$pfx."sys_page (menuid, contentid, pagename, title, language, metakeys, metadesc, usecomment, dateline, deldate, mods) VALUES
 		(0, ".$mainpageId.", 'index', '', '".Abricos::$LNG."', '', '', 0, ".TIMENOW.", 0, ''),
 		(".$aboutmenuId.", ".$aboutpageId.", 'index', '', '".Abricos::$LNG."', '', '', 0, ".TIMENOW.", 0, '')
 	");
@@ -223,41 +223,42 @@ if ($isPrevVersionCore) {
     $updateManager->serverVersion = '0.2.1';
 
     $db->query_write("
-		INSERT INTO `".$pfx."sys_menu` 
+		INSERT INTO ".$pfx."sys_menu 
 			(menuid, parentmenuid, name, link, title, menuorder, dateline) 
 		SELECT 
 			menuid, parentmenuid, name, link, phrase, menuorder, dateline
-		FROM `".$pfx."menu`
+		FROM ".$pfx."menu
 		WHERE deldate=0
 	");
-    $db->query_write("DROP TABLE `".$pfx."menu`");
+    $db->query_write("DROP TABLE ".$pfx."menu");
 
     $db->query_write("
-		INSERT INTO `".$pfx."sys_page` 
+		INSERT INTO ".$pfx."sys_page 
 			(pageid, menuid, contentid, pagename, title, metakeys, metadesc, dateline)
 		SELECT 
 			pageid, menuid, contentid, pagename, title, metakeys, metadesc, dateline
-		FROM `".$pfx."page`
+		FROM ".$pfx."page
 		WHERE deldate=0
 	");
-    $db->query_write("DROP TABLE `".$pfx."page`");
+    $db->query_write("DROP TABLE ".$pfx."page");
 }
 
 if ($updateManager->isUpdate('0.2.1') || $updateManager->serverVersion == '1.0.1') {
     $db->query_write("
 		UPDATE ".$pfx."module
-			SET takelink='__super'
+		SET takelink='__super'
 		WHERE name='sitemap' 
 	");
 }
+
 if ($updateManager->isUpdate('0.2.2')) {
     Abricos::GetModule('sitemap')->permission->Install();
 }
+
 if ($updateManager->isUpdate('0.2.3.1')) {
-
     $db->query_write("
-		ALTER TABLE `".$pfx."sys_page` ADD `editormode` TINYINT(1) UNSIGNED NOT NULL default '0' COMMENT '0-визуальный редактор, 1-исходный код'
+		ALTER TABLE ".$pfx."sys_page ADD editormode TINYINT(1) UNSIGNED NOT NULL default '0' COMMENT '0-визуальный редактор, 1-исходный код'
 	");
-
 }
+
 ?>
