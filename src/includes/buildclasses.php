@@ -30,7 +30,7 @@ class SitemapMenuBrickBulder {
      *
      * @var integer
      */
-    public $cfgLimitLevel = 0;
+    public $cfgLevelLimit = 0;
 
     /**
      * Вывод меню с определенного уровня
@@ -74,7 +74,7 @@ class SitemapMenuBrickBulder {
 
     public $cfgNoWrap = false;
 
-    public function __construct(Ab_CoreBrick $brick) {
+    public function __construct(Ab_CoreBrick $brick){
 
         $this->brickid = SitemapMenuBrickBulder::$_counter++;
 
@@ -84,6 +84,7 @@ class SitemapMenuBrickBulder {
             'clearIfEmpty' => false,
             'fromMenu' => '',
             'isSubMenu' => false,
+            'levelLimit' => 0,
             'lineLimit' => '',
             'lineLimitPhrase' => '',
             'noWrap' => false
@@ -95,41 +96,42 @@ class SitemapMenuBrickBulder {
 
         $this->cfgLineLimit = $p['lineLimit'];
         $this->cfgLineLimitPhrase = $p['lineLimitPhrase'];
+        $this->cfgLevelLimit = $p['levelLimit'];
         $this->cfgNoWrap = $this->ToBoolean($p['noWrap']);
     }
 
-    public function GetTplMenu($level) {
-        $v = & $this->brick->param->var;
+    public function GetTplMenu($level){
+        $v = &$this->brick->param->var;
         $nm = 'menu-level-'.$level;
-        if (!empty($v[$nm])) {
+        if (!empty($v[$nm])){
             return $v[$nm];
         }
         return $v['menu'];
     }
 
-    public function GetTplMenuItem($isNotChild, $level) {
-        $v = & $this->brick->param->var;
+    public function GetTplMenuItem($isNotChild, $level){
+        $v = &$this->brick->param->var;
 
         $nm = "item";
         $nmLevel = $nm."-level-".$level;
         $nmNotChild = "itemNotChild";
         $nmNotChildLevel = $nmNotChild."-level-".$level;
 
-        if ($isNotChild) {
-            if (!empty($v[$nmNotChildLevel])) {
+        if ($isNotChild){
+            if (!empty($v[$nmNotChildLevel])){
                 return $v[$nmNotChildLevel];
-            } else if (!empty($v[$nmNotChild])) {
+            } else if (!empty($v[$nmNotChild])){
                 return $v[$nmNotChild];
             }
         }
-        if (!empty($v[$nmLevel])) {
+        if (!empty($v[$nmLevel])){
             return $v[$nmLevel];
         }
         return $v[$nm];
     }
 
-    private function ToBoolean($var) {
-        switch (strtolower($var)) {
+    private function ToBoolean($var){
+        switch (strtolower($var)){
             case 'true':
             case 'on':
             case 'yes':
@@ -139,8 +141,8 @@ class SitemapMenuBrickBulder {
         return false;
     }
 
-    public function BuildItem(SMMenuItem $item, $level) {
-        if ($item->off) {
+    public function BuildItem(SMMenuItem $item, $level){
+        if ($item->off){
             return "";
         }
 
@@ -158,7 +160,7 @@ class SitemapMenuBrickBulder {
         ));
     }
 
-    public function BuildMoreItem(SMMenuItemList $list) {
+    public function BuildMoreItem(SMMenuItemList $list){
         $sMenuSub = $this->BuildMenu($list, 1, 0, $this->cfgLineLimit);
 
         $tplItem = $this->GetTplMenuItem(empty($sMenuSub), 0);
@@ -173,21 +175,25 @@ class SitemapMenuBrickBulder {
         ));
     }
 
-    public function BuildMenu(SMMenuItemList $list, $level, $id, $fromIndex = 0, $toIndex = 0) {
-        if ($list->Count() == 0) {
+    public function BuildMenu(SMMenuItemList $list, $level, $id, $fromIndex = 0, $toIndex = 0){
+        if ($list->Count() == 0){
             return "";
         }
 
+        if ($this->cfgLevelLimit > 0 && $level >= $this->cfgLevelLimit){
+            return;
+        }
+
         $lst = "";
-        for ($i = 0; $i < $list->Count(); $i++) {
+        for ($i = 0; $i < $list->Count(); $i++){
 
             if (($fromIndex > 0 && $i < $fromIndex) ||
                 ($toIndex > 0 && $i > $toIndex)
-            ) {
+            ){
                 continue;
             }
 
-            if ($level === 0 && $this->cfgLineLimit > 0 && $this->cfgLineLimit == $i) {
+            if ($level === 0 && $this->cfgLineLimit > 0 && $this->cfgLineLimit == $i){
                 $lst .= $this->BuildMoreItem($list);
                 break;
             } else {
@@ -202,20 +208,20 @@ class SitemapMenuBrickBulder {
         ));
     }
 
-    public function Build() {
+    public function Build(){
         $list = SitemapManager::$instance->MenuList();
 
-        if ($this->cfgIsSubMenu) {
+        if ($this->cfgIsSubMenu){
             $adr = Abricos::$adress;
             $item = $list->FindByPath($adr->dir, false);
 
-            if (empty($item)) {
+            if (empty($item)){
                 return "";
             }
             $list = $item->childs;
-        } else if (!empty($this->cfgFromMenu)) {
+        } else if (!empty($this->cfgFromMenu)){
             $item = $list->FindByPath($this->cfgFromMenu);
-            if (empty($item)) {
+            if (empty($item)){
                 return "";
             }
             $list = $item->childs;
@@ -223,7 +229,7 @@ class SitemapMenuBrickBulder {
 
         $sMenu = $this->BuildMenu($list, 0, 0);
 
-        if ($this->cfgNoWrap) {
+        if ($this->cfgNoWrap){
             $sResult = Brick::ReplaceVarByData($sMenu, array(
                 "brickid" => ($this->brick->name.$this->brickid)
             ));

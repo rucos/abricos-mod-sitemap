@@ -14,14 +14,14 @@
 [/bkvar]
 
 [bkvar=item-level-0]
-	<li class="menuitem-level-{v#lvl} menuitem-withchild dropdown">
+	<li class="menuitem-level-{v#lvl} menuitem-withchild dropdown {v#selected}">
 	    <a href="{v#lnk}" class="dropdown-toggle" data-hover="dropdown" itemprop="url"><span itemprop="name">{v#tl}</span> <b class="caret"></b></a>
 		{v#childs}
 	</li>
 [/bkvar]
 
 [bkvar=itemNotChild]
-	<li class="menuitem-level-{v#lvl} menuitem-notchild">
+	<li class="menuitem-level-{v#lvl} menuitem-notchild {v#selected}">
 	    <a href="{v#lnk}" itemprop="url" itemprop="url"><span itemprop="name">{v#tl}</span></a>
 	</li>
 [/bkvar]
