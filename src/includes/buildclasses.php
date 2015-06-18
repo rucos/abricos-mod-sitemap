@@ -150,14 +150,15 @@ class SitemapMenuBrickBulder {
 
         $tplItem = $this->GetTplMenuItem(empty($sMenuSub), $level);
 
-        return Brick::ReplaceVarByData($tplItem, array(
+        $tpl = Brick::ReplaceVarByData($tplItem, array(
             "id" => $item->id,
-            "sel" => $item->isSelect ? "selected" : "",
+            "selected" => $item->isSelect ? "selected" : "",
             "tl" => $item->title,
             "lnk" => $item->URI(),
             "lvl" => $level,
             "childs" => $sMenuSub
         ));
+        return $tpl;
     }
 
     public function BuildMoreItem(SMMenuItemList $list){
