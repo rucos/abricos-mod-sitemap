@@ -1,7 +1,3 @@
-/*
- * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
- */
-
 /**
  * @module Sitemap
  * @namespace Brick.mod.sitemap
@@ -28,8 +24,7 @@ Component.entryPoint = function(NS){
 
         SYS = Brick.mod.sys;
 
-    NS.ManagerWidget = Y.Base.create('managerWidget', NS.AppWidget, [
-    ], {
+    NS.ManagerWidget = Y.Base.create('managerWidget', NS.AppWidget, [], {
         onInitAppWidget: function(err, appInstance, options){
             this.renderManager();
         },
@@ -233,10 +228,9 @@ Component.entryPoint = function(NS){
         }
     });
 
-    NS.MenuItemCreatePanel = Y.Base.create('termsOfUseDialog', SYS.Dialog, [
-    ], {
+    NS.MenuItemCreatePanel = Y.Base.create('termsOfUseDialog', SYS.Dialog, [], {
         onClick: function(e){
-            switch(e.dataClick){
+            switch (e.dataClick) {
                 case "cancel":
                     this.hide();
                     return true;
@@ -288,32 +282,32 @@ Component.entryPoint = function(NS){
 
     /*
 
-    var MenuItemCreatePanel = function(menuid, cfg){
-        this.ccfg = L.merge({
-            'onSave': null
-        }, cfg || {});
-        this.menuid = menuid;
-        MenuItemCreatePanel.superclass.constructor.call(this);
-    };
-    YAHOO.extend(MenuItemCreatePanel, Brick.widget.Dialog, {
-        initTemplate: function(){
-            return buildTemplate(this, 'mnuadd').replace('mnuadd');
-        },
-        onClick: function(el){
-            var tp = this._TId['mnuadd'];
-            switch (el.id) {
-                case tp['bcancel']:
-                    this.close();
-                    return true;
-                case tp['badd']:
-                    this.create();
-                    return true;
-            }
-        },
-    });
+     var MenuItemCreatePanel = function(menuid, cfg){
+     this.ccfg = L.merge({
+     'onSave': null
+     }, cfg || {});
+     this.menuid = menuid;
+     MenuItemCreatePanel.superclass.constructor.call(this);
+     };
+     YAHOO.extend(MenuItemCreatePanel, Brick.widget.Dialog, {
+     initTemplate: function(){
+     return buildTemplate(this, 'mnuadd').replace('mnuadd');
+     },
+     onClick: function(el){
+     var tp = this._TId['mnuadd'];
+     switch (el.id) {
+     case tp['bcancel']:
+     this.close();
+     return true;
+     case tp['badd']:
+     this.create();
+     return true;
+     }
+     },
+     });
 
-    NS.MenuItemCreatePanel = MenuItemCreatePanel;
-/**/
+     NS.MenuItemCreatePanel = MenuItemCreatePanel;
+     /**/
 
     var MenuItemRemovePanel = function(item, callback){
         this.item = item;
@@ -338,7 +332,7 @@ Component.entryPoint = function(NS){
         },
         remove: function(){
             var TM = this._TM, gel = function(n){
-                    return  TM.getEl('removepanel.' + n);
+                    return TM.getEl('removepanel.' + n);
                 },
                 __self = this;
             Dom.setStyle(gel('btns'), 'display', 'none');

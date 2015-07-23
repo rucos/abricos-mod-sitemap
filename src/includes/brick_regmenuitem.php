@@ -11,29 +11,29 @@
  */
 
 $brick = Brick::$builder->brick;
-$v = & $brick->param->var;
-$p = & $brick->param->param;
+$v = &$brick->param->var;
+$p = &$brick->param->param;
 
 $adr = Abricos::$adress;
 
-if (empty($brick->parent) || $brick->parent->type != Brick::BRICKTYPE_CONTENT) {
+if (empty($brick->parent) || $brick->parent->type != Brick::BRICKTYPE_CONTENT){
     // регистрация элемента меню возможна только для стартовых кирпичей
     return;
 }
 
-if ($adr->level == 0) {
+if ($adr->level == 0){
     // вызываемый кирпич является заглавной страницей
     return;
 }
 
-if (empty($p['link']) && empty($p['name'])) {
+if (empty($p['link']) && empty($p['name'])){
     $p['name'] = $adr->dir[$adr->level - 1];
-    if (empty($p['name'])) {
+    if (empty($p['name'])){
         return;
     }
 }
 
-if (empty($p['title'])) {
+if (empty($p['title'])){
     $p['title'] = $p['name'];
 }
 
@@ -41,7 +41,7 @@ SitemapModule::$instance->GetManager();
 $mList = SitemapManager::$instance->MenuList();
 $mItem = $mList->FindByPath($adr->dir, false);
 
-if (!empty($mItem)) {
+if (!empty($mItem)){
     return;
 }
 
@@ -50,18 +50,18 @@ $man->RolesDisable();
 
 $parentMenuId = 0;
 
-if ($adr->level == 1) {
+if ($adr->level == 1){
     // первый уровень, значит нет родителя
     $parentMenuId = 0;
 } else {
     $parentName = $adr->dir[$adr->level - 2];
-    if (empty($parentName)) {
+    if (empty($parentName)){
         return;
     }
 
     $mParentItem = $mList->FindByPath($adr->dir, true);
 
-    if (empty($mParentItem) || $mParentItem->Level() != $adr->level - 1) {
+    if (empty($mParentItem) || $mParentItem->Level() != $adr->level - 1){
         // нет родителя или родитель уровня выше
         return;
     }

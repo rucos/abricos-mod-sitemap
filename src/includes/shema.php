@@ -15,7 +15,7 @@ $pfx = $db->prefix;
 
 $isPrevVersionCore = $updateManager->serverVersion == '1.0.1';
 
-if ($updateManager->isInstall() || $isPrevVersionCore) {
+if ($updateManager->isInstall() || $isPrevVersionCore){
 
     // меню
     $db->query_write("
@@ -58,11 +58,11 @@ if ($updateManager->isInstall() || $isPrevVersionCore) {
     );
 }
 
-if ($updateManager->isInstall() && !$isPrevVersionCore) {
+if ($updateManager->isInstall() && !$isPrevVersionCore){
 
-    $modBosExs = file_exists(CWD."/modules/bos/module.php");
+	$modBosExs = file_exists(CWD."/modules/bos/module.php");
 
-    if (Abricos::$LNG == 'ru') {
+    if (Abricos::$LNG == 'ru'){
 
         $mainpage = "
 <h2>Добро пожаловать!</h2>
@@ -77,7 +77,7 @@ if ($updateManager->isInstall() && !$isPrevVersionCore) {
 Для этого авторизуйтесь под учетной записью <i>admin</i>, пароль <i>admin</i> и  
 перейдите в ";
 
-        if ($modBosExs) {
+        if ($modBosExs){
             $mainpage .= "<a href='/bos/#app=uprofile/ws/showws/'>профиль пользователя</a>";
         } else {
             $mainpage .= "<a href='/user/'>Панель управления</a> -&gt; раздел 'Профиль пользователя'";
@@ -90,7 +90,7 @@ if ($updateManager->isInstall() && !$isPrevVersionCore) {
 <p>
 		 ";
 
-        if ($modBosExs) {
+        if ($modBosExs){
             $mainpage .= "<a href='/bos/#app=user/board/showBoardPanel'>Панель управления</a>";
         } else {
             $mainpage .= "<a href='/user/'>Панель управления</a>";
@@ -127,7 +127,7 @@ if ($updateManager->isInstall() && !$isPrevVersionCore) {
 <pBy default, the system creates an administrative user <i>admin</i>.
 You need to install the new password and e-mail address on the account. 
 To do this, log in using login <i>admin</i>, password <i>admin</i> and go to your ";
-        if ($modBosExs) {
+        if ($modBosExs){
             $mainpage .= "<a href='/bos/#app=uprofile/ws/showws/'>user profile </a>";
         } else {
             $mainpage .= "<a href='/user/'>Control Panel</a> -&gt; section 'User Profile'";
@@ -140,7 +140,7 @@ To do this, log in using login <i>admin</i>, password <i>admin</i> and go to you
 <p>
 		";
 
-        if ($modBosExs) {
+        if ($modBosExs){
             $mainpage .= "<a href='/bos/#app=user/board/showBoardPanel'>Control Panel</a>";
         } else {
             $mainpage .= "<a href='/user/'>Control Panel</a>";
@@ -172,7 +172,7 @@ To set up the site and manage the content you want at least two tabs: <br />
 	");
     $mainpageId = $db->insert_id();
 
-    if (Abricos::$LNG == 'ru') {
+    if (Abricos::$LNG == 'ru'){
         $about = "<h2>О проекте</h2><p><a href='http://ru.abricos.org'>Абрикос</a> - это современная система управления web-контентом (CMS) и платформа интернет приложений.</p>";
 
     } else {
@@ -185,7 +185,7 @@ To set up the site and manage the content you want at least two tabs: <br />
     $aboutpageId = $db->insert_id();
 
 
-    if (Abricos::$LNG == 'ru') {
+    if (Abricos::$LNG == 'ru'){
         $db->query_write("
 			INSERT INTO ".$pfx."sys_menu 
 			(parentmenuid, menutype, name, title, descript, link, language, menuorder, level, off, dateline, deldate) VALUES
@@ -219,7 +219,7 @@ To set up the site and manage the content you want at least two tabs: <br />
 	");
 }
 
-if ($isPrevVersionCore) {
+if ($isPrevVersionCore){
     $updateManager->serverVersion = '0.2.1';
 
     $db->query_write("
@@ -243,7 +243,7 @@ if ($isPrevVersionCore) {
     $db->query_write("DROP TABLE ".$pfx."page");
 }
 
-if ($updateManager->isUpdate('0.2.1') || $updateManager->serverVersion == '1.0.1') {
+if ($updateManager->isUpdate('0.2.1') || $updateManager->serverVersion == '1.0.1'){
     $db->query_write("
 		UPDATE ".$pfx."module
 		SET takelink='__super'
@@ -251,11 +251,11 @@ if ($updateManager->isUpdate('0.2.1') || $updateManager->serverVersion == '1.0.1
 	");
 }
 
-if ($updateManager->isUpdate('0.2.2')) {
+if ($updateManager->isUpdate('0.2.2')){
     Abricos::GetModule('sitemap')->permission->Install();
 }
 
-if ($updateManager->isUpdate('0.2.3.1')) {
+if ($updateManager->isUpdate('0.2.3.1')){
     $db->query_write("
 		ALTER TABLE ".$pfx."sys_page ADD editormode TINYINT(1) UNSIGNED NOT NULL default '0' COMMENT '0-визуальный редактор, 1-исходный код'
 	");

@@ -11,8 +11,8 @@ $man = SitemapManager::$instance;
 
 $brick = Brick::$builder->brick;
 
-$p = & $this->brick->param->param;
-$v = & $this->brick->param->var;
+$p = &$this->brick->param->param;
+$v = &$this->brick->param->var;
 
 $param = $brick->param;
 
@@ -23,12 +23,12 @@ $mods = explode("/", $param->param['mods']);
 
 $menuList = $man->MenuList();
 
-if (empty($menuList) || $menuList->Count() == 0) {
+if (empty($menuList) || $menuList->Count() == 0){
     $brick->content = "";
     return;
 }
 
-if (!class_exists("sitemap_brick_menu_builder")) {
+if (!class_exists("sitemap_brick_menu_builder")){
 
     class sitemap_brick_menu_builder {
 
@@ -37,42 +37,42 @@ if (!class_exists("sitemap_brick_menu_builder")) {
          */
         public $brick;
 
-        public function __construct(Ab_CoreBrick $brick) {
+        public function __construct(Ab_CoreBrick $brick){
             $this->brick = $brick;
         }
 
-        public function BuildItem(SMMenuItem $menu) {
+        public function BuildItem(SMMenuItem $menu){
 
-            if ($menu->off) {
+            if ($menu->off){
                 return "";
             }
 
             $p = $this->brick->param->param;
             $v = $this->brick->param->var;
 
-            if ($p['level'] > 0 && ($menu->Level() > $p['level'] + 1)) {
+            if ($p['level'] > 0 && ($menu->Level() > $p['level'] + 1)){
                 return "";
             }
 
             $notItems = !empty($p['not']) ? explode("&", $p['not']) : array();
 
-            foreach ($notItems as $nitem) {
-                if ($nitem == $menu->name) {
+            foreach ($notItems as $nitem){
+                if ($nitem == $menu->name){
                     return "";
                 }
             }
 
             $lst = "";
             $isChildSelect = false;
-            for ($i = 0; $i < $menu->childs->Count(); $i++) {
+            for ($i = 0; $i < $menu->childs->Count(); $i++){
                 $child = $menu->childs->GetByIndex($i);
-                if ($child->isSelect) {
+                if ($child->isSelect){
                     $isChildSelect = true;
                 }
                 $lst .= $this->BuildItem($child);
             }
 
-            if (!empty($lst)) {
+            if (!empty($lst)){
                 $lst = Brick::ReplaceVarByData($v["menu"], array(
                     "id" => $menu->id,
                     "lvl" => $menu->Level(),
@@ -81,12 +81,12 @@ if (!class_exists("sitemap_brick_menu_builder")) {
                 ));
             }
 
-            if ($isroot) {
+            if ($isroot){
                 return $lst;
             }
 
             $isSelect = $menu->isSelect;
-            if ($p['notselp'] && $isChildSelect) {
+            if ($p['notselp'] && $isChildSelect){
                 $isSelect = false;
             }
 
@@ -101,21 +101,21 @@ if (!class_exists("sitemap_brick_menu_builder")) {
             ));
         }
 
-        public function Build() {
+        public function Build(){
             $v = $this->brick->param->var;
             $p = $this->brick->param->param;
 
             $list = SitemapManager::$instance->MenuList();
-            if (!empty($p['from'])) {
+            if (!empty($p['from'])){
                 $item = $list->FindByPath($p['from']);
-                if (empty($item)) {
+                if (empty($item)){
                     return "";
                 }
                 $list = $item->childs;
             }
 
             $lst = "";
-            for ($i = 0; $i < $list->Count(); $i++) {
+            for ($i = 0; $i < $list->Count(); $i++){
                 $lst .= $this->BuildItem($list->GetByIndex($i));
             }
 

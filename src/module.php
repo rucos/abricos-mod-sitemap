@@ -1,6 +1,6 @@
 <?php
 /**
- * Модуль "Карта сайта"
+ * Module "Website Structure"
  *
  * @package Abricos
  * @subpackage Sitemap
@@ -9,13 +9,6 @@
  */
 
 /**
- * Карта сайта.
- *
- * Элементы сайта разделены на три типа:
- * 1) Главная страница
- * 2) Пункт меню и его страница index
- * 3) Страница не index
- * 4) Ссылка
  *
  * @package Abricos
  * @subpackage Sitemap
@@ -34,7 +27,7 @@ class SitemapModule extends Ab_Module {
      */
     public $page = null;
 
-    function __construct() {
+    function __construct(){
         $this->version = "0.2.6";
         $this->name = "sitemap";
         $this->takelink = "__super";
@@ -48,22 +41,22 @@ class SitemapModule extends Ab_Module {
      *
      * @return SitemapManager
      */
-    public function GetManager() {
-        if (is_null($this->_manager)) {
+    public function GetManager(){
+        if (is_null($this->_manager)){
             require_once 'includes/manager.php';
             $this->_manager = new SitemapManager($this);
         }
         return $this->_manager;
     }
 
-    public function GetContentName() {
+    public function GetContentName(){
         $adress = Abricos::$adress;
-        if ($adress->level >= 1 && $adress->dir[0] == 'sitemap') {
+        if ($adress->level >= 1 && $adress->dir[0] == 'sitemap'){
             return 'sitemap';
         }
 
         $page = $this->GetManager()->PageByCurrentAddress();
-        if (is_null($page)) {
+        if (is_null($page)){
             return '';
         }
 
@@ -72,13 +65,16 @@ class SitemapModule extends Ab_Module {
         return 'index';
     }
 
-    public function GetTemplate() {
+    public function GetTemplate(){
         $page = $this->page;
-        if (empty($page->detail->template)) {
+        if (empty($page->detail->template)){
             return null;
         }
         $arr = explode(":", $page->detail->template);
-        return array("owner" => $arr[0], "name" => $arr[1]);
+        return array(
+            "owner" => $arr[0],
+            "name" => $arr[1]
+        );
     }
 
     public function Bos_IsMenu(){
@@ -95,7 +91,7 @@ class SitemapAction {
 
 class SitemapPermission extends Ab_UserPermission {
 
-    public function __construct(SitemapModule $module) {
+    public function __construct(SitemapModule $module){
         Abricos::GetModule('user'); // заплатка
         $defRoles = array(
             new Ab_UserRole(SitemapAction::VIEW, Ab_UserGroup::GUEST),
@@ -110,7 +106,7 @@ class SitemapPermission extends Ab_UserPermission {
         parent::__construct($module, $defRoles);
     }
 
-    public function GetRoles() {
+    public function GetRoles(){
         $roles = array(
             SitemapAction::VIEW => $this->CheckAction(SitemapAction::VIEW),
             SitemapAction::WRITE => $this->CheckAction(SitemapAction::WRITE),

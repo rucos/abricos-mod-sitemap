@@ -16,12 +16,12 @@ Abricos::GetModule('sitemap')->GetManager();
 $man = SitemapManager::$instance;
 $page = $man->PageByCurrentAddress();
 
-if (empty($page)) {
+if (empty($page)){
     $brick->content = $brick->param->var['pagenotfound'];
     return;
 }
 
-if ($man->IsAdminRole()) {
+if ($man->IsAdminRole()){
     $brick->content .= Brick::ReplaceVarByData($brick->param->var['editor'], array(
         "pagenm" => $page->name,
         "pageid" => $page->id,
@@ -32,21 +32,21 @@ if ($man->IsAdminRole()) {
 
 $brick->content .= $page->detail->body;
 
-if (!empty($page->detail->mods)) {
+if (!empty($page->detail->mods)){
     $mods = json_decode($page->detail->mods);
-    foreach ($mods as $own => $val) {
-        foreach ($mods->$own as $bkname => $val2) {
+    foreach ($mods as $own => $val){
+        foreach ($mods->$own as $bkname => $val2){
             Brick::$builder->LoadBrickS($own, $bkname, $brick);
         }
     }
 }
-if (!empty($page->title)) {
+if (!empty($page->title)){
     Brick::$builder->SetGlobalVar('meta_title', $page->title);
 }
-if (!empty($page->detail->metaKeys)) {
+if (!empty($page->detail->metaKeys)){
     Brick::$builder->SetGlobalVar('meta_keys', $page->detail->metaKeys);
 }
-if (!empty($page->detail->metaDesc)) {
+if (!empty($page->detail->metaDesc)){
     Brick::$builder->SetGlobalVar('meta_desc', $page->detail->metaDesc);
 }
 
