@@ -1,17 +1,14 @@
 <?php
 /**
- * Module "Website Structure"
- *
  * @package Abricos
  * @subpackage Sitemap
- * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+ * @copyright 2008-2015 Alexander Kuzmin
+ * @license http://opensource.org/licenses/mit-license.php MIT License
  * @author Alexander Kuzmin <roosit@abricos.org>
  */
 
 /**
- *
- * @package Abricos
- * @subpackage Sitemap
+ * Class SitemapModule
  */
 class SitemapModule extends Ab_Module {
 

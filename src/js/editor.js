@@ -1,7 +1,3 @@
-/**
- * @module Sitemap
- * @namespace Brick.mod.sitemap
- */
 var Component = new Brick.Component();
 Component.requires = {
     yahoo: ['tabview', 'json', 'dragdrop'],
