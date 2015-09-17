@@ -12,15 +12,10 @@ Component.entryPoint = function(NS){
         buildTemplate = this.buildTemplate;
 
     var Y = Brick.YUI,
-
-        WAITING = 'waiting',
-        BOUNDING_BOX = 'boundingBox',
-
         COMPONENT = this,
-
         SYS = Brick.mod.sys;
 
-    NS.ManagerWidget = Y.Base.create('managerWidget', NS.AppWidget, [], {
+    NS.ManagerWidget = Y.Base.create('managerWidget', SYS.AppWidget, [], {
         onInitAppWidget: function(err, appInstance, options){
             this.renderManager();
         },

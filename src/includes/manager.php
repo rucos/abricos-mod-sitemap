@@ -619,12 +619,12 @@ class SitemapManager extends Ab_ModuleManager {
         if (!$this->IsAdminRole()){
             return null;
         }
-        $lng = $this->module->GetI18n();
+        $i18n = $this->module->I18n();
         return array(
             array(
                 "name" => "sitemap",
-                "title" => $lng['bosmenu']['sitemap'],
-                "icon" => "/modules/sitemap/js/images/cp_icon.gif",
+                "title" => $i18n->Translate('bosmenu.sitemap'),
+                "icon" => "/modules/sitemap/images/cp_icon.gif",
                 "url" => "sitemap/wspace/ws",
                 "parent" => "controlPanel"
             )

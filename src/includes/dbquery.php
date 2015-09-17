@@ -60,6 +60,8 @@ class SitemapDBQuery {
     }
 
     public static function MenuUpdate(Ab_Database $db, $d){
+        $d->nm = isset($d->nm) ? $d->nm : '';
+        $d->off = isset($d->off) ? $d->off : 0;
         $sql = "
 			UPDATE ".$db->prefix."sys_menu
 			SET
