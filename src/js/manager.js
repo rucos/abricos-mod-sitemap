@@ -1,7 +1,7 @@
 var Component = new Brick.Component();
 Component.requires = {
     mod: [
-        {name: 'sitemap', files: ['api.js', 'editor.js']},
+        {name: 'sitemap', files: ['editor.js']},
         {name: 'sys', files: ['panel.js', 'data.js', 'form.js']}
     ]
 };

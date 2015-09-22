@@ -9,10 +9,11 @@ Component.requires = {
 Component.entryPoint = function(NS){
 
     var Dom = YAHOO.util.Dom,
-        E = YAHOO.util.Event,
         L = YAHOO.lang,
         buildTemplate = this.buildTemplate,
         BW = Brick.mod.widget.Widget;
+
+    var SYS = Brick.mod.sys;
 
     var J = YAHOO.lang.JSON;
 
@@ -69,11 +70,11 @@ Component.entryPoint = function(NS){
 
             var detail = page.detail;
 
-            var Editor = Brick.widget.Editor;
-            this.editor = new Editor(this.gel('editor'), {
-                'width': '750px', height: '250px',
+            var Editor = SYS.Editor;
+            this.editor = new Editor({
+                srcNode: this.gel('editor'),
                 'mode': detail.editorMode > 0 ? Editor.MODE_CODE : Editor.MODE_VISUAL,
-                'value': detail.body
+                'content': detail.body
             });
 
             var mItem;
@@ -197,8 +198,8 @@ Component.entryPoint = function(NS){
                     'mtdsc': this.gel('pgdesc').value,
                     'tpl': this.gel('select.id').value,
                     'mods': this._mods,
-                    'bd': this.editor.getContent(),
-                    'em': this.editor.get('mode') == Brick.widget.Editor.MODE_CODE ? 1 : 0
+                    'bd': this.editor.get('content'),
+                    'em': this.editor.get('mode') == SYS.Editor.MODE_CODE ? 1 : 0
                 },
                 'menu': {
                     'id': this.page.menuid,

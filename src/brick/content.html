@@ -1,8 +1,8 @@
 <!--[*]
-[script]brick_content.php[/script]
+[script]brick/content.php[/script]
 [bkvar=editor]
 	<img id="mod-sitemap-fasteditor" onclick="showSitemapPageEditor({v#pageid}); return false;" style="cursor: pointer;" src="/modules/sitemap/images/edit.gif" alt="{#brick.content.1}" title="{#brick.content.1}"/>
-	<img id="mod-sitemap-loading" style="display: none;" src="/images/loading.gif" alt="{#brick.content.2}" />
+	<img id="mod-sitemap-loading" style="float: right; display: none;" src="/images/loading.gif" alt="{#brick.content.2}" />
 	
 	<script>
 		var gel = function(n){ return document.getElementById(n); },
@@ -13,8 +13,7 @@
 			elb.style.display = 'none';
 			ell.style.display = '';
 			
-			Brick.ff('sitemap', 'editor', function(){
-				var NS = Brick.mod.sitemap;
+			Brick.use('sitemap', 'editor', function(err, NS){
 				NS.initManager(function(man){
 					man.pageLoad(pageid, function(page){
 						elb.style.display = '';

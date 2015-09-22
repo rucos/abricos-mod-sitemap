@@ -39,6 +39,15 @@ class SitemapManager extends Ab_ModuleManager {
         return $this->IsRoleEnable(SitemapAction::VIEW);
     }
 
+    /**
+     * @param $brick
+     * @return SitemapMenuBrickBulder
+     */
+    public function GetMenuBuilder($brick){
+        require_once 'buildclasses.php';
+        return new SitemapMenuBrickBulder($brick);
+    }
+
     public function AJAX($d){
         switch ($d->do){
             case 'initdata':

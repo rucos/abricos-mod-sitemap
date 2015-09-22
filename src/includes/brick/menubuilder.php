@@ -7,14 +7,11 @@
  * @author Alexander Kuzmin <roosit@abricos.org>
  */
 
-require_once 'buildclasses.php';
-
-Abricos::GetModule('sitemap')->GetManager();
-$man = SitemapManager::$instance;
-
+/** @var SitemapManager $man */
+$man = Abricos::GetModule('sitemap')->GetManager();
 $brick = Brick::$builder->brick;
 
-$builder = new SitemapMenuBrickBulder($brick);
+$builder = $man->GetMenuBuilder($brick);
 $brick->content = $builder->Build();
 
 ?>
