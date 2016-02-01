@@ -73,8 +73,8 @@ Component.entryPoint = function(NS){
             var Editor = SYS.Editor;
             this.editor = new Editor({
                 srcNode: this.gel('editor'),
-                'mode': detail.editorMode > 0 ? Editor.MODE_CODE : Editor.MODE_VISUAL,
-                'content': detail.body
+                mode: detail.editorMode > 0 ? Editor.MODE_CODE : Editor.MODE_VISUAL,
+                content: detail.body
             });
 
             var mItem;
@@ -210,6 +210,7 @@ Component.entryPoint = function(NS){
                     'off': (this.gel('moff').checked ? 1 : 0)
                 }
             };
+
             var menuid = sd['menu']['id'];
             if (L.isValue(this.cfg['parentMenuItem'])){
                 sd['menu']['pid'] = this.cfg['parentMenuItem'].id;
