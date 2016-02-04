@@ -36,6 +36,14 @@ Component.entryPoint = function(NS){
                 view: function(){
                     return this.getURL('ws') + 'manager/ManagerWidget/'
                 }
+            },
+            page: {
+                append: function(parentid){
+                    return this.getURL('ws') + 'editor/ManagerWidget/'
+                },
+                editor: function(pageid){
+                    return this.getURL('ws') + 'editor/ManagerWidget/'
+                },
             }
         }
     });

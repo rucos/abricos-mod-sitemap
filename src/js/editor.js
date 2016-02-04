@@ -1,24 +1,43 @@
 var Component = new Brick.Component();
 Component.requires = {
-    yahoo: ['tabview', 'json', 'dragdrop'],
+    yahoo: ['tabview', 'json'],
     mod: [
-        {name: 'sys', files: ['old-form.js', 'editor.js', 'container.js']},
+        {name: 'sys', files: ['panel.js', 'old-form.js', 'editor.js', 'container.js']},
         {name: 'sitemap', files: ['lib.js']}
     ]
 };
 Component.entryPoint = function(NS){
 
+    var Y = Brick.YUI,
+        COMPONENT = this,
+        SYS = Brick.mod.sys;
+
+    var L = Y.Lang;
+
     var Dom = YAHOO.util.Dom,
-        L = YAHOO.lang,
         buildTemplate = this.buildTemplate,
-        BW = Brick.mod.widget.Widget;
+        BW = Brick.mod.widget.Widget,
+        J = YAHOO.lang.JSON;
 
-    var SYS = Brick.mod.sys;
+    NS.PageEditorPanel = Y.Base.create('pageEditorPanel', SYS.AppWidget, [], {
+        onInitAppWidget: function(err, appInstance, options){
 
-    var J = YAHOO.lang.JSON;
+        },
+    }, {
+        ATTRS: {
+            component: {value: COMPONENT},
+            templateBlockName: {value: 'pageeditorpanel'},
+            page: {},
+            config: {}
+        },
+        CLICKS: {
+            save: 'save',
+            cancel: 'hide'
+        }
+    });
 
     var PageEditorWidget = function(container, page, cfg){
-        cfg = L.merge({
+        cfg = Y.merge({
             'onCancel': null,
             'onSave': null,
             'onLoadDetail': null,
@@ -53,9 +72,9 @@ Component.entryPoint = function(NS){
             if (L.isValue(page.detail) || page.id == 0){
                 this._onLoadDetail(page, cfg);
             } else {
-                var __self = this;
+                var instance = this;
                 NS.manager.pageLoad(page.id, function(){
-                    __self._onLoadDetail(page, cfg);
+                    instance._onLoadDetail(page, cfg);
                     NS.life(cfg['onLoadDetail'], page);
                 });
             }
@@ -225,14 +244,14 @@ Component.entryPoint = function(NS){
             });
         },
         selectModule: function(){
-            var __self = this;
+            var instance = this;
             NS.initManager(function(man){
                 man.loadBrickList(function(list){
                     if (L.isNull(list)){
                         return;
                     }
                     new Mods(function(id){
-                        __self.addModule(id);
+                        instance.addModule(id);
                     });
                 });
             });
@@ -273,40 +292,6 @@ Component.entryPoint = function(NS){
 
     });
     NS.PageEditorWidget = PageEditorWidget;
-
-    var PageEditorPanel = function(page, cfg){
-        this.page = page;
-        this.ccfg = L.merge({
-            'onClose': null,
-            'onSave': null
-        }, cfg || {});
-        PageEditorPanel.superclass.constructor.call(this, {'overflow': true});
-    };
-    YAHOO.extend(PageEditorPanel, Brick.widget.Dialog, {
-        initTemplate: function(){
-            return buildTemplate(this, 'pageeditorpanel').replace('pageeditorpanel');
-        },
-        onLoad: function(){
-            var __self = this, cfg = this.ccfg;
-            var closeCallback = function(){
-                __self.close();
-                NS.life(cfg['onClose']);
-            };
-            this.editorWidget = new PageEditorWidget(this._TM.getEl('pageeditorpanel.widget'), this.page, {
-                'parentMenuItem': cfg['parentMenuItem'],
-                'onLoadDetail': function(){
-                    __self.center();
-                },
-                'onCancel': closeCallback,
-                'onSave': function(){
-                    NS.life(cfg['onSave']);
-                    closeCallback();
-                }
-            });
-        }
-    });
-
-    NS.PageEditorPanel = PageEditorPanel;
 
     var Mods = function(callback){
         this.callback = callback;
@@ -357,7 +342,7 @@ Component.entryPoint = function(NS){
 
 
     var LinkEditorWidget = function(container, link, cfg){
-        cfg = L.merge({
+        cfg = Y.merge({
             'onCancel': null,
             'onSave': null
         }, cfg || {});
@@ -399,7 +384,7 @@ Component.entryPoint = function(NS){
             NS.life(this.cfg['onCancel']);
         },
         save: function(){
-            var __self = this;
+            var instance = this;
             var sd = {
                 'id': this.link.id,
                 'pid': this.link.parentid,
@@ -409,7 +394,7 @@ Component.entryPoint = function(NS){
             };
 
             NS.manager.linkSave(this.link.id, sd, function(){
-                NS.life(__self.cfg['onSave']);
+                NS.life(instance.cfg['onSave']);
             });
         }
     });
@@ -420,7 +405,7 @@ Component.entryPoint = function(NS){
      */
     var LinkEditorPanel = function(link, cfg){
         this.link = link;
-        cfg = L.merge({
+        cfg = Y.merge({
             'onClose': null,
             'onSave': null,
             'overflow': true
@@ -433,9 +418,9 @@ Component.entryPoint = function(NS){
             return buildTemplate(this, 'linkeditor').replace('linkeditor');
         },
         onLoad: function(){
-            var __self = this, cfg = this.ccfg;
+            var instance = this, cfg = this.ccfg;
             var closeCallback = function(){
-                __self.close();
+                instance.close();
                 NS.life(cfg['onClose']);
             };
             this.editorWidget = new NS.LinkEditorWidget(this._TM.getEl('linkeditor.widget'), this.link, {

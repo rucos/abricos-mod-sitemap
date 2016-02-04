@@ -1,19 +1,73 @@
-<!--{managerwidget}-->
-<div id="{i#id}" class="aw-sitemap">
-    <div class="manager">
-        <div class="loading " data-wait="show">
-            <img src="/images/loading.gif"/> Идет загрузка данных <br/> Пожалуйста, подождите...
+<!--{wrap}-->
+<div class="panel panel-default aw-sitemap">
+    <div class="panel-heading text-center">
+        <h3 class="panel-title pull-left">
+            Страницы сайта
+        </h3>
+
+        <span data-wait="show">
+            <img src="/images/loading.gif"/> Загрузка...
+        </span>
+
+        <div class="clearfix"></div>
+    </div>
+
+    <div class="panel-body">
+        <div id="{i#body}"></div>
+    </div>
+</div>
+
+<!--{widget}-->
+<div class="aw-sitemap manager">
+    <div class="loading " data-wait="show">
+        <img src="/images/loading.gif"/> Идет загрузка данных <br/> Пожалуйста, подождите...
+    </div>
+
+    <div data-wait="hide">
+
+        <div class="list-group">
+            <div class="list-group-item">
+                <a href="/" target="_blank"
+                   title="Открыть для просмотра в новом окне">
+                    Главная страница сайта
+                </a>
+
+                <div class="btn-toolbar pull-right">
+                    <a href="#" class="btn btn-success btn-xs"
+                       data-url="page.append(0)"
+                       title="Добавить">
+                        <i class="fa fa-plus-circle"></i>
+                    </a>
+
+                    <a href="#" class="btn btn-primary btn-xs"
+                       data-url="page.editor"
+                       title="Редактировать">
+                        <i class="fa fa-pencil-square-o"></i>
+                    </a>
+
+                    <a href="/" target="_blank" class="btn btn-default btn-xs"
+                       title="Открыть для просмотра в новом окне">
+                        <i class="fa fa-external-link"></i>
+                    </a>
+
+                </div>
+            </div>
+
         </div>
 
-        <div id="{i#view}" style="display: none" data-wait="hide">
-            <div class="bk_sitemap-def">
-                <div class="bk_sitemap-page">{##def.page}</div>
-                <div class="bk_sitemap-status"><!-- {##def.status} --></div>
-                <div class="bk_sitemap-modify">{##def.modify}</div>
-            </div>
-            <ul class="bk_sitemap-root">
-                <li class="bk_sitemap-level-0">
-                    <div class="bk_sitemap-page bk_sitemap-left-root">
+        <h4>Меню и элементы</h4>
+
+        <div id="{i#list}"></div>
+
+
+        <div class="bk_sitemap-def hide">
+            <div class="bk_sitemap-page">{##def.page}</div>
+            <div class="bk_sitemap-status"><!-- {##def.status} --></div>
+            <div class="bk_sitemap-modify">{##def.modify}</div>
+        </div>
+        <ul class="bk_sitemap-root">
+            <li class="bk_sitemap-level-0">
+                <div class="bk_sitemap-page bk_sitemap-left-root">
                         <span class="w1">
                             <a href="/" target="_blank">
                                 <span class="bk_sitemap-title">
@@ -22,24 +76,112 @@
                                 </span>
                             </a>
                         </span>
-                    </div>
-                    <div class="bk_sitemap-status bk_sitemap-published-status">
-                        <!-- {#mod.sitemap.manager.status.published} --></div>
-                    <div class="bk_sitemap-modify">
-                        <img src="/modules/sitemap/images/empty.gif" />
-                        <img src="/modules/sitemap/images/empty.gif" />
-                        <img id="{i#rootedit}" class="img_link" alt="{#mod.sitemap.manager.modify.edit}"
-                             title="{#mod.sitemap.manager.modify.edit}" src="/modules/sitemap/images/edit.gif"/>
-                        <img id="{i#rootadd}" class="img_link" alt="{#mod.sitemap.manager.modify.add}"
-                             title="{#mod.sitemap.manager.modify.add}" src="/modules/sitemap/images/plus.png"/>
-                        <img src="/modules/sitemap/images/empty.gif" />
-                    </div>
-                </li>
-            </ul>
-            <ul id="{i#items}" class="bk_sitemap"></ul>
-        </div>
+                </div>
+                <div class="bk_sitemap-status bk_sitemap-published-status">
+                    <!-- {#mod.sitemap.manager.status.published} --></div>
+                <div class="bk_sitemap-modify">
+                    <img src="/modules/sitemap/images/empty.gif"/>
+                    <img src="/modules/sitemap/images/empty.gif"/>
+                    <img data-click="rootedit" data-url="" class="img_link" alt="{#mod.sitemap.manager.modify.edit}"
+                         title="{#mod.sitemap.manager.modify.edit}" src="/modules/sitemap/images/edit.gif"/>
+                    <img data-click="rootadd" class="img_link" alt="{#mod.sitemap.manager.modify.add}"
+                         title="{#mod.sitemap.manager.modify.add}" src="/modules/sitemap/images/plus.png"/>
+                    <img src="/modules/sitemap/images/empty.gif"/>
+                </div>
+            </li>
+        </ul>
+        <ul id="{i#items}" class="bk_sitemap"></ul>
     </div>
 </div>
+
+<!--{table}-->
+<div class="list-group">{v#rows}</div>
+
+<!--{rowPage}-->
+<div class="list-group-item">
+
+    <i class="fa fa-folder-o" title="Ссылка"></i> &nbsp;
+
+    <a href="{v#url}" target="_blank"
+       title="Открыть для просмотра в новом окне">
+        {v#title}
+    </a>
+
+    {v#upDownButtons}
+
+    <div class="btn-toolbar pull-right">
+        <a href="#" class="btn btn-success btn-xs"
+           data-url="page.append({v#id})"
+           title="Добавить">
+            <i class="fa fa-plus-circle"></i>
+        </a>
+
+        <a href="#" class="btn btn-primary btn-xs"
+           data-url="page.editor"
+           title="Редактировать">
+            <i class="fa fa-pencil-square-o"></i>
+        </a>
+
+        <a href="{v#url}" target="_blank" class="btn btn-primary btn-xs"
+           title="Открыть для просмотра в новом окне">
+            <i class="fa fa-external-link"></i>
+        </a>
+
+        <button data-click="removeItem" class="btn btn-danger btn-xs"
+                title="Удалить элемент">
+            <i class="fa fa-trash-o"></i>
+        </button>
+    </div>
+
+</div>
+
+<!--{rowLink}-->
+<div class="list-group-item">
+
+    <i class="fa fa-link" title="Ссылка"></i> &nbsp;
+
+    <a href="{v#url}" target="_blank"
+       title="Открыть для просмотра в новом окне">{v#title}</a>
+
+    {v#upDownButtons}
+
+    <div class="btn-toolbar pull-right">
+        <a href="#" class="btn btn-primary btn-xs"
+           data-url="page.editor"
+           title="Редактировать">
+            <i class="fa fa-pencil-square-o"></i>
+        </a>
+
+        <a href="{v#url}" target="_blank" class="btn btn-primary btn-xs"
+           title="Открыть для просмотра в новом окне">
+            <i class="fa fa-external-link"></i>
+        </a>
+
+        <button data-click="removeItem" class="btn btn-danger btn-xs"
+                title="Удалить элемент">
+            <i class="fa fa-trash-o"></i>
+        </button>
+    </div>
+</div>
+
+<!--{upDownButtons}-->
+<div class="upDownButtons btn-toolbar pull-right">
+    <button class="btn btn-info btn-xs" type="button"
+            data-id="{v#id}"
+            data-click="moveUp"
+            title="Переместить вверх">
+
+        <i class="fa fa-arrow-up"></i>
+    </button>
+
+    <button class="btn btn-info btn-xs" type="button"
+            data-id="{v#id}"
+            data-click="moveDown"
+            title="Переместить вниз">
+        <i class="fa fa-arrow-down"></i>
+    </button>
+</div>
+
 
 <!--{maplist}-->
 <ul id="{i#id}-{v#id}" class="relative">{v#list}</ul>
@@ -48,8 +190,12 @@
 <li class="bk_sitemap-level-{v#level} {v#childstatus}">
     <div class="bk_sitemap-page">
 		<span class="w1">
-   		<img id="{i#expand}-{v#id}" src="{#mod.sitemap.manager.img.expand}" class="bk_sitemap-expander img_link" title=""
-             alt=""/>
+   		<img id="{i#expand}-{v#id}"
+             data-click="itemExpand" data-id="{v#id}"
+             src="{#mod.sitemap.manager.img.expand}"
+             class="bk_sitemap-expander img_link"
+             title="" alt=""/>
+
 			{v#imgtype}
 			<a title="" href="{v#url}" target="_blank"><span class="bk_sitemap-title">{v#title}</span></a>
 		</span>
@@ -63,7 +209,8 @@
 <li class="bk_sitemap-level-{v#level} no-children">
     <div class="bk_sitemap-page">
 		<span class="w1">
-			<img src="/modules/sitemap/images/empty.gif" alt="{#mod.sitemap.manager.icons.page}" title="{#mod.sitemap.manager.icons.page}"
+			<img src="/modules/sitemap/images/empty.gif" alt="{#mod.sitemap.manager.icons.page}"
+                 title="{#mod.sitemap.manager.icons.page}"
                  class="bk_sitemap-icon"/>
 			<a title="" href="{v#url}" target="_blank"><span class="bk_sitemap-title">{v#title}</span></a>
 		</span>
@@ -78,15 +225,22 @@
 <!--{imgtypepage}--><img src="/modules/sitemap/images/document.png" alt="{#mod.sitemap.manager.icons.page}"
                          title="{#mod.sitemap.manager.icons.page}" class="bk_sitemap-icon"/>
 <!--{biempty}--><img src="/modules/sitemap/images/empty.gif" alt=""/>
-<!--{biup}--><img id="{i#id}-{v#id}" class="img_link" alt="{#mod.sitemap.manager.modify.up}" title="{#mod.sitemap.manager.modify.up}"
+<!--{biup}--><img id="{i#id}-{v#id}" class="img_link" alt="{#mod.sitemap.manager.modify.up}"
+                  title="{#mod.sitemap.manager.modify.up}"
                   src="/modules/sitemap/images/arrow_up.png"/>
 <!--{bidown}--><img id="{i#id}-{v#id}" class="img_link" alt="{#mod.sitemap.manager.modify.down}"
                     title="{#mod.sitemap.manager.modify.down}" src="/modules/sitemap/images/arrow_down.png"/>
-<!--{biedit}--><img id="{i#id}-{v#id}" class="img_link" alt="{#mod.sitemap.manager.modify.edit}"
-                    title="{#mod.sitemap.manager.modify.edit}" src="/modules/sitemap/images/edit.gif"/>
+
+<!--{biedit}-->
+<img id="{i#id}-{v#id}"
+     data-click="itemEdit" data-id="{v#id}"
+     class="img_link" alt="{#mod.sitemap.manager.modify.edit}"
+     title="{#mod.sitemap.manager.modify.edit}" src="/modules/sitemap/images/edit.gif"/>
+
 <!--{bieditp}--><img id="{i#id}-{v#id}" class="img_link" alt="{#mod.sitemap.manager.modify.edit}"
                      title="{#mod.sitemap.manager.modify.edit}" src="/modules/sitemap/images/edit.gif"/>
-<!--{biadd}--><img id="{i#id}-{v#id}" class="img_link" alt="{#mod.sitemap.manager.modify.add}" title="{#mod.sitemap.manager.modify.add}"
+<!--{biadd}--><img id="{i#id}-{v#id}" class="img_link" alt="{#mod.sitemap.manager.modify.add}"
+                   title="{#mod.sitemap.manager.modify.add}"
                    src="/modules/sitemap/images/plus.png"/>
 <!--{birem}--><img id="{i#id}-{v#id}" class="img_link" class="remove" alt="{#mod.sitemap.manager.modify.delete}"
                    title="{#mod.sitemap.manager.modify.delete}" src="/modules/sitemap/images/icon-remove.gif"/>
@@ -115,7 +269,7 @@
                                       type="radio"/>Страницу</label><br/>
     </div>
 
-    <hr />
+    <hr/>
 
     <div class="text-right">
         <button data-click="create" class="btn btn-primary" type="submit">

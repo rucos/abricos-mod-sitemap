@@ -17,66 +17,123 @@ Component.entryPoint = function(NS){
 
     NS.ManagerWidget = Y.Base.create('managerWidget', SYS.AppWidget, [], {
         onInitAppWidget: function(err, appInstance, options){
-            this.renderManager();
+            this.sitemapWidget = new NS.SitemapWidget({
+                srcNode: this.template.one('body')
+            });
         },
-        renderManager: function(){
-            var list = NS.manager.menuList;
+        destructor: function(){
+            if (this.sitemapWidget){
+                this.sitemapWidget.destroy();
+            }
+        }
+    }, {
+        ATTRS: {
+            component: {value: COMPONENT},
+            templateBlockName: {value: 'wrap'}
+        }
+    });
 
-            Y.Node.one(this.template.gel('items')).setHTML(this.buildList(list));
+    NS.SitemapWidget = Y.Base.create('managerWidget', SYS.AppWidget, [], {
+        onInitAppWidget: function(err, appInstance, options){
 
-            this.renderList(list);
+            this.renderList();
+
+            this.old_renderManager();
         },
-        renderList: function(list){
+        _renderList: function(menuList){
+            var tp = this.template,
+                lst = "";
+
+            menuList.foreach(function(item){
+                lst += tp.replace(item.isLink ? 'rowLink' : 'rowPage', {
+                    id: item.id,
+                    title: item.title,
+                    url: item.URL(),
+                    upDownButtons: tp.replace('upDownButtons')
+                });
+            });
+            return lst;
+        },
+        renderList: function(){
+            var tp = this.template;
+            tp.setHTML({
+                list: tp.replace('table', {
+                    rows: this._renderList(NS.manager.menuList)
+                })
+            });
+        },
+
+        old_renderManager: function(){
+            this.template.setHTML({
+                items: this.buildList()
+            });
+            this.old_renderList();
+        },
+        old_renderList: function(list){
             list = list || NS.manager.menuList;
-            var __self = this, TId = this.template.idMap;
-            var lng = this.language;
+
+            var tp = this.template,
+                instance = this,
+                lng = this.language;
 
             list.foreach(function(item){
-                var container = Dom.get(TId['maplist']['id'] + '-' + item.id);
-                var img = Dom.get(TId['mapitem']['expand'] + '-' + item.id);
-                if (!L.isNull(img)){
-                    img.style.display = item.childs.count() > 0 ? '' : 'none';
+
+                var img = tp.one('mapitem.expand-' + item.id);
+
+                if (img){
+                    tp.toggleView(item.childs.count() > 0, 'mapitem.expand-' + item.id);
+                    img.set('src', lng.get('img.' + (item.expand ? 'collapse' : 'expand')));
                 }
 
-                img.src = lng.get('img.' + (item.expand ? 'collapse' : 'expand'));
-                Dom.setStyle(container, 'display', item.expand ? '' : 'none');
-                __self.renderList(item.childs);
+                tp.toggleView(item.expand, 'maplist.id-' + item.id);
+
+                instance.old_renderList(item.childs);
             });
         },
         onClick: function(e){
-            var TId = this.template.idMap, __self = this;
+            var numid = e.target.getData('id'),
+                pcfg = {
+                    'onSave': function(){
+                        instance.old_renderManager();
+                    }
+                };
 
-            var el = e.target.getDOMNode();
-
-            var pcfg = {
-                'onSave': function(){
-                    __self.renderManager();
-                }
-            };
-
-            var tp = this.template.idMap['managerwidget'];
-
-            switch (el.id) {
-                case tp['rootedit']:
+            switch (e.dataClick) {
+                case 'rootedit':
                     var page = NS.manager.pageList.find(0, 'index');
-                    new NS.PageEditorPanel(page, pcfg);
+                    new NS.PageEditorPanel({page: page, config: pcfg});
                     return true;
-                case tp['rootadd']:
+                case 'rootadd':
                     new NS.MenuItemCreatePanel({
                         onSave: function(){
-                            __self.renderManager();
+                            instance.old_renderManager();
                         }
                     });
                     return true;
+                case 'itemExpand':
+                    this.itemChangeExpand(numid);
+                    return true;
+
+                case 'itemEdit':
+                    var item = NS.manager.menuList.find(numid);
+                    if (item.isLink){
+                        new NS.LinkEditorPanel(item, pcfg);
+                    } else {
+                        var page = NS.manager.pageList.find(numid, 'index');
+                        new NS.PageEditorPanel({page: page, config: pcfg});
+                    }
+                    return true;
             }
+
+            var TId = this.template.idMap,
+                instance = this,
+                el = e.target.getDOMNode();
+
 
             var prefix = el.id.replace(/([0-9]+$)/, '');
             var numid = el.id.replace(prefix, "");
 
             switch (prefix) {
-                case (TId['mapitem']['expand'] + '-'):
-                    this.itemChangeExpand(numid);
-                    return true;
                 case (TId['biup']['id'] + '-'):
                     this.itemMove(numid, 'up');
                     return true;
@@ -87,21 +144,12 @@ Component.entryPoint = function(NS){
                     new NS.MenuItemCreatePanel({
                         menuId: numid,
                         onSave: function(){
-                            __self.renderManager();
+                            instance.old_renderManager();
                         }
                     });
                     return true;
                 case (TId['bieditp']['id'] + '-'):
                     // API.showPageEditorPanel(numid);
-                    return true;
-                case (TId['biedit']['id'] + '-'):
-                    var item = NS.manager.menuList.find(numid);
-                    if (item.isLink){
-                        new NS.LinkEditorPanel(item, pcfg);
-                    } else {
-                        var page = NS.manager.pageList.find(numid, 'index');
-                        new NS.PageEditorPanel(page, pcfg);
-                    }
                     return true;
                 case (TId['birem']['id'] + '-'):
                     this.menuRemove(numid);
@@ -114,21 +162,26 @@ Component.entryPoint = function(NS){
         },
 
         buildList: function(menuList){
-            var __self = this;
-            var TM = this.template, T = this.template.data, lst = "", index = 0;
+            menuList = menuList || NS.manager.menuList;
+
+            var instance = this,
+                tp = this.template,
+                lst = "",
+                index = 0;
+
             menuList.foreach(function(item){
                 var btns = "";
-                btns += (index == 0 ? T['biempty'] : T['biup']);
-                btns += (item.order < menuList.count() - 1 ? T['bidown'] : T['biempty']);
-                btns += T['biedit'];
-                btns += (item.isLink ? T['biempty'] : T['biadd']);
-                btns += T['birem'];
+                btns += tp.replace(index == 0 ? 'biempty' : 'biup');
+                btns += tp.replace(item.order < menuList.count() - 1 ? 'bidown' : 'biempty');
+                btns += tp.replace('biedit');
+                btns += tp.replace(item.isLink ? 'biempty' : 'biadd');
+                btns += tp.replace('birem');
 
                 var lstChilds = "";
                 if (item.childs.count() > 0){
-                    lstChilds = TM.replace('maplist', {
+                    lstChilds = tp.replace('maplist', {
                         'id': item.id,
-                        'list': __self.buildList(item.childs)
+                        'list': instance.buildList(item.childs)
                     });
                 }
 
@@ -136,17 +189,21 @@ Component.entryPoint = function(NS){
                     if (page.name == 'index' || page.menuid != item.id){
                         return;
                     }
-                    lstChilds += TM.replace('mapitempage', {
+                    lstChilds += tp.replace('mapitempage', {
                         'url': page.URL(),
                         'title': page.name + ".html",
                         'level': item.level + 1,
-                        'buttons': T['biempty'] + T['biempty'] + T['bieditp'] + T['biempty'] + T['biremp'],
+                        'buttons': tp.replace('biempty') +
+                        tp.replace('biempty') +
+                        tp.replace('bieditp') +
+                        tp.replace('biempty') +
+                        tp.replace('biremp'),
                         'id': page.id
                     });
                 });
 
-                lst += TM.replace('mapitem', {
-                    'imgtype': TM.replace(item.isLink ? 'imgtypelink' : 'imgtypemenu'),
+                lst += tp.replace('mapitem', {
+                    'imgtype': tp.replace(item.isLink ? 'imgtypelink' : 'imgtypemenu'),
                     'url': item.URL(),
                     'title': item.title,
                     'level': item.level,
@@ -160,9 +217,9 @@ Component.entryPoint = function(NS){
             return lst;
         },
         menuRemove: function(menuid){
-            var __self = this, item = NS.manager.menuList.find(menuid);
+            var instance = this, item = NS.manager.menuList.find(menuid);
             new NS.MenuItemRemovePanel(item, function(){
-                __self.renderManager();
+                instance.old_renderManager();
             });
         },
         itemChangeExpand: function(menuid){
@@ -172,7 +229,7 @@ Component.entryPoint = function(NS){
                 return;
             }
             item.expand = !item.expand;
-            this.renderList();
+            this.old_renderList();
         },
         itemMove: function(menuid, act){
             var item = NS.manager.menuList.find(menuid);
@@ -206,15 +263,14 @@ Component.entryPoint = function(NS){
                 };
             });
             NS.manager.menuSaveOrders(sd);
-            this.renderManager();
+            this.old_renderManager();
         }
     }, {
         ATTRS: {
-            component: {
-                value: COMPONENT
-            },
+            component: {value: COMPONENT},
             templateBlockName: {
-                value: 'managerwidget,maplist,mapitem,mapitempage,imgtypelink,imgtypemenu,biempty,biup,bidown,biadd,bieditp,biedit,birem,biremp'
+                value: 'widget,table,rowPage,rowLink,upDownButtons' +
+                ',maplist,mapitem,mapitempage,imgtypelink,imgtypemenu,biempty,biup,bidown,biadd,bieditp,biedit,birem,biremp'
             }
         }
     });
@@ -232,9 +288,9 @@ Component.entryPoint = function(NS){
         },
 
         createMenuItem: function(){
-            var __self = this;
+            var instance = this;
             var onSave = function(){
-                NS.life(__self.get('onSave'));
+                NS.life(instance.get('onSave'));
             };
 
             var pMenuId = this.get('menuId');
@@ -242,18 +298,24 @@ Component.entryPoint = function(NS){
                 tm = this.template;
 
             if (tm.gel('mnuadd.type0').checked){
-                new NS.PageEditorPanel(new NS.Page({'nm': 'index'}), {
-                    'parentMenuItem': pMenu,
-                    'onSave': onSave
+                new NS.PageEditorPanel({
+                    page: new NS.Page({'nm': 'index'}),
+                    config: {
+                        'parentMenuItem': pMenu,
+                        'onSave': onSave
+                    }
                 });
             } else if (tm.gel('mnuadd.type1').checked){
                 new NS.LinkEditorPanel(new NS.Menu({
                     'pid': L.isValue(pMenu) ? pMenu.id : 0
                 }), {'onSave': onSave});
             } else {
-                new NS.PageEditorPanel(new NS.Page(), {
-                    'parentMenuItem': pMenu,
-                    'onSave': onSave
+                new NS.PageEditorPanel({
+                    page: new NS.Page(),
+                    config: {
+                        'parentMenuItem': pMenu,
+                        'onSave': onSave
+                    }
                 });
             }
             this.hide();
@@ -325,12 +387,12 @@ Component.entryPoint = function(NS){
             var TM = this._TM, gel = function(n){
                     return TM.getEl('removepanel.' + n);
                 },
-                __self = this;
+                instance = this;
             Dom.setStyle(gel('btns'), 'display', 'none');
             Dom.setStyle(gel('bloading'), 'display', '');
             NS.manager.menuRemove(this.item.id, function(){
-                __self.close();
-                NS.life(__self.callback);
+                instance.close();
+                NS.life(instance.callback);
             });
         }
     });

@@ -19,27 +19,18 @@
 						elb.style.display = '';
 						ell.style.display = 'none';
 						
-						new NS.PageEditorPanel(page, {
-							'onSave': function(){
-				   				Brick.Page.reload();
-							}
-						});
+						new NS.PageEditorPanel({
+                            page: page,
+                            config: {
+                                'onSave': function(){
+                                    Brick.Page.reload();
+                                }
+                            }
+                        });
 					});
 				});
 			});
 		};
-		/*
-		YAHOO.util.Event.onDOMReady(function () {
-			YAHOO.util.Event.addListener('mod-sitemap-fasteditor', 'click', function(){
-		   		Brick.Component.API.fire('sitemap', 'editor', 'showPageEditorPanelObj', {
-		   			pageid: {v#pageid}, withmenu: {v#withmenu}, menuid: {v#menuid},
-		   			savecallback: function(){
-		   				Brick.Page.reload();
-		   			}
-		   		});
-			});
-	    });
-	    /**/
 	</script>
 [/bkvar]
 

@@ -1,7 +1,19 @@
-<!--{pageeditorpanel}-->
-<div class='hd'>{#mod.sitemap.pageeditor.hd}</div>
-<div class='bd'>
-	<div id="{i#widget}"></div>
+<!--{pageEditor}-->
+<div class="panel panel-default aw-sitemap">
+    <div class="panel-heading text-center">
+        <h3 class="panel-title pull-left">
+            Редактор страницы
+        </h3>
+
+        <span data-wait="show">
+            <img src="/images/loading.gif"/> Загрузка...
+        </span>
+
+        <div class="clearfix"></div>
+    </div>
+    <div class="panel-body">
+        <div id="{i#body}"></div>
+    </div>
 </div>
 
 <!--{pageeditorwidget}-->
