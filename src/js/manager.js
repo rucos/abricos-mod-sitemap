@@ -42,15 +42,21 @@ Component.entryPoint = function(NS){
         },
         _renderList: function(menuList){
             var tp = this.template,
+                index = 0,
                 lst = "";
 
             menuList.foreach(function(item){
-                lst += tp.replace(item.isLink ? 'rowLink' : 'rowPage', {
+                lst += tp.replace(item.isLink ? 'rowLink' : 'rowMenu', {
                     id: item.id,
                     title: item.title,
                     url: item.URL(),
-                    upDownButtons: tp.replace('upDownButtons')
+                    upDownButtons: tp.replace('upDownButtons', {
+                        id: item.id,
+                        disabledUp: index === 0 ? 'disabled' : '',
+                        disabledDown: (item.order < menuList.count() - 1) ? '' : 'disabled'
+                    })
                 });
+                index++;
             });
             return lst;
         },
@@ -61,6 +67,7 @@ Component.entryPoint = function(NS){
                     rows: this._renderList(NS.manager.menuList)
                 })
             });
+            this.appURLUpdate();
         },
 
         old_renderManager: function(){
@@ -269,7 +276,7 @@ Component.entryPoint = function(NS){
         ATTRS: {
             component: {value: COMPONENT},
             templateBlockName: {
-                value: 'widget,table,rowPage,rowLink,upDownButtons' +
+                value: 'widget,table,rowMenu,rowLink,upDownButtons' +
                 ',maplist,mapitem,mapitempage,imgtypelink,imgtypemenu,biempty,biup,bidown,biadd,bieditp,biedit,birem,biremp'
             }
         }

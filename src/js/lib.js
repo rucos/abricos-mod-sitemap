@@ -34,16 +34,32 @@ Component.entryPoint = function(NS){
             ws: "#app={C#MODNAMEURI}/wspace/ws/",
             manager: {
                 view: function(){
-                    return this.getURL('ws') + 'manager/ManagerWidget/'
+                    return this.getURL('ws') + 'manager/ManagerWidget/';
                 }
+            },
+            menu: {
+                append: function(parentid){
+                    return this.getURL('ws') + 'editor/ManagerWidget/';
+                },
+                edit: function(menuid){
+                    return this.getURL('ws') + 'menuEditor/MenuEditorWidget/' + (menuid | 0) + '/';
+                },
             },
             page: {
                 append: function(parentid){
-                    return this.getURL('ws') + 'editor/ManagerWidget/'
+                    return this.getURL('ws') + 'editor/ManagerWidget/';
                 },
-                editor: function(pageid){
-                    return this.getURL('ws') + 'editor/ManagerWidget/'
+                edit: function(pageid){
+                    return this.getURL('ws') + 'pageEditor/PageEditorWidget/' + (pageid | 0) + '/';
                 },
+            },
+            link: {
+                append: function(parentid){
+
+                },
+                edit: function(linkid){
+
+                }
             }
         }
     });

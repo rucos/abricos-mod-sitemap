@@ -1,0 +1,104 @@
+<!--{widget}-->
+<div class="panel panel-default aw-sitemap">
+    <div class="panel-heading text-center">
+        <h3 class="panel-title pull-left">
+            Редактор страницы
+        </h3>
+
+        <span data-wait="show">
+            <img src="/images/loading.gif"/> Загрузка...
+        </span>
+
+        <div class="clearfix"></div>
+    </div>
+
+    <div class="panel-body">
+
+        <h4 class="pull-left">
+            Меню
+        </h4>
+
+        <div class="pull-right">
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox"> не отображать в списке
+                </label>
+            </div>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <div class="form-group row">
+
+            <div class="col-sm-2">
+                Название
+            </div>
+            <div class="col-sm-5">
+                <input id="{i#title}" class="form-control" type="text"/>
+
+                <div class="help-block">
+                    Название отображается в меню
+                </div>
+            </div>
+
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-2">
+                Имя
+            </div>
+            <div class="col-sm-5">
+                <input id="{i#name}" class="form-control" type="text"/>
+
+                <div class="help-block">
+                    Участвует в формировании адреса страницы (часть URL)
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-2">
+                Краткое описание
+            </div>
+            <div class="col-sm-9">
+                <input id="{i#descript}" class="form-control" type="text"/>
+            </div>
+        </div>
+
+        <hr/>
+
+        <h4>Контент страницы</h4>
+
+        <div id="{i#editor}" data-rows="15"></div>
+
+        <hr/>
+
+        <h4>SEO-оптимизация</h4>
+
+        <div class="form-group row">
+            <div class="col-sm-2">
+                META-title
+            </div>
+            <div class="col-sm-5">
+                <input id="{i#metaTitle}" class="form-control" type="text"/>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-2">
+                META-keywords
+            </div>
+            <div class="col-sm-5">
+                <input id="{i#metaKeys}" class="form-control" type="text"/>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-2">
+                META-description
+            </div>
+            <div class="col-sm-5">
+                <input id="{i#metaDescript}" class="form-control" type="text"/>
+            </div>
+        </div>
+
+    </div>
+</div>

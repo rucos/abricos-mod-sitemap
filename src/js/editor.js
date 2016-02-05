@@ -55,30 +55,6 @@ Component.entryPoint = function(NS){
             this.editor = null;
             this._mods = "";
         },
-        destroy: function(){
-            if (L.isValue(this.editor)){
-                this.editor.destroy();
-            }
-            PageEditorWidget.superclass.destroy.call(this);
-        },
-        onLoad: function(page, cfg){
-            if (!L.isValue(page)){
-                this.elHide('loading,view');
-                this.elShow('nullitem');
-                NS.life(cfg['onLoadDetail'], page);
-                return;
-            }
-
-            if (L.isValue(page.detail) || page.id == 0){
-                this._onLoadDetail(page, cfg);
-            } else {
-                var instance = this;
-                NS.manager.pageLoad(page.id, function(){
-                    instance._onLoadDetail(page, cfg);
-                    NS.life(cfg['onLoadDetail'], page);
-                });
-            }
-        },
         _onLoadDetail: function(page, cfg){
             this.elHide('loading');
             this.elShow('view');
@@ -87,14 +63,6 @@ Component.entryPoint = function(NS){
 
             new YAHOO.widget.TabView(this.gel('tab'));
 
-            var detail = page.detail;
-
-            var Editor = SYS.Editor;
-            this.editor = new Editor({
-                srcNode: this.gel('editor'),
-                mode: detail.editorMode > 0 ? Editor.MODE_CODE : Editor.MODE_VISUAL,
-                content: detail.body
-            });
 
             var mItem;
 

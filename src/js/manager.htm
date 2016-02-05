@@ -40,12 +40,12 @@
                     </a>
 
                     <a href="#" class="btn btn-primary btn-xs"
-                       data-url="page.editor"
+                       data-url="page.edit"
                        title="Редактировать">
                         <i class="fa fa-pencil-square-o"></i>
                     </a>
 
-                    <a href="/" target="_blank" class="btn btn-default btn-xs"
+                    <a href="/" target="_blank" class="btnItemGo btn btn-default btn-xs"
                        title="Открыть для просмотра в новом окне">
                         <i class="fa fa-external-link"></i>
                     </a>
@@ -97,7 +97,7 @@
 <!--{table}-->
 <div class="list-group">{v#rows}</div>
 
-<!--{rowPage}-->
+<!--{rowMenu}-->
 <div class="list-group-item">
 
     <i class="fa fa-folder-o" title="Ссылка"></i> &nbsp;
@@ -111,26 +111,27 @@
 
     <div class="btn-toolbar pull-right">
         <a href="#" class="btn btn-success btn-xs"
-           data-url="page.append({v#id})"
+           data-url="menu.append({v#id})"
            title="Добавить">
             <i class="fa fa-plus-circle"></i>
         </a>
 
         <a href="#" class="btn btn-primary btn-xs"
-           data-url="page.editor"
+           data-url="menu.edit({v#id})"
            title="Редактировать">
             <i class="fa fa-pencil-square-o"></i>
         </a>
 
-        <a href="{v#url}" target="_blank" class="btn btn-primary btn-xs"
+        <button data-click="removeItem" class="btnItemRemove btn btn-danger btn-xs"
+                title="Удалить элемент">
+            <i class="fa fa-trash-o"></i>
+        </button>
+
+        <a href="{v#url}" target="_blank" class=" btnItemGo btn btn-default btn-xs"
            title="Открыть для просмотра в новом окне">
             <i class="fa fa-external-link"></i>
         </a>
 
-        <button data-click="removeItem" class="btn btn-danger btn-xs"
-                title="Удалить элемент">
-            <i class="fa fa-trash-o"></i>
-        </button>
     </div>
 
 </div>
@@ -147,20 +148,20 @@
 
     <div class="btn-toolbar pull-right">
         <a href="#" class="btn btn-primary btn-xs"
-           data-url="page.editor"
+           data-url="link.edit({v#id})"
            title="Редактировать">
             <i class="fa fa-pencil-square-o"></i>
         </a>
 
-        <a href="{v#url}" target="_blank" class="btn btn-primary btn-xs"
-           title="Открыть для просмотра в новом окне">
-            <i class="fa fa-external-link"></i>
-        </a>
-
-        <button data-click="removeItem" class="btn btn-danger btn-xs"
+        <button data-click="removeItem" class="btnItemRemove btn btn-danger btn-xs"
                 title="Удалить элемент">
             <i class="fa fa-trash-o"></i>
         </button>
+
+        <a href="{v#url}" target="_blank" class=" btnItemGo btn btn-default btn-xs"
+           title="Открыть для просмотра в новом окне">
+            <i class="fa fa-external-link"></i>
+        </a>
     </div>
 </div>
 
@@ -169,6 +170,7 @@
     <button class="btn btn-info btn-xs" type="button"
             data-id="{v#id}"
             data-click="moveUp"
+            {v#disabledUp}
             title="Переместить вверх">
 
         <i class="fa fa-arrow-up"></i>
@@ -177,6 +179,7 @@
     <button class="btn btn-info btn-xs" type="button"
             data-id="{v#id}"
             data-click="moveDown"
+            {v#disabledDown}
             title="Переместить вниз">
         <i class="fa fa-arrow-down"></i>
     </button>
