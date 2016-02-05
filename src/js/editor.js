@@ -19,23 +19,6 @@ Component.entryPoint = function(NS){
         BW = Brick.mod.widget.Widget,
         J = YAHOO.lang.JSON;
 
-    NS.PageEditorPanel = Y.Base.create('pageEditorPanel', SYS.AppWidget, [], {
-        onInitAppWidget: function(err, appInstance, options){
-
-        },
-    }, {
-        ATTRS: {
-            component: {value: COMPONENT},
-            templateBlockName: {value: 'pageeditorpanel'},
-            page: {},
-            config: {}
-        },
-        CLICKS: {
-            save: 'save',
-            cancel: 'hide'
-        }
-    });
-
     var PageEditorWidget = function(container, page, cfg){
         cfg = Y.merge({
             'onCancel': null,
@@ -50,90 +33,7 @@ Component.entryPoint = function(NS){
     };
     YAHOO.extend(PageEditorWidget, BW, {
         init: function(page, cfg){
-            this.page = page;
             this.cfg = cfg;
-            this.editor = null;
-            this._mods = "";
-        },
-        _onLoadDetail: function(page, cfg){
-            this.elHide('loading');
-            this.elShow('view');
-
-            var TM = this._TM;
-
-            new YAHOO.widget.TabView(this.gel('tab'));
-
-
-            var mItem;
-
-            if (page.id == 0){
-                mItem = new NS.Menu({
-                    'pid': L.isValue(cfg['parentMenuId']) ? cfg['parentMenuId'].id : 0
-                });
-            } else {
-                mItem = NS.manager.menuList.find(page.menuid);
-            }
-
-            if (!L.isValue(mItem) && page.name == 'index'){ // заглавная страница
-                this.elHide('pgnamecont');
-                this.elSetValue('pgname', 'index');
-            } else if (page.name != 'index'){
-
-            } else {
-                this.elShow('menucont');
-
-                this.elSetValue({
-                    'mtitle': mItem.title,
-                    'mdesc': mItem.descript,
-                    'mname': mItem.name
-                });
-                this.gel('moff').checked = mItem.off > 0 ? true : false;
-            }
-
-            var s = TM.replace('option', {'id': '', 'tl': ''});
-            var tmps = NS.manager.templates;
-            for (var i = 0; i < tmps.length; i++){
-                s += TM.replace('option', {'id': tmps[i], 'tl': tmps[i]});
-            }
-
-            this.elSetHTML('templates', TM.replace('select', {'list': s}));
-
-            this.elSetValue({
-                'pgname': page.name,
-                'pgtitle': page.title,
-                'pgkeys': detail.metaKeys,
-                'pgdesc': detail.metaDesc,
-                'select.id': detail.template
-            });
-
-            if (page.name == 'index'){
-                this.elHide('pgnamecont');
-            }
-
-            this._mods = detail.mods;
-
-            this.renderMods();
-        },
-        renderMods: function(){
-            var TM = this._TM, mods = this._mods, lst = "";
-            this.modsid = {};
-
-            if (L.isString(mods) && mods.length > 0){
-                var o = YAHOO.lang.JSON.parse(mods), i = 0;
-
-                for (var own in o){
-                    for (var bk in o[own]){
-                        this.modsid[i] = {'own': own, 'bk': bk};
-                        lst += TM.replace('moditem', {
-                            'own': own,
-                            'nm': bk,
-                            'id': i
-                        });
-                        i++;
-                    }
-                }
-            }
-            this.elSetHTML('modlist', lst);
         },
         onClick: function(el, tp){
             switch (el.id) {
@@ -164,52 +64,6 @@ Component.entryPoint = function(NS){
         },
         close: function(){
             NS.life(this.cfg['onCancel']);
-        },
-        nameTranslite: function(){
-            var el = this.gel('mname');
-            var title = this.gel('mtitle');
-            if (!el.value && title.value){
-                el.value = Brick.util.Translite.ruen(title.value);
-            }
-        },
-        save: function(){
-            var cfg = this.cfg;
-            this.nameTranslite();
-
-            var sd = {
-                'page': {
-                    'id': this.page.id,
-                    'nm': this.gel('pgname').value,
-                    'tl': this.gel('pgtitle').value,
-                    'mtks': this.gel('pgkeys').value,
-                    'mtdsc': this.gel('pgdesc').value,
-                    'tpl': this.gel('select.id').value,
-                    'mods': this._mods,
-                    'bd': this.editor.get('content'),
-                    'em': this.editor.get('mode') == SYS.Editor.MODE_CODE ? 1 : 0
-                },
-                'menu': {
-                    'id': this.page.menuid,
-                    'pid': L.isValue(this.cfg['parentMenuItem']) ? this.cfg['parentMenuItem'].id : 0,
-                    'tl': this.gel('mtitle').value,
-                    'dsc': this.gel('mdesc').value,
-                    'nm': this.gel('mname').value,
-                    'off': (this.gel('moff').checked ? 1 : 0)
-                }
-            };
-
-            var menuid = sd['menu']['id'];
-            if (L.isValue(this.cfg['parentMenuItem'])){
-                sd['menu']['pid'] = this.cfg['parentMenuItem'].id;
-            } else if (menuid > 0){
-                var menu = NS.manager.menuList.find(menuid);
-                if (L.isValue(menu) && L.isValue(menu.parent)){
-                    sd['menu']['pid'] = menu.parent.id;
-                }
-            }
-            NS.manager.pageSave(this.page.id, sd, function(){
-                NS.life(cfg['onSave']);
-            });
         },
         selectModule: function(){
             var instance = this;
@@ -266,27 +120,11 @@ Component.entryPoint = function(NS){
         Mods.superclass.constructor.call(this);
     };
     YAHOO.extend(Mods, Brick.widget.Dialog, {
-        el: function(name){
-            return Dom.get(this._TId['mods'][name]);
-        },
-        elv: function(name){
-            return Brick.util.Form.getValue(this.el(name));
-        },
-        setelv: function(name, value){
-            Brick.util.Form.setValue(this.el(name), value);
-        },
         initTemplate: function(){
             return buildTemplate(this, 'mods,modstable,modsrow').replace('mods');
         },
         onLoad: function(){
             var TM = this._TM;
-            var lst = "";
-            NS.manager.brickList.foreach(function(di){
-                lst += TM.replace('modsrow', {
-                    'id': di['id'], 'own': di['mName'], 'nm': di['bName']
-                });
-            });
-            TM.getEl('mods.table').innerHTML = TM.replace('modstable', {'rows': lst});
         },
         onClick: function(el){
             var TId = this._TId, tp = TId['mods'];
