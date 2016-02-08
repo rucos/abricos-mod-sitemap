@@ -161,16 +161,6 @@
 <!--{option}-->
 <option value="{v#id}">{v#tl}</option>
 
-<!--{moditem}-->
-<div style="float: left; text-align: center; margin-left: 5px">
-    <span>{v#own}</span><br/>
-    <span>{v#nm}</span><br/>
-	<span>
-		<a href="#" id="{i#insert}-{v#id}">{#mod.sitemap.editor.moditem.1}</a>&nbsp;
-		<a href="#" id="{i#remove}-{v#id}">{#mod.sitemap.editor.moditem.2}</a>
-	</span>
-</div>
-
 <!--{modules}-->
 <div class="form-group row">
     <div class="col-sm-2">
@@ -178,9 +168,7 @@
     </div>
     <div class="col-sm-10">
         <div id="{i#pageContainer}" class="row">
-            <div id="{i#selected}" class="col-sm-9">
-
-            </div>
+            <div id="{i#selected}" class="col-sm-9"></div>
             <div class="col-sm-3">
                 <button data-click="findModule" type="button" class="btn btn-info btn-sm"
                         data-wait="disable">
@@ -205,3 +193,26 @@
         </div>
     </div>
 </div>
+
+<!--{modItem}-->
+<div class="thumbnail col-sm-4">
+    <div class="caption text-center">
+        <h4>{v#module}:{v#brick}</h4>
+        <div class="btn-group">
+            <button data-click="insertModuleOnPage"
+                    data-module="{v#module}"
+                    data-brick="{v#brick}" class="btn btn-success btn-xs"
+                    title="Добавить на страницу">
+                Добавить
+            </button>
+            <button data-click="removeModuleFromSelected"
+                    data-module="{v#module}"
+                    data-brick="{v#brick}" class="btn btn-default btn-xs"
+                    title="Удалить из списка">
+                Удалить
+            </button>
+        </div>
+    </div>
+
+</div>
+

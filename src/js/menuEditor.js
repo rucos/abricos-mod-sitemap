@@ -102,11 +102,20 @@ Component.entryPoint = function(NS){
 
             this.moduleListWidget = new NS.PageModuleListWidget({
                 srcNode: tp.one('modules'),
-                page: page
+                page: page,
+                CLICKS: {
+                    insertModuleOnPage: {
+                        event: this._onInsertModuleOnPage,
+                        context: this
+                    }
+                }
             });
+        },
+        _onInsertModuleOnPage: function(e){
+            var module = e.target.getData('module'),
+                brick = e.target.getData('brick');
 
-            console.log(menu);
-            console.log(page);
+            this.editor.insertValue("[mod]" + module + ":" + brick + "[/mod]");
         },
         nameTranslite: function(){
             var tp = this.template,
@@ -127,26 +136,27 @@ Component.entryPoint = function(NS){
                 menu = this.get('menu');
 
             var sd = {
-                'page': {
+                page: {
                     id: page.id,
                     nm: tp.getValue('pageName'),
                     tl: tp.getValue('pageTitle'),
                     mtks: tp.getValue('pageKeys'),
                     mtdsc: tp.getValue('pageDescript'),
-                    // 'tpl': this.gel('select.id').value,
-                    // 'mods': this._mods,
+                    tpl: tp.getValue('select.id'),
+                    mods: this.moduleListWidget.toJSON(),
                     bd: this.editor.get('content'),
                     em: this.editor.get('mode') == SYS.Editor.MODE_CODE ? 1 : 0
                 },
-                'menu': {
+                menu: {
                     id: page.menuid,
-                    // 'pid': L.isValue(this.cfg['parentMenuItem']) ? this.cfg['parentMenuItem'].id : 0,
+                    pid: this.get('parentid'),
                     'tl': tp.getValue('menuTitle'),
                     'dsc': tp.getValue('menuDescript'),
                     'nm': tp.getValue('menuName'),
                     'off': tp.getValue('menuOff')
                 }
             };
+
             console.log(sd);
 
             /*
@@ -170,6 +180,7 @@ Component.entryPoint = function(NS){
             component: {value: COMPONENT},
             templateBlockName: {value: 'widget,select,option,moditem'},
             menuid: {value: 0},
+            parentid: {value: 0},
             modules: {value: ''},
             page: {},
             menu: {}
@@ -190,31 +201,34 @@ Component.entryPoint = function(NS){
 
     NS.PageModuleListWidget = Y.Base.create('pageModuleListWidget', SYS.AppWidget, [], {
         onInitAppWidget: function(err, appInstance, options){
+            var page = this.get('page');
+            if (!page || !page.detail){
+                return;
+            }
+
+            var mods = {};
+            try {
+                mods = Y.JSON.parse(page.detail.mods);
+            } catch (e) {
+            }
+
+            this.set('selected', mods);
+            this.renderMods();
         },
         renderMods: function(){
             var tp = this.template,
-                mods = this.get('page').detail.mods,
+                selected = this.get('selected'),
                 lst = "";
 
-            this.modsid = {};
-
-            if (Y.Lang.isString(mods) && mods.length > 0){
-                var o = Y.JSON.parse(mods),
-                    i = 0;
-
-                for (var own in o){
-                    for (var bk in o[own]){
-                        this.modsid[i] = {'own': own, 'bk': bk};
-                        lst += tp.replace('moditem', {
-                            'own': own,
-                            'nm': bk,
-                            'id': i
-                        });
-                        i++;
-                    }
+            for (var m in selected){
+                for (var b in selected[m]){
+                    lst += tp.replace('modItem', {
+                        module: m,
+                        brick: b
+                    });
                 }
             }
-            tp.setHTML('modlist', lst);
+            tp.setHTML('selected', lst);
         },
         _showFindModule: function(){
             var tp = this.template,
@@ -245,17 +259,40 @@ Component.entryPoint = function(NS){
         closeFindModule: function(){
             this.template.toggleView(true, 'pageContainer', 'dialogContainer');
         },
+        addModuleInList: function(){
+            var tp = this.template,
+                id = tp.getValue('select.id') | 0,
+                brick = NS.manager.brickList.get(id);
+
+            if (!brick){
+                return;
+            }
+
+            var selected = this.get('selected'),
+                m = selected[brick.mName] = selected[brick.mName] || {};
+
+            m[brick.bName] = '';
+
+            this.closeFindModule();
+
+            this.renderMods();
+        },
+        toJSON: function(){
+            var selected = this.get('selected');
+
+            return Y.JSON.stringify(selected);
+        }
     }, {
         ATTRS: {
             component: {value: COMPONENT},
-            templateBlockName: {value: 'modules,select,option'},
+            templateBlockName: {value: 'modules,select,option,modItem'},
             page: {value: ''},
-            selectd: {value: []},
+            selected: {value: []},
         },
         CLICKS: {
             findModule: 'showFindModule',
-            addModule: 'addModule',
-            closeFindModule: 'closeFindModule'
+            closeFindModule: 'closeFindModule',
+            addModule: 'addModuleInList',
         }
     });
 
