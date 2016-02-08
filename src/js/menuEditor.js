@@ -14,6 +14,10 @@ Component.entryPoint = function(NS){
 
     NS.MenuEditorWidget = Y.Base.create('menuEditorWidget', SYS.AppWidget, [], {
         onInitAppWidget: function(err, appInstance, options){
+
+            this.publish('saved', {defaultFn: this._defSaved});
+            this.publish('canceled', {defaultFn: this._defCandeled});
+
             var menuid = this.get('menuid'),
                 page = NS.manager.pageList.find(menuid, 'index');
 
@@ -133,7 +137,8 @@ Component.entryPoint = function(NS){
 
             var tp = this.template,
                 page = this.get('page'),
-                menu = this.get('menu');
+                menu = this.get('menu'),
+                parentid = this.get('parentid') | 0;
 
             var sd = {
                 page: {
@@ -149,7 +154,7 @@ Component.entryPoint = function(NS){
                 },
                 menu: {
                     id: page.menuid,
-                    pid: this.get('parentid'),
+                    pid: parentid,
                     'tl': tp.getValue('menuTitle'),
                     'dsc': tp.getValue('menuDescript'),
                     'nm': tp.getValue('menuName'),
@@ -157,23 +162,31 @@ Component.entryPoint = function(NS){
                 }
             };
 
-            console.log(sd);
+            var menuid = sd['menu']['id'];
 
-            /*
+            if (parentid === 0){
+                var menu = NS.manager.menuList.find(menuid);
+                if (menu && menu.parent){
+                    sd['menu']['pid'] = menu.parent.id;
+                }
+            }
 
-             var menuid = sd['menu']['id'];
-             if (L.isValue(this.cfg['parentMenuItem'])){
-             sd['menu']['pid'] = this.cfg['parentMenuItem'].id;
-             } else if (menuid > 0){
-             var menu = NS.manager.menuList.find(menuid);
-             if (L.isValue(menu) && L.isValue(menu.parent)){
-             sd['menu']['pid'] = menu.parent.id;
-             }
-             }
-             NS.manager.pageSave(this.page.id, sd, function(){
-             NS.life(cfg['onSave']);
-             });
-             /**/
+            this.set('waiting', true);
+
+            var instance = this;
+            NS.manager.pageSave(page.id, sd, function(){
+                instance.set('waiting', false);
+                instance.fire('saved');
+            });
+        },
+        cancel: function(){
+            this.fire('canceled');
+        },
+        _defSaved: function(){
+            this.go('ws');
+        },
+        _defCandeled: function(){
+            this.go('ws');
         },
     }, {
         ATTRS: {
@@ -277,9 +290,27 @@ Component.entryPoint = function(NS){
 
             this.renderMods();
         },
+        removeModuleFromSelected: function(e){
+            var module = e.target.getData('module'),
+                brick = e.target.getData('brick'),
+                selected = this.get('selected'),
+                nSelected = {};
+
+            for (var m in selected){
+                for (var b in selected[m]){
+                    if (m !== module || b !== brick){
+                        if (!nSelected[m]){
+                            nSelected[m] = {};
+                        }
+                        nSelected[m][b] ='';
+                    }
+                }
+            }
+            this.set('selected', nSelected);
+            this.renderMods();
+        },
         toJSON: function(){
             var selected = this.get('selected');
-
             return Y.JSON.stringify(selected);
         }
     }, {
@@ -293,6 +324,7 @@ Component.entryPoint = function(NS){
             findModule: 'showFindModule',
             closeFindModule: 'closeFindModule',
             addModule: 'addModuleInList',
+            removeModuleFromSelected: 'removeModuleFromSelected'
         }
     });
 
