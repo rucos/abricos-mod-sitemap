@@ -37,17 +37,17 @@ Component.entryPoint = function(NS){
                     return this.getURL('ws') + 'manager/ManagerWidget/';
                 }
             },
-            menu: {
-                append: function(parentid){
-                    return this.getURL('ws') + 'editor/ManagerWidget/';
-                },
-                edit: function(menuid){
-                    return this.getURL('ws') + 'menuEditor/MenuEditorWidget/' + (menuid | 0) + '/';
+            create: function(parentid){
+                return this.getURL('ws') + 'create/CreateWidget/' + (parentid | 0) + '/';
+            },
+            root: {
+                edit: function(){
+                    return this.getURL('ws') + 'pageEditor/PageEditorWidget/0/0/root/';
                 },
             },
-            page: {
+            menu: {
                 append: function(parentid){
-                    return this.getURL('ws') + 'editor/ManagerWidget/';
+                    return this.getURL('ws') + 'pageEditor/PageEditorWidget/0/'+ (parentid | 0) + '/menu/';
                 },
                 edit: function(pageid){
                     return this.getURL('ws') + 'pageEditor/PageEditorWidget/' + (pageid | 0) + '/';
@@ -60,7 +60,15 @@ Component.entryPoint = function(NS){
                 edit: function(linkid){
 
                 }
-            }
+            },
+            page: {
+                append: function(parentid){
+                    return this.getURL('ws') + 'pageEditor/PageEditorWidget/0/'+ (parentid | 0) + '/page/';
+                },
+                edit: function(pageid){
+                    return this.getURL('ws') + 'pageEditor/PageEditorWidget/' + (pageid | 0) + '/';
+                },
+            },
         }
     });
 };

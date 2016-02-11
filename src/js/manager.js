@@ -41,11 +41,33 @@ Component.entryPoint = function(NS){
             this.old_renderManager();
         },
         _renderList: function(menuList){
-            var tp = this.template,
+            var instance = this,
+                tp = this.template,
                 index = 0,
-                lst = "";
+                lst = "",
+                childVisibleStatus = NS.SitemapWidget.childVisibleStatus;
 
             menuList.foreach(function(item){
+
+                var childButtons = '',
+                    childList = '',
+                    childStatus = !!childVisibleStatus[item.id];
+
+                if (item.childs.count() > 0){
+                    childButtons = tp.replace('childButtons', {
+                        id: item.id,
+                        count: item.childs.count(),
+                        isHideShow: childStatus ? 'hide' : '',
+                        isHideHide: !childStatus ? 'hide' : '',
+                    });
+
+                    if (childStatus){
+                        childList = tp.replace('table', {
+                            rows: instance._renderList(item.childs)
+                        });
+                    }
+                }
+
                 lst += tp.replace(item.isLink ? 'rowLink' : 'rowMenu', {
                     id: item.id,
                     title: item.title,
@@ -54,7 +76,9 @@ Component.entryPoint = function(NS){
                         id: item.id,
                         disabledUp: index === 0 ? 'disabled' : '',
                         disabledDown: (item.order < menuList.count() - 1) ? '' : 'disabled'
-                    })
+                    }),
+                    childButtons: childButtons,
+                    childList: childList
                 });
                 index++;
             });
@@ -70,9 +94,102 @@ Component.entryPoint = function(NS){
             this.appURLUpdate();
         },
 
+        showChilds: function(itemid){
+            console.log(itemid);
+            NS.SitemapWidget.childVisibleStatus[itemid] = true;
+            this.renderList();
+        },
+        hideChilds: function(itemid){
+            NS.SitemapWidget.childVisibleStatus[itemid] = false;
+            this.renderList();
+        },
+        onClick: function(e){
+
+            var itemid = e.target.getData('id');
+
+            switch (e.dataClick) {
+                case 'showChilds':
+                    this.showChilds(itemid);
+                    return true;
+                case 'hideChilds':
+                    this.hideChilds(itemid);
+                    return true;
+            }
+
+            // TODO: old remove
+
+            var numid = e.target.getData('id'),
+                pcfg = {
+                    'onSave': function(){
+                        instance.old_renderManager();
+                    }
+                };
+
+            switch (e.dataClick) {
+                case 'rootedit':
+                    var page = NS.manager.pageList.find(0, 'index');
+                    new NS.PageEditorPanel({page: page, config: pcfg});
+                    return true;
+                case 'rootadd':
+                    new NS.MenuItemCreatePanel({
+                        onSave: function(){
+                            instance.old_renderManager();
+                        }
+                    });
+                    return true;
+                case 'itemExpand':
+                    this.old_itemChangeExpand(numid);
+                    return true;
+
+                case 'itemEdit':
+                    var item = NS.manager.menuList.find(numid);
+                    if (item.isLink){
+                        new NS.LinkEditorPanel(item, pcfg);
+                    } else {
+                        var page = NS.manager.pageList.find(numid, 'index');
+                        new NS.PageEditorPanel({page: page, config: pcfg});
+                    }
+                    return true;
+            }
+
+            var TId = this.template.idMap,
+                instance = this,
+                el = e.target.getDOMNode();
+
+
+            var prefix = el.id.replace(/([0-9]+$)/, '');
+            var numid = el.id.replace(prefix, "");
+
+            switch (prefix) {
+                case (TId['biup']['id'] + '-'):
+                    this.old_itemMove(numid, 'up');
+                    return true;
+                case (TId['bidown']['id'] + '-'):
+                    this.old_itemMove(numid, 'down');
+                    return true;
+                case (TId['biadd']['id'] + '-'):
+                    new NS.MenuItemCreatePanel({
+                        menuId: numid,
+                        onSave: function(){
+                            instance.old_renderManager();
+                        }
+                    });
+                    return true;
+                case (TId['bieditp']['id'] + '-'):
+                    // API.showPageEditorPanel(numid);
+                    return true;
+                case (TId['birem']['id'] + '-'):
+                    this.old_menuRemove(numid);
+                    return true;
+                case (TId['biremp']['id'] + '-'):
+                    this.removePage(numid);
+                    return true;
+            }
+            return false;
+        },
         old_renderManager: function(){
             this.template.setHTML({
-                items: this.buildList()
+                items: this.old_buildList()
             });
             this.old_renderList();
         },
@@ -97,78 +214,7 @@ Component.entryPoint = function(NS){
                 instance.old_renderList(item.childs);
             });
         },
-        onClick: function(e){
-            var numid = e.target.getData('id'),
-                pcfg = {
-                    'onSave': function(){
-                        instance.old_renderManager();
-                    }
-                };
-
-            switch (e.dataClick) {
-                case 'rootedit':
-                    var page = NS.manager.pageList.find(0, 'index');
-                    new NS.PageEditorPanel({page: page, config: pcfg});
-                    return true;
-                case 'rootadd':
-                    new NS.MenuItemCreatePanel({
-                        onSave: function(){
-                            instance.old_renderManager();
-                        }
-                    });
-                    return true;
-                case 'itemExpand':
-                    this.itemChangeExpand(numid);
-                    return true;
-
-                case 'itemEdit':
-                    var item = NS.manager.menuList.find(numid);
-                    if (item.isLink){
-                        new NS.LinkEditorPanel(item, pcfg);
-                    } else {
-                        var page = NS.manager.pageList.find(numid, 'index');
-                        new NS.PageEditorPanel({page: page, config: pcfg});
-                    }
-                    return true;
-            }
-
-            var TId = this.template.idMap,
-                instance = this,
-                el = e.target.getDOMNode();
-
-
-            var prefix = el.id.replace(/([0-9]+$)/, '');
-            var numid = el.id.replace(prefix, "");
-
-            switch (prefix) {
-                case (TId['biup']['id'] + '-'):
-                    this.itemMove(numid, 'up');
-                    return true;
-                case (TId['bidown']['id'] + '-'):
-                    this.itemMove(numid, 'down');
-                    return true;
-                case (TId['biadd']['id'] + '-'):
-                    new NS.MenuItemCreatePanel({
-                        menuId: numid,
-                        onSave: function(){
-                            instance.old_renderManager();
-                        }
-                    });
-                    return true;
-                case (TId['bieditp']['id'] + '-'):
-                    // API.showPageEditorPanel(numid);
-                    return true;
-                case (TId['birem']['id'] + '-'):
-                    this.menuRemove(numid);
-                    return true;
-                case (TId['biremp']['id'] + '-'):
-                    this.removePage(numid);
-                    return true;
-            }
-            return false;
-        },
-
-        buildList: function(menuList){
+        old_buildList: function(menuList){
             menuList = menuList || NS.manager.menuList;
 
             var instance = this,
@@ -188,7 +234,7 @@ Component.entryPoint = function(NS){
                 if (item.childs.count() > 0){
                     lstChilds = tp.replace('maplist', {
                         'id': item.id,
-                        'list': instance.buildList(item.childs)
+                        'list': instance.old_buildList(item.childs)
                     });
                 }
 
@@ -223,13 +269,13 @@ Component.entryPoint = function(NS){
             });
             return lst;
         },
-        menuRemove: function(menuid){
+        old_menuRemove: function(menuid){
             var instance = this, item = NS.manager.menuList.find(menuid);
             new NS.MenuItemRemovePanel(item, function(){
                 instance.old_renderManager();
             });
         },
-        itemChangeExpand: function(menuid){
+        old_itemChangeExpand: function(menuid){
             var list = NS.manager.menuList;
             var item = list.find(menuid);
             if (!L.isValue(item)){
@@ -238,7 +284,7 @@ Component.entryPoint = function(NS){
             item.expand = !item.expand;
             this.old_renderList();
         },
-        itemMove: function(menuid, act){
+        old_itemMove: function(menuid, act){
             var item = NS.manager.menuList.find(menuid);
             if (L.isNull(item)){
                 return;
@@ -276,10 +322,11 @@ Component.entryPoint = function(NS){
         ATTRS: {
             component: {value: COMPONENT},
             templateBlockName: {
-                value: 'widget,table,rowMenu,rowLink,upDownButtons' +
+                value: 'widget,table,rowMenu,rowLink,upDownButtons,childButtons' +
                 ',maplist,mapitem,mapitempage,imgtypelink,imgtypemenu,biempty,biup,bidown,biadd,bieditp,biedit,birem,biremp'
             }
-        }
+        },
+        childVisibleStatus: {}
     });
 
     NS.MenuItemCreatePanel = Y.Base.create('termsOfUseDialog', SYS.Dialog, [], {
@@ -397,7 +444,7 @@ Component.entryPoint = function(NS){
                 instance = this;
             Dom.setStyle(gel('btns'), 'display', 'none');
             Dom.setStyle(gel('bloading'), 'display', '');
-            NS.manager.menuRemove(this.item.id, function(){
+            NS.manager.old_menuRemove(this.item.id, function(){
                 instance.close();
                 NS.life(instance.callback);
             });

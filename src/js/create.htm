@@ -1,0 +1,62 @@
+<!--{widget}-->
+<div class="panel panel-default aw-sitemap">
+    <div class="panel-heading text-center">
+        <h3 class="panel-title pull-left">
+            Добавление элемента в структуру сайта
+        </h3>
+
+        <span data-wait="show">
+            <img src="/images/loading.gif"/> Загрузка...
+        </span>
+
+        <div class="btn-group pull-right hide">
+            <button data-click="create" class="btn btn-default btn-sm" type="button">
+                Добавить
+            </button>
+            <button data-click="cancel" class="btn btn-default btn-sm" type="button">
+                Отмена
+            </button>
+        </div>
+
+
+        <div class="clearfix"></div>
+    </div>
+
+    <div class="panel-body">
+
+        <h4>
+            Что будем добавлять?
+        </h4>
+
+        <div class="radio">
+            <label>
+                <input id="{i#type0}" name="item_type" value="0" type="radio" checked/>
+                Раздел
+            </label>
+        </div>
+        <div class="radio">
+            <label for="{i#type1}">
+                <input id="{i#type1}" name="item_type" value="1" type="radio"/>
+                Ссылку
+            </label>
+        </div>
+        <div class="radio">
+            <label for="{i#type2}">
+                <input id="{i#type2}" name="item_type" value="2" type="radio"/>
+                Страницу
+            </label>
+        </div>
+
+        <hr/>
+
+        <div class="btn-group pull-right">
+            <button data-click="create" class="btn btn-primary" type="button">
+                Добавить
+            </button>
+            <button data-click="cancel" class="btn btn-default" type="button">
+                Отмена
+            </button>
+        </div>
+
+    </div>
+</div>

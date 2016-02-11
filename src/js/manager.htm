@@ -34,13 +34,13 @@
 
                 <div class="btn-toolbar pull-right">
                     <a href="#" class="btn btn-success btn-xs"
-                       data-url="page.append(0)"
+                       data-url="create(0)"
                        title="Добавить">
                         <i class="fa fa-plus-circle"></i>
                     </a>
 
                     <a href="#" class="btn btn-primary btn-xs"
-                       data-url="page.edit"
+                       data-url="root.edit"
                        title="Редактировать">
                         <i class="fa fa-pencil-square-o"></i>
                     </a>
@@ -111,7 +111,7 @@
 
     <div class="btn-toolbar pull-right">
         <a href="#" class="btn btn-success btn-xs"
-           data-url="menu.append({v#id})"
+           data-url="create({v#id})"
            title="Добавить">
             <i class="fa fa-plus-circle"></i>
         </a>
@@ -131,9 +131,13 @@
            title="Открыть для просмотра в новом окне">
             <i class="fa fa-external-link"></i>
         </a>
-
     </div>
 
+    {v#childButtons}
+
+    <div class="clearfix"></div>
+
+    {v#childList}
 </div>
 
 <!--{rowLink}-->
@@ -163,6 +167,24 @@
             <i class="fa fa-external-link"></i>
         </a>
     </div>
+</div>
+
+<!--{childButtons}-->
+<div class="childButtons btn-toolbar pull-right">
+    <button class="{v#isHideShow} btn btn-default btn-xs" type="button"
+            data-id="{v#id}"
+            data-click="showChilds"
+            title="Развернуть элементы">
+
+        <i class="fa fa-plus"></i> Развернуть ({v#count})
+    </button>
+    <button class="{v#isHideHide} btn btn-default btn-xs" type="button"
+            data-id="{v#id}"
+            data-click="hideChilds"
+            title="Свернуть элементы">
+
+        <i class="fa fa-minus"></i> Свернуть ({v#count})
+    </button>
 </div>
 
 <!--{upDownButtons}-->
