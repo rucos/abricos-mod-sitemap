@@ -78,6 +78,8 @@ Component.entryPoint = function(NS){
                 tp.hide('menuContainer,pageNameContainer');
                 tp.setValue('pageName', 'index');
             } else if (page.name !== 'index'){
+                tp.hide('menuContainer')
+                tp.show('pageNameContainer');
             } else {
                 tp.show('menuContainer')
                 tp.hide('pageNameContainer');

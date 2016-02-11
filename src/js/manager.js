@@ -35,9 +35,7 @@ Component.entryPoint = function(NS){
 
     NS.SitemapWidget = Y.Base.create('managerWidget', SYS.AppWidget, [], {
         onInitAppWidget: function(err, appInstance, options){
-
             this.renderList();
-
             this.old_renderManager();
         },
         _renderList: function(menuList){
@@ -51,20 +49,40 @@ Component.entryPoint = function(NS){
 
                 var childButtons = '',
                     childList = '',
-                    childStatus = !!childVisibleStatus[item.id];
+                    childStatus = !!childVisibleStatus[item.id],
+                    childCount = 0;
+
+                NS.manager.pageList.foreach(function(page){
+                    if (page.name === 'index' || page.menuid != item.id){
+                        return;
+                    }
+                    childList += tp.replace('rowPage', {
+                        url: page.URL(),
+                        title: page.name + ".html",
+                        id: page.id
+                    });
+                    childCount++;
+                });
 
                 if (item.childs.count() > 0){
+                    childList += instance._renderList(item.childs);
+                    childCount += item.childs.count();
+                }
+
+                if (childList !== ''){
                     childButtons = tp.replace('childButtons', {
                         id: item.id,
-                        count: item.childs.count(),
+                        count: childCount,
                         isHideShow: childStatus ? 'hide' : '',
                         isHideHide: !childStatus ? 'hide' : '',
                     });
 
                     if (childStatus){
                         childList = tp.replace('table', {
-                            rows: instance._renderList(item.childs)
+                            rows: childList
                         });
+                    } else {
+                        childList = '';
                     }
                 }
 
@@ -80,6 +98,8 @@ Component.entryPoint = function(NS){
                     childButtons: childButtons,
                     childList: childList
                 });
+
+
                 index++;
             });
             return lst;
@@ -95,7 +115,6 @@ Component.entryPoint = function(NS){
         },
 
         showChilds: function(itemid){
-            console.log(itemid);
             NS.SitemapWidget.childVisibleStatus[itemid] = true;
             this.renderList();
         },
@@ -322,7 +341,7 @@ Component.entryPoint = function(NS){
         ATTRS: {
             component: {value: COMPONENT},
             templateBlockName: {
-                value: 'widget,table,rowMenu,rowLink,upDownButtons,childButtons' +
+                value: 'widget,table,rowMenu,rowPage,rowLink,upDownButtons,childButtons' +
                 ',maplist,mapitem,mapitempage,imgtypelink,imgtypemenu,biempty,biup,bidown,biadd,bieditp,biedit,birem,biremp'
             }
         },

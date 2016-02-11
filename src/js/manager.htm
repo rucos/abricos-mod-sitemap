@@ -140,6 +140,33 @@
     {v#childList}
 </div>
 
+<!--{rowPage}-->
+<div class="list-group-item">
+
+    <i class="fa fa-link" title="Ссылка"></i> &nbsp;
+
+    <a href="{v#url}" target="_blank"
+       title="Открыть для просмотра в новом окне">{v#title}</a>
+
+    <div class="btn-toolbar pull-right">
+        <a href="#" class="btn btn-primary btn-xs"
+           data-url="link.edit({v#id})"
+           title="Редактировать">
+            <i class="fa fa-pencil-square-o"></i>
+        </a>
+
+        <button data-click="removeItem" class="btnItemRemove btn btn-danger btn-xs"
+                title="Удалить элемент">
+            <i class="fa fa-trash-o"></i>
+        </button>
+
+        <a href="{v#url}" target="_blank" class=" btnItemGo btn btn-default btn-xs"
+           title="Открыть для просмотра в новом окне">
+            <i class="fa fa-external-link"></i>
+        </a>
+    </div>
+</div>
+
 <!--{rowLink}-->
 <div class="list-group-item">
 
