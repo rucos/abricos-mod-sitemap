@@ -122,9 +122,47 @@ Component.entryPoint = function(NS){
             NS.SitemapWidget.childVisibleStatus[itemid] = false;
             this.renderList();
         },
-        onClick: function(e){
+        itemMove: function(menuid, act){
+            var item = NS.manager.menuList.find(menuid);
+            if (L.isNull(item)){
+                return;
+            }
 
-            var itemid = e.target.getData('id');
+            var list = L.isNull(item.parent) ? NS.manager.menuList : item.parent.childs;
+
+            for (var i = 0; i < list.count(); i++){
+                list.getByIndex(i).order = i;
+            }
+            for (var i = 0; i < list.count(); i++){
+                var item = list.getByIndex(i);
+                if (item.id == menuid){
+                    if (act == 'up'){
+                        list.getByIndex(i - 1).order = i;
+                        list.getByIndex(i).order = i - 1;
+                    } else if (act == 'down'){
+                        list.getByIndex(i).order = i + 1;
+                        list.getByIndex(i + 1).order = i;
+                    }
+                }
+            }
+            list.reorder();
+            var sd = [];
+            list.foreach(function(item){
+                sd[sd.length] = {
+                    id: item.id,
+                    o: item.order
+                };
+            });
+            NS.manager.menuSaveOrders(sd);
+            this.renderList();
+        },
+        onClick: function(e){
+            var target = e.defineTarget || e.target,
+                itemid = target.getData('id');
+
+            if (target.get('disabled')){
+                return;
+            }
 
             switch (e.dataClick) {
                 case 'showChilds':
@@ -133,7 +171,14 @@ Component.entryPoint = function(NS){
                 case 'hideChilds':
                     this.hideChilds(itemid);
                     return true;
+                case 'moveUp':
+                    this.itemMove(itemid, 'up');
+                    return true;
+                case 'moveDown':
+                    this.itemMove(itemid, 'down');
+                    return true;
             }
+
 
             // TODO: old remove
 
