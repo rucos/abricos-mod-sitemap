@@ -58,39 +58,6 @@
         <h4>Меню и элементы</h4>
 
         <div id="{i#list}"></div>
-
-
-        <div class="bk_sitemap-def hide">
-            <div class="bk_sitemap-page">{##def.page}</div>
-            <div class="bk_sitemap-status"><!-- {##def.status} --></div>
-            <div class="bk_sitemap-modify">{##def.modify}</div>
-        </div>
-        <ul class="bk_sitemap-root">
-            <li class="bk_sitemap-level-0">
-                <div class="bk_sitemap-page bk_sitemap-left-root">
-                        <span class="w1">
-                            <a href="/" target="_blank">
-                                <span class="bk_sitemap-title">
-                                    {#mod.sitemap.manager.panel.title}
-                                    &nbsp;
-                                </span>
-                            </a>
-                        </span>
-                </div>
-                <div class="bk_sitemap-status bk_sitemap-published-status">
-                    <!-- {#mod.sitemap.manager.status.published} --></div>
-                <div class="bk_sitemap-modify">
-                    <img src="/modules/sitemap/images/empty.gif"/>
-                    <img src="/modules/sitemap/images/empty.gif"/>
-                    <img data-click="rootedit" data-url="" class="img_link" alt="{#mod.sitemap.manager.modify.edit}"
-                         title="{#mod.sitemap.manager.modify.edit}" src="/modules/sitemap/images/edit.gif"/>
-                    <img data-click="rootadd" class="img_link" alt="{#mod.sitemap.manager.modify.add}"
-                         title="{#mod.sitemap.manager.modify.add}" src="/modules/sitemap/images/plus.png"/>
-                    <img src="/modules/sitemap/images/empty.gif"/>
-                </div>
-            </li>
-        </ul>
-        <ul id="{i#items}" class="bk_sitemap"></ul>
     </div>
 </div>
 
@@ -98,7 +65,7 @@
 <div class="list-group">{v#rows}</div>
 
 <!--{rowMenu}-->
-<div class="list-group-item">
+<div class="list-group-item" data-id="{v#id}" data-type="menu">
 
     <i class="fa fa-folder-o" title="Ссылка"></i> &nbsp;
 
@@ -107,33 +74,43 @@
         {v#title}
     </a>
 
-    {v#upDownButtons}
+    <div class="pull-right removeContainer"></div>
 
-    <div class="btn-toolbar pull-right">
-        <a href="#" class="btn btn-success btn-xs"
-           data-url="create({v#id})"
-           title="Добавить">
-            <i class="fa fa-plus-circle"></i>
-        </a>
+    <table class="pull-right buttonsContainer">
+        <tbody>
+        <tr>
+            {v#childButtons}
 
-        <a href="#" class="btn btn-primary btn-xs"
-           data-url="menu.edit({v#id})"
-           title="Редактировать">
-            <i class="fa fa-pencil-square-o"></i>
-        </a>
+            <td class="btn-toolbar">
+                <a href="#" class="btn btn-success btn-xs"
+                   data-url="create({v#id})"
+                   title="Добавить">
+                    <i class="fa fa-plus-circle"></i>
+                </a>
 
-        <button data-click="removeItem" class="btnItemRemove btn btn-danger btn-xs"
-                title="Удалить элемент">
-            <i class="fa fa-trash-o"></i>
-        </button>
+                <a href="#" class="btn btn-primary btn-xs"
+                   data-url="menu.edit({v#id})"
+                   title="Редактировать">
+                    <i class="fa fa-pencil-square-o"></i>
+                </a>
 
-        <a href="{v#url}" target="_blank" class=" btnItemGo btn btn-default btn-xs"
-           title="Открыть для просмотра в новом окне">
-            <i class="fa fa-external-link"></i>
-        </a>
-    </div>
+                <button data-click="showRemoveMenu" class="btnItemRemove btn btn-danger btn-xs"
+                        data-id="{v#id}"
+                        title="Удалить элемент">
+                    <i class="fa fa-trash-o"></i>
+                </button>
 
-    {v#childButtons}
+                <a href="{v#url}" target="_blank" class=" btnItemGo btn btn-default btn-xs"
+                   title="Открыть для просмотра в новом окне">
+                    <i class="fa fa-external-link"></i>
+                </a>
+            </td>
+
+            {v#upDownButtons}
+        </tr>
+        </tbody>
+    </table>
+
 
     <div class="clearfix"></div>
 
@@ -141,63 +118,76 @@
 </div>
 
 <!--{rowPage}-->
-<div class="list-group-item">
+<div class="list-group-item" data-id="{v#id}" data-type="page">
 
     <i class="fa fa-file-text-o" title="Страница"></i> &nbsp;
 
     <a href="{v#url}" target="_blank"
        title="Открыть для просмотра в новом окне">{v#title}</a>
 
-    <div class="btn-toolbar pull-right">
-        <a href="#" class="btn btn-primary btn-xs"
-           data-url="page.edit({v#id})"
-           title="Редактировать">
-            <i class="fa fa-pencil-square-o"></i>
-        </a>
+    <table class="pull-right">
+        <tbody>
+        <tr>
+            <td class="btn-toolbar">
+                <a href="#" class="btn btn-primary btn-xs"
+                   data-url="page.edit({v#id})"
+                   title="Редактировать">
+                    <i class="fa fa-pencil-square-o"></i>
+                </a>
 
-        <button data-click="removeItem" class="btnItemRemove btn btn-danger btn-xs"
-                title="Удалить элемент">
-            <i class="fa fa-trash-o"></i>
-        </button>
+                <button data-click="removeItem" class="btnItemRemove btn btn-danger btn-xs"
+                        title="Удалить элемент">
+                    <i class="fa fa-trash-o"></i>
+                </button>
 
-        <a href="{v#url}" target="_blank" class=" btnItemGo btn btn-default btn-xs"
-           title="Открыть для просмотра в новом окне">
-            <i class="fa fa-external-link"></i>
-        </a>
-    </div>
+                <a href="{v#url}" target="_blank" class="btnItemGo btn btn-default btn-xs"
+                   title="Открыть для просмотра в новом окне">
+                    <i class="fa fa-external-link"></i>
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
 </div>
 
 <!--{rowLink}-->
-<div class="list-group-item">
+<div class="list-group-item" data-id="{v#id}" data-type="link">
 
     <i class="fa fa-link" title="Ссылка"></i> &nbsp;
 
     <a href="{v#url}" target="_blank"
        title="Открыть для просмотра в новом окне">{v#title}</a>
 
-    {v#upDownButtons}
+    <table class="pull-right">
+        <tbody>
+        <tr>
+            <td class="btn-toolbar">
+                <a href="#" class="btn btn-primary btn-xs"
+                   data-url="link.edit({v#id})"
+                   title="Редактировать">
+                    <i class="fa fa-pencil-square-o"></i>
+                </a>
 
-    <div class="btn-toolbar pull-right">
-        <a href="#" class="btn btn-primary btn-xs"
-           data-url="link.edit({v#id})"
-           title="Редактировать">
-            <i class="fa fa-pencil-square-o"></i>
-        </a>
+                <button data-click="removeItem" class="btnItemRemove btn btn-danger btn-xs"
+                        title="Удалить элемент">
+                    <i class="fa fa-trash-o"></i>
+                </button>
 
-        <button data-click="removeItem" class="btnItemRemove btn btn-danger btn-xs"
-                title="Удалить элемент">
-            <i class="fa fa-trash-o"></i>
-        </button>
+                <a href="{v#url}" target="_blank" class=" btnItemGo btn btn-default btn-xs"
+                   title="Открыть для просмотра в новом окне">
+                    <i class="fa fa-external-link"></i>
+                </a>
+            </td>
+            {v#upDownButtons}
+        </tr>
+        </tbody>
+    </table>
 
-        <a href="{v#url}" target="_blank" class=" btnItemGo btn btn-default btn-xs"
-           title="Открыть для просмотра в новом окне">
-            <i class="fa fa-external-link"></i>
-        </a>
-    </div>
 </div>
 
 <!--{childButtons}-->
-<div class="childButtons btn-toolbar pull-right">
+<td class="childButtons btn-toolbar">
     <button class="{v#isHideShow} btn btn-default btn-xs" type="button"
             data-id="{v#id}"
             data-click="showChilds"
@@ -212,10 +202,10 @@
 
         <i class="fa fa-minus"></i> Свернуть ({v#count})
     </button>
-</div>
+</td>
 
 <!--{upDownButtons}-->
-<div class="upDownButtons btn-toolbar pull-right">
+<td class="upDownButtons btn-toolbar">
     <button class="btn btn-info btn-xs" type="button"
             data-id="{v#id}"
             data-click="moveUp"
@@ -232,127 +222,27 @@
             title="Переместить вниз">
         <i class="fa fa-arrow-down"></i>
     </button>
-</div>
+</td>
 
+<!--{menuRemove}-->
+<div class="alert alert-danger">
+    <span>
+        Удалить элемент меню со всем его содержимым?
+        &nbsp;
+    </span>
 
-<!--{maplist}-->
-<ul id="{i#id}-{v#id}" class="relative">{v#list}</ul>
-
-<!--{mapitem}-->
-<li class="bk_sitemap-level-{v#level} {v#childstatus}">
-    <div class="bk_sitemap-page">
-		<span class="w1">
-   		<img id="{i#expand}-{v#id}"
-             data-click="itemExpand" data-id="{v#id}"
-             src="{#mod.sitemap.manager.img.expand}"
-             class="bk_sitemap-expander img_link"
-             title="" alt=""/>
-
-			{v#imgtype}
-			<a title="" href="{v#url}" target="_blank"><span class="bk_sitemap-title">{v#title}</span></a>
-		</span>
-    </div>
-    <div class="bk_sitemap-status bk_sitemap-hidden-status"><!-- {#mod.sitemap.manager.status.hidden} --></div>
-    <div class="bk_sitemap-modify">{v#buttons}</div>
-    {v#child}
-</li>
-
-<!--{mapitempage}-->
-<li class="bk_sitemap-level-{v#level} no-children">
-    <div class="bk_sitemap-page">
-		<span class="w1">
-			<img src="/modules/sitemap/images/empty.gif" alt="{#mod.sitemap.manager.icons.page}"
-                 title="{#mod.sitemap.manager.icons.page}"
-                 class="bk_sitemap-icon"/>
-			<a title="" href="{v#url}" target="_blank"><span class="bk_sitemap-title">{v#title}</span></a>
-		</span>
-    </div>
-    <div class="bk_sitemap-status bk_sitemap-hidden-status"><!-- {#mod.sitemap.manager.status.hidden} --></div>
-    <div class="bk_sitemap-modify">{v#buttons}</div>
-</li>
-<!--{imgtypemenu}--><img src="/modules/sitemap/images/paper_bag.png" alt="{#mod.sitemap.manager.icons.menu}"
-                         title="{#mod.sitemap.manager.icons.menu}" class="bk_sitemap-icon"/>
-<!--{imgtypelink}--><img src="/modules/sitemap/images/chain.png" alt="{#mod.sitemap.manager.icons.link}"
-                         title="{#mod.sitemap.manager.icons.link}" class="bk_sitemap-icon"/>
-<!--{imgtypepage}--><img src="/modules/sitemap/images/document.png" alt="{#mod.sitemap.manager.icons.page}"
-                         title="{#mod.sitemap.manager.icons.page}" class="bk_sitemap-icon"/>
-<!--{biempty}--><img src="/modules/sitemap/images/empty.gif" alt=""/>
-<!--{biup}--><img id="{i#id}-{v#id}" class="img_link" alt="{#mod.sitemap.manager.modify.up}"
-                  title="{#mod.sitemap.manager.modify.up}"
-                  src="/modules/sitemap/images/arrow_up.png"/>
-<!--{bidown}--><img id="{i#id}-{v#id}" class="img_link" alt="{#mod.sitemap.manager.modify.down}"
-                    title="{#mod.sitemap.manager.modify.down}" src="/modules/sitemap/images/arrow_down.png"/>
-
-<!--{biedit}-->
-<img id="{i#id}-{v#id}"
-     data-click="itemEdit" data-id="{v#id}"
-     class="img_link" alt="{#mod.sitemap.manager.modify.edit}"
-     title="{#mod.sitemap.manager.modify.edit}" src="/modules/sitemap/images/edit.gif"/>
-
-<!--{bieditp}--><img id="{i#id}-{v#id}" class="img_link" alt="{#mod.sitemap.manager.modify.edit}"
-                     title="{#mod.sitemap.manager.modify.edit}" src="/modules/sitemap/images/edit.gif"/>
-<!--{biadd}--><img id="{i#id}-{v#id}" class="img_link" alt="{#mod.sitemap.manager.modify.add}"
-                   title="{#mod.sitemap.manager.modify.add}"
-                   src="/modules/sitemap/images/plus.png"/>
-<!--{birem}--><img id="{i#id}-{v#id}" class="img_link" class="remove" alt="{#mod.sitemap.manager.modify.delete}"
-                   title="{#mod.sitemap.manager.modify.delete}" src="/modules/sitemap/images/icon-remove.gif"/>
-<!--{biremp}--><img id="{i#id}-{v#id}" class="img_link" class="remove" alt="{#mod.sitemap.manager.modify.delete}"
-                    title="{#mod.sitemap.manager.modify.delete}" src="/modules/sitemap/images/icon-remove.gif"/>
-<!--{mnuadd}-->
-<div class='hd'>Добавление элемента структуры</div>
-<div class='bd'>
-
-    <p style="width: 400px">Что будем добавлять?</p>
-
-    <div class="radio">
-        <label for="{i#type0}">
-            <input id="{i#type0}" name="item_type" value="0" type="radio" checked/>
-            Раздел
-        </label>
-    </div>
-    <div class="radio">
-        <label for="{i#type1}">
-            <input id="{i#type1}" name="item_type" value="1" type="radio"/>
-            Ссылку
-        </label>
-    </div>
-    <div class="radio">
-        <label for="{i#type2}"><input id="{i#type2}" name="item_type" value="2"
-                                      type="radio"/>Страницу</label><br/>
-    </div>
-
-    <hr/>
-
-    <div class="text-right">
-        <button data-click="create" class="btn btn-primary" type="submit">
-            Добавить
+    <div class="btn-group pull-right">
+        <button class="btn btn-danger btn-xs" type="button"
+                data-id="{v#id}" data-type="menu"
+                data-click="removeMenu">
+            Удалить
         </button>
 
-        <button data-click="cancel" class="btn btn-default" type="button">
+        <button class="btn btn-default btn-xs" type="button"
+                data-id="{v#id}" data-type="menu"
+                data-click="closeRemoveMenu">
             Отмена
         </button>
 
-    </div>
-
-</div>
-
-
-<!--{removepanel}-->
-<div class='hd'>Удаление элемента меню</div>
-<div class='bd aw-sitemap'>
-    <div id="{i#dialogremove}" class="field">
-        <p>
-            Вы действительно хотите удалить раздел элемент со всем его содержимым?
-        </p>
-
-        <div class="buttons right">
-			<span id="{i#btns}">
-				<input id="{i#bremove}" value="Удалить" type="button"/>
-				<input id="{i#bcancel}" value="Отмена" type="button"/>
-			</span>
-			<span id="{i#bloading}" style="display: none">
-				<img src="/images/loading.gif"/> Удаление...
-			</span>
-        </div>
     </div>
 </div>
