@@ -190,6 +190,7 @@ Component.entryPoint = function(NS){
                 nodeButtons.removeClass('hide');
             }
         },
+
         showRemoveMenu: function(menuid){
             this._visibleRemoveItemContainer(menuid, 'menu', true);
         },
@@ -211,6 +212,53 @@ Component.entryPoint = function(NS){
                 instance.renderList();
             });
         },
+
+        showRemovePage: function(pageid){
+            this._visibleRemoveItemContainer(pageid, 'page', true);
+        },
+        closeRemovePage: function(pageid){
+            this._visibleRemoveItemContainer(pageid, 'page', false);
+        },
+        removePage: function(pageid){
+            var instance = this,
+                item = NS.manager.pageList.find(pageid);
+            
+            if (!item){
+                return;
+            }
+
+            this.set('waiting', true);
+
+            NS.manager.pageRemove(item.id, function(){
+                instance.set('waiting', false);
+                instance.closeRemovePage(pageid);
+                instance.renderList();
+            });
+        },
+
+        showRemoveLink: function(linkid){
+            this._visibleRemoveItemContainer(linkid, 'link', true);
+        },
+        closeRemoveLink: function(linkid){
+            this._visibleRemoveItemContainer(linkid, 'link', false);
+        },
+        removeLink: function(linkid){
+            var instance = this,
+                item = NS.manager.menuList.find(linkid);
+
+            if (!item){
+                return;
+            }
+
+            this.set('waiting', true);
+
+            NS.manager.menuRemove(item.id, function(){
+                instance.set('waiting', false);
+                instance.closeRemoveLink(linkid);
+                instance.renderList();
+            });
+        },
+        
         onClick: function(e){
             var target = e.defineTarget || e.target,
                 itemid = target.getData('id');
@@ -226,12 +274,14 @@ Component.entryPoint = function(NS){
                 case 'hideChilds':
                     this.hideChilds(itemid);
                     return true;
+
                 case 'moveUp':
                     this.itemMove(itemid, 'up');
                     return true;
                 case 'moveDown':
                     this.itemMove(itemid, 'down');
                     return true;
+
                 case 'showRemoveMenu':
                     this.showRemoveMenu(itemid);
                     return true;
@@ -241,6 +291,26 @@ Component.entryPoint = function(NS){
                 case 'removeMenu':
                     this.removeMenu(itemid);
                     return true;
+
+                case 'showRemovePage':
+                    this.showRemovePage(itemid);
+                    return true;
+                case 'closeRemovePage':
+                    this.closeRemovePage(itemid);
+                    return true;
+                case 'removePage':
+                    this.removePage(itemid);
+                    return true;
+
+                case 'showRemoveLink':
+                    this.showRemoveLink(itemid);
+                    return true;
+                case 'closeRemoveLink':
+                    this.closeRemoveLink(itemid);
+                    return true;
+                case 'removeLink':
+                    this.removeLink(itemid);
+                    return true;
             }
         }
     }, {
@@ -248,7 +318,7 @@ Component.entryPoint = function(NS){
             component: {value: COMPONENT},
             templateBlockName: {
                 value: 'widget,table,rowMenu,rowPage,rowLink,upDownButtons,childButtons' +
-                ',menuRemove'
+                ',menuRemove,pageRemove,linkRemove'
             }
         },
         childVisibleStatus: {}

@@ -111,7 +111,6 @@
         </tbody>
     </table>
 
-
     <div class="clearfix"></div>
 
     {v#childList}
@@ -125,7 +124,9 @@
     <a href="{v#url}" target="_blank"
        title="Открыть для просмотра в новом окне">{v#title}</a>
 
-    <table class="pull-right">
+    <div class="pull-right removeContainer"></div>
+
+    <table class="pull-right buttonsContainer">
         <tbody>
         <tr>
             <td class="btn-toolbar">
@@ -135,7 +136,8 @@
                     <i class="fa fa-pencil-square-o"></i>
                 </a>
 
-                <button data-click="removeItem" class="btnItemRemove btn btn-danger btn-xs"
+                <button data-click="showRemovePage" class="btnItemRemove btn btn-danger btn-xs"
+                        data-id="{v#id}"
                         title="Удалить элемент">
                     <i class="fa fa-trash-o"></i>
                 </button>
@@ -149,6 +151,7 @@
         </tbody>
     </table>
 
+    <div class="clearfix"></div>
 </div>
 
 <!--{rowLink}-->
@@ -159,7 +162,9 @@
     <a href="{v#url}" target="_blank"
        title="Открыть для просмотра в новом окне">{v#title}</a>
 
-    <table class="pull-right">
+    <div class="pull-right removeContainer"></div>
+
+    <table class="pull-right buttonsContainer">
         <tbody>
         <tr>
             <td class="btn-toolbar">
@@ -169,7 +174,8 @@
                     <i class="fa fa-pencil-square-o"></i>
                 </a>
 
-                <button data-click="removeItem" class="btnItemRemove btn btn-danger btn-xs"
+                <button data-click="showRemoveLink" class="btnItemRemove btn btn-danger btn-xs"
+                        data-id="{v#id}"
                         title="Удалить элемент">
                     <i class="fa fa-trash-o"></i>
                 </button>
@@ -183,7 +189,7 @@
         </tr>
         </tbody>
     </table>
-
+    <div class="clearfix"></div>
 </div>
 
 <!--{childButtons}-->
@@ -227,7 +233,7 @@
 <!--{menuRemove}-->
 <div class="alert alert-danger">
     <span>
-        Удалить элемент меню со всем его содержимым?
+        Вы действительно хотите удалить элемент меню со всем его содержимым?
         &nbsp;
     </span>
 
@@ -237,12 +243,50 @@
                 data-click="removeMenu">
             Удалить
         </button>
-
         <button class="btn btn-default btn-xs" type="button"
                 data-id="{v#id}" data-type="menu"
                 data-click="closeRemoveMenu">
             Отмена
         </button>
+    </div>
+</div>
 
+<!--{pageRemove}-->
+<div class="alert alert-danger">
+    <span>
+        Вы действительно хотите удалить страницу? &nbsp;
+    </span>
+
+    <div class="btn-group pull-right">
+        <button class="btn btn-danger btn-xs" type="button"
+                data-id="{v#id}" data-type="page"
+                data-click="removePage">
+            Удалить
+        </button>
+        <button class="btn btn-default btn-xs" type="button"
+                data-id="{v#id}" data-type="page"
+                data-click="closeRemovePage">
+            Отмена
+        </button>
+    </div>
+</div>
+
+<!--{linkRemove}-->
+<div class="alert alert-danger">
+    <span>
+        Вы действительно хотите удалить ссылку? &nbsp;
+    </span>
+
+    <div class="btn-group pull-right">
+        <button class="btn btn-danger btn-xs" type="button"
+                data-id="{v#id}" data-type="link"
+                data-click="removeLink">
+            Удалить
+        </button>
+        <button class="btn btn-default btn-xs" type="button"
+                data-id="{v#id}" data-type="link"
+                data-click="closeRemoveLink">
+            Отмена
+        </button>
     </div>
 </div>
