@@ -1,7 +1,7 @@
 var Component = new Brick.Component();
 Component.requires = {
     mod: [
-        {name: '{C#MODNAME}', files: ['pageEditor.js', 'linkEditor']}
+        {name: '{C#MODNAME}', files: ['pageEditor.js', 'linkEditor.js']}
     ]
 };
 Component.entryPoint = function(NS){
