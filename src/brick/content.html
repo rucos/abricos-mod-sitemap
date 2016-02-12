@@ -1,42 +1,29 @@
 <!--[*]
 [script]brick/content.php[/script]
-[bkvar=editor]
-	<img id="mod-sitemap-fasteditor" onclick="showSitemapPageEditor({v#pageid}); return false;" style="cursor: pointer;" src="/modules/sitemap/images/edit.gif" alt="{#brick.content.1}" title="{#brick.content.1}"/>
-	<img id="mod-sitemap-loading" style="float: right; display: none;" src="/images/loading.gif" alt="{#brick.content.2}" />
-	
-	<script>
-		var gel = function(n){ return document.getElementById(n); },
-			elb = gel('mod-sitemap-fasteditor'),
-			ell = gel('mod-sitemap-loading');
-		
-		var showSitemapPageEditor = function(pageid){
-			elb.style.display = 'none';
-			ell.style.display = '';
-			
-			Brick.use('sitemap', 'editor', function(err, NS){
-				NS.initManager(function(man){
-					man.pageLoad(pageid, function(page){
-						elb.style.display = '';
-						ell.style.display = 'none';
-						
-						new NS.PageEditorPanel({
-                            page: page,
-                            config: {
-                                'onSave': function(){
-                                    Brick.Page.reload();
-                                }
-                            }
-                        });
-					});
-				});
-			});
-		};
-	</script>
-[/bkvar]
 
 [bkvar=pagenotfound]
 	<h1>Error 404</h1>
 	<p>Page not found</p>
+[/bkvar]
+
+[bkvar=wrap]
+	<div id="editor-{v#brickid}">
+	    <img src="/images/loading.gif" />
+	</div>
+	<div id="wrap-{v#brickid}">{v#content}</div>
+
+	<script>
+        Brick.use('sitemap', 'buttonEditor', function(err, NS){
+            new NS.EasyPageEditorButtonWidget({
+                srcNode: '#editor-{v#brickid}',
+                contentNode: '#wrap-{v#brickid}',
+                pageName: '{v#pageName}',
+                pageType: '{v#pageType}',
+                menuid: '{v#menuid}',
+                pageid: '{v#pageid}',
+            });
+        });
+    </script>
 [/bkvar]
 
 [*]-->

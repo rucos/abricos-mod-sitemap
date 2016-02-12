@@ -7,29 +7,32 @@
  * @author Alexander Kuzmin <roosit@abricos.org>
  */
 
-// выборка контента из БД
 $brick = Brick::$builder->brick;
-$brick->content = "";
+$v = &$brick->param->var;
+$p = &$brick->param->param;
 
-Abricos::GetModule('sitemap')->GetManager();
-$man = SitemapManager::$instance;
+/** @var SitemapManager $man */
+$man = Abricos::GetModule('sitemap')->GetManager();
 $page = $man->PageByCurrentAddress();
 
 if (empty($page)){
-    $brick->content = $brick->param->var['pagenotfound'];
+    $brick->content = $v['pagenotfound'];
     return;
 }
 
 if ($man->IsAdminRole()){
-    $brick->content .= Brick::ReplaceVarByData($brick->param->var['editor'], array(
-        "pagenm" => $page->name,
+    $brick->content = Brick::ReplaceVarByData($v['wrap'], array(
+        "brickid" => $brick->id,
+        "pageName" => $page->name,
         "pageid" => $page->id,
-        "withmenu" => $page->menuid > 0 && $page->name == 'index' ? 'true' : 'false',
-        "menuid" => $page->menuid
+        "pageType" => $page->menuid > 0 && $page->name == 'index' ? 'menu' : 'page',
+        "menuid" => $page->menuid,
+        "content" => $page->detail->body
     ));
+} else {
+    $brick->content = $page->detail->body;
 }
 
-$brick->content .= $page->detail->body;
 
 if (!empty($page->detail->mods)){
     $mods = json_decode($page->detail->mods);
