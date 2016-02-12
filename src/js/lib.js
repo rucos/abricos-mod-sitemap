@@ -55,10 +55,10 @@ Component.entryPoint = function(NS){
             },
             link: {
                 append: function(parentid){
-
+                    return this.getURL('ws') + 'linkEditor/LinkEditorWidget/0/'+ (parentid | 0) + '/';
                 },
                 edit: function(linkid){
-
+                    return this.getURL('ws') + 'linkEditor/LinkEditorWidget/' + (linkid | 0) + '/';
                 }
             },
             page: {

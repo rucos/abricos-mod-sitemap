@@ -18,17 +18,17 @@ Component.entryPoint = function(NS){
         BW = Brick.mod.widget.Widget,
         J = YAHOO.lang.JSON;
 
-    var LinkEditorWidget = function(container, link, cfg){
+    var old_LinkEditorWidget = function(container, link, cfg){
         cfg = Y.merge({
             'onCancel': null,
             'onSave': null
         }, cfg || {});
 
-        LinkEditorWidget.superclass.constructor.call(this, container, {
-            'buildTemplate': buildTemplate, 'tnames': 'linkeditorwidget'
+        old_LinkEditorWidget.superclass.constructor.call(this, container, {
+            'buildTemplate': buildTemplate, 'tnames': 'old_LinkEditorWidget'
         }, link, cfg);
     };
-    YAHOO.extend(LinkEditorWidget, BW, {
+    YAHOO.extend(old_LinkEditorWidget, BW, {
         init: function(link, cfg){
             this.link = link;
             this.cfg = cfg;
@@ -75,39 +75,6 @@ Component.entryPoint = function(NS){
             });
         }
     });
-    NS.LinkEditorWidget = LinkEditorWidget;
+    NS.old_LinkEditorWidget = old_LinkEditorWidget;
 
-    /**
-     * Редактор ссылки.
-     */
-    var LinkEditorPanel = function(link, cfg){
-        this.link = link;
-        cfg = Y.merge({
-            'onClose': null,
-            'onSave': null,
-            'overflow': true
-        }, cfg || {});
-        this.ccfg = cfg;
-        LinkEditorPanel.superclass.constructor.call(this);
-    };
-    YAHOO.extend(LinkEditorPanel, Brick.widget.Dialog, {
-        initTemplate: function(){
-            return buildTemplate(this, 'linkeditor').replace('linkeditor');
-        },
-        onLoad: function(){
-            var instance = this, cfg = this.ccfg;
-            var closeCallback = function(){
-                instance.close();
-                NS.life(cfg['onClose']);
-            };
-            this.editorWidget = new NS.LinkEditorWidget(this._TM.getEl('linkeditor.widget'), this.link, {
-                'onCancel': closeCallback,
-                'onSave': function(){
-                    NS.life(cfg['onSave']);
-                    closeCallback();
-                }
-            });
-        }
-    });
-    NS.LinkEditorPanel = LinkEditorPanel;
 };

@@ -1,0 +1,71 @@
+<!--{widget}-->
+<div class="panel panel-default aw-sitemap">
+    <div class="panel-heading text-center">
+        <h3 class="panel-title pull-left">
+            Редактор ссылки
+        </h3>
+
+        <span data-wait="show">
+            <img src="/images/loading.gif"/> Загрузка...
+        </span>
+
+        <div class="btn-group pull-right">
+            <button data-click="save" class="btn btn-default btn-xs" type="button">
+                Сохранить
+            </button>
+            <button data-click="cancel" class="btn btn-default btn-xs" type="button">
+                Отмена
+            </button>
+        </div>
+
+
+        <div class="clearfix"></div>
+    </div>
+
+    <div class="panel-body">
+        <h4> Ссылка </h4>
+
+        <div class="form-group row">
+            <div class="col-sm-2">
+                Название
+            </div>
+            <div class="col-sm-5">
+                <input id="{i#title}" class="form-control" type="text"/>
+
+                <div class="help-block">
+                    Название отображается в меню
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-2">
+                Краткое описание
+            </div>
+            <div class="col-sm-9">
+                <input id="{i#descript}" class="form-control" type="text"/>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-2">
+                Ссылка
+            </div>
+            <div class="col-sm-5">
+                <input id="{i#link}" class="form-control" type="text"/>
+            </div>
+        </div>
+
+        <hr/>
+
+        <div class="btn-group pull-right">
+            <button data-click="save" class="btn btn-default" type="button">
+                Сохранить
+            </button>
+            <button data-click="cancel" class="btn btn-default" type="button">
+                Отмена
+            </button>
+        </div>
+
+    </div>
+</div>

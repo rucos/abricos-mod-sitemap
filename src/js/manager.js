@@ -1,8 +1,8 @@
 var Component = new Brick.Component();
 Component.requires = {
     mod: [
-        {name: 'sitemap', files: ['editor.js']},
-        {name: 'sys', files: ['panel.js', 'data.js', 'form.js']}
+        {name: 'sys', files: ['data.js', 'form.js']},
+        {name: '{C#MODNAME}', files: ['editor.js']},
     ]
 };
 Component.entryPoint = function(NS){
@@ -392,93 +392,6 @@ Component.entryPoint = function(NS){
         },
         childVisibleStatus: {}
     });
-
-    NS.MenuItemCreatePanel = Y.Base.create('termsOfUseDialog', SYS.Dialog, [], {
-        onClick: function(e){
-            switch (e.dataClick) {
-                case "cancel":
-                    this.hide();
-                    return true;
-                case "create":
-                    this.createMenuItem();
-                    return true;
-            }
-        },
-
-        createMenuItem: function(){
-            var instance = this;
-            var onSave = function(){
-                NS.life(instance.get('onSave'));
-            };
-
-            var pMenuId = this.get('menuId');
-            var pMenu = NS.manager.menuList.find(pMenuId),
-                tm = this.template;
-
-            if (tm.gel('mnuadd.type0').checked){
-                new NS.PageEditorPanel({
-                    page: new NS.Page({'nm': 'index'}),
-                    config: {
-                        'parentMenuItem': pMenu,
-                        'onSave': onSave
-                    }
-                });
-            } else if (tm.gel('mnuadd.type1').checked){
-                new NS.LinkEditorPanel(new NS.Menu({
-                    'pid': L.isValue(pMenu) ? pMenu.id : 0
-                }), {'onSave': onSave});
-            } else {
-                new NS.PageEditorPanel({
-                    page: new NS.Page(),
-                    config: {
-                        'parentMenuItem': pMenu,
-                        'onSave': onSave
-                    }
-                });
-            }
-            this.hide();
-        }
-    }, {
-        ATTRS: {
-            menuId: {value: 0},
-            onSave: {value: null},
-            component: {
-                value: COMPONENT
-            },
-            templateBlockName: {
-                value: 'mnuadd'
-            }
-        }
-    });
-
-    /*
-
-     var MenuItemCreatePanel = function(menuid, cfg){
-     this.ccfg = L.merge({
-     'onSave': null
-     }, cfg || {});
-     this.menuid = menuid;
-     MenuItemCreatePanel.superclass.constructor.call(this);
-     };
-     YAHOO.extend(MenuItemCreatePanel, Brick.widget.Dialog, {
-     initTemplate: function(){
-     return buildTemplate(this, 'mnuadd').replace('mnuadd');
-     },
-     onClick: function(el){
-     var tp = this._TId['mnuadd'];
-     switch (el.id) {
-     case tp['bcancel']:
-     this.close();
-     return true;
-     case tp['badd']:
-     this.create();
-     return true;
-     }
-     },
-     });
-
-     NS.MenuItemCreatePanel = MenuItemCreatePanel;
-     /**/
 
     var MenuItemRemovePanel = function(item, callback){
         this.item = item;
