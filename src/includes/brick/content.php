@@ -21,11 +21,18 @@ if (empty($page)){
 }
 
 if ($man->IsAdminRole()){
+
+    if ($page->menuid === 0 && $page->name == 'index'){
+        $pageType = 'root';
+    } else {
+        $pageType = $page->menuid > 0 && $page->name == 'index' ? 'menu' : 'page';
+    }
+
     $brick->content = Brick::ReplaceVarByData($v['wrap'], array(
         "brickid" => $brick->id,
         "pageName" => $page->name,
         "pageid" => $page->id,
-        "pageType" => $page->menuid > 0 && $page->name == 'index' ? 'menu' : 'page',
+        "pageType" => $pageType,
         "menuid" => $page->menuid,
         "content" => $page->detail->body
     ));
