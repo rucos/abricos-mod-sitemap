@@ -94,6 +94,7 @@ Component.entryPoint = function(NS){
 
             this.editor = new Editor({
                 srcNode: tp.gel('editor'),
+                toolbar: Editor.TOOLBAR_STANDART,
                 mode: page.detail.editorMode > 0 ? Editor.MODE_CODE : Editor.MODE_VISUAL,
                 content: page.detail.body
             });
