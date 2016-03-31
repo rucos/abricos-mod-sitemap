@@ -66,7 +66,7 @@ Component.entryPoint = function(NS){
                     return this.getURL('ws') + 'pageEditor/PageEditorWidget/0/'+ (parentid | 0) + '/page/';
                 },
                 edit: function(pageid){
-                    return this.getURL('ws') + 'pageEditor/PageEditorWidget/' + (pageid | 0) + '/';
+                    return this.getURL('ws') + 'pageEditor/PageEditorWidget/' + (pageid | 0) + '/0/page/';
                 },
             },
         }
