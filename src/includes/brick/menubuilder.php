@@ -13,5 +13,3 @@ $brick = Brick::$builder->brick;
 
 $builder = $man->GetMenuBuilder($brick);
 $brick->content = $builder->Build();
-
-?>

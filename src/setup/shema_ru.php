@@ -50,13 +50,13 @@ if ($updateManager->isInstall()){
 </p>
 	";
 
-	$about = "
+    $about = "
 		<h2>О проекте</h2>
 		<p><a href='http://ru.abricos.org'>Абрикос</a> - это современная система управления web-контентом (CMS) и платформа интернет приложений.</p>
 	";
 
-	$mainpageId = Ab_CoreQuery::ContentAppend($db, $mainpage, 'sitemap');
-	$aboutpageId = Ab_CoreQuery::ContentAppend($db, $about, 'sitemap');
+    $mainpageId = Ab_CoreQuery::ContentAppend($db, $mainpage, 'sitemap');
+    $aboutpageId = Ab_CoreQuery::ContentAppend($db, $about, 'sitemap');
 
     $db->query_write("
 			INSERT INTO ".$pfx."sys_menu 
@@ -76,5 +76,3 @@ if ($updateManager->isInstall()){
 		(".$aboutmenuId.", ".$aboutpageId.", 'index', '', '".Abricos::$LNG."', '', '', 0, ".TIMENOW.", 0, '')
 	");
 }
-
-?>

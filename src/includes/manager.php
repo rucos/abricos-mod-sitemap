@@ -885,6 +885,3 @@ class SitemapMenuItem {
     }
 
 }
-
-
-?>

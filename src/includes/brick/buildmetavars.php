@@ -30,5 +30,3 @@ while (!empty($mItem)){
 array_push($arr, SystemModule::$instance->GetPhrases()->Get('site_name'));
 
 Brick::$builder->SetGlobalVar('meta_title', implode(" / ", $arr));
-
-?>

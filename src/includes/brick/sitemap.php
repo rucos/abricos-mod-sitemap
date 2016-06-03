@@ -7,7 +7,6 @@
  * @author Alexander Kuzmin <roosit@abricos.org>
  */
 
-
 if (!function_exists("sitemap_brick_sitemap_buildlist")){
     function sitemap_brick_sitemap_buildlist($path, &$result, $uri){
 
@@ -78,5 +77,3 @@ if (count($aLst) == 0){
 $brick->content .= Brick::ReplaceVarByData($v['adminscript'], array(
     'list' => implode(",", $aLst)
 ));
-
-?>

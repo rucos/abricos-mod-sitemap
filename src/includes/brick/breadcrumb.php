@@ -52,5 +52,3 @@ array_push($arr, Brick::ReplaceVarByData(Abricos::$adress->level == 0 ? $v['item
 )));
 
 $brick->content = Brick::ReplaceVarByData($brick->content, array("result" => implode($v['del'], array_reverse($arr))));
-
-?>

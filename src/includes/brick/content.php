@@ -58,5 +58,3 @@ if (!empty($page->detail->metaKeys)){
 if (!empty($page->detail->metaDesc)){
     Brick::$builder->SetGlobalVar('meta_desc', $page->detail->metaDesc);
 }
-
-?>

@@ -346,7 +346,6 @@ class SitemapPageDetail {
 class SitemapPageList extends AbricosList {
 }
 
-
 class SitemapConfig {
 
     /**
@@ -368,6 +367,3 @@ class SitemapConfig {
         /**/
     }
 }
-
-
-?>

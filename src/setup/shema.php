@@ -98,5 +98,3 @@ if ($updateManager->isUpdate('0.2.3.1')){
 		ALTER TABLE ".$pfx."sys_page ADD editormode TINYINT(1) UNSIGNED NOT NULL default '0' COMMENT '0-визуальный редактор, 1-исходный код'
 	");
 }
-
-?>

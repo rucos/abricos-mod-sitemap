@@ -115,5 +115,3 @@ class SitemapPermission extends Ab_UserPermission {
 }
 
 Abricos::ModuleRegister(new SitemapModule());
-
-?>

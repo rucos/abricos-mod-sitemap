@@ -77,5 +77,3 @@ $man->MenuSave(array(
 ));
 
 $man->RolesEnable();
-
-?>

@@ -249,5 +249,3 @@ class SitemapMenuBrickBulder {
         return $sResult;
     }
 }
-
-?>

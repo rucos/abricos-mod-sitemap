@@ -72,5 +72,3 @@ if ($updateManager->isInstall()){
 		(".$aboutmenuId.", ".$aboutpageId.", 'index', '', '".Abricos::$LNG."', '', '', 0, ".TIMENOW.", 0, '')
 	");
 }
-
-?>

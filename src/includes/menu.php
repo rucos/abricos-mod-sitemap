@@ -138,6 +138,3 @@ $builder = new sitemap_brick_menu_builder($brick);
 
 $v['title'] = !empty($p['title']) ? Brick::ReplaceVarByData($v['title'], array('tl' => $p['title'])) : "";
 $v['result'] = $builder->Build();
-
-
-?>

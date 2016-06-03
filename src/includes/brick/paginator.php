@@ -75,5 +75,3 @@ $brick->content = Brick::ReplaceVarByData($brick->content, array(
         $hidepn
     ))
 ));
-
-?>
