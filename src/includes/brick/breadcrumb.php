@@ -18,6 +18,11 @@ if (Abricos::$adress->level === 0){
 
 SitemapModule::$instance->GetManager();
 $mList = SitemapManager::$instance->MenuList();
+if (empty($mList)){
+    $brick->content = "";
+    return;
+}
+
 $mItem = $mList->FindByPath(Abricos::$adress->dir, true);
 
 $mItemCheck = $mItem;

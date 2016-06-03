@@ -217,6 +217,10 @@ class SitemapMenuBrickBulder {
     public function Build(){
         $list = SitemapManager::$instance->MenuList();
 
+        if (empty($list)){
+            return "";
+        }
+
         if ($this->cfgIsSubMenu){
             $adr = Abricos::$adress;
             $item = $list->FindByPath($adr->dir, false);
