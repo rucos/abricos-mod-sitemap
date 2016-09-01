@@ -1,0 +1,19 @@
+<!--[*]
+[script]brick/cecutient.php[/script]
+[*]-->
+<script>
+	if(getCookie('theme')){
+		document.write('<a href="?default" class="a-fixed-top-edu"><i class="fa fa-eye" aria-hidden="true"></i> Обычная версия</a>');
+	} else {
+		document.write('<a href="?vision" class="a-fixed-top-edu"><i class="fa fa-eye-slash" aria-hidden="true"></i>Для слабовидящих</a>');
+	}
+			
+	function getCookie(name){
+	  var matches = document.cookie.match(new RegExp(
+			    "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+			  ));
+		  return matches ? decodeURIComponent(matches[1]) : undefined;
+	}
+</script>
+	
+	
